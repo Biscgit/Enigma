@@ -1,6 +1,7 @@
 spec:
   inputs:
     TYPE:
+---
 
 build:
   # Use the official docker image.
