@@ -40,6 +40,8 @@ deploy-job:      # This job runs in the deploy stage.
 
 prune-images:
   stage: prune
+  services:
+    - docker:dind
   script:
     - docker image prune -f
   when: always
