@@ -42,6 +42,4 @@ prune-images:
   stage: prune
   script:
     - docker image prune -f
-  needs:
-    - build-backend
-    - build-frontend
+  when: always
