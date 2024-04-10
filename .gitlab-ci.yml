@@ -2,6 +2,7 @@ stages:          # List of stages for jobs, and their order of execution
   - build
   - test
   - deploy
+  - prune
 
 include: "build-template.yml"
 
@@ -36,3 +37,11 @@ deploy-job:      # This job runs in the deploy stage.
   script:
     - echo "Deploying application..."
     - echo "Application successfully deployed."
+
+prune-images:
+  stage: prune
+  script:
+    - docker image prune -f
+  needs:
+    - build-backend
+    - build-frontend
