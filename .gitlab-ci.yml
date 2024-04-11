@@ -2,7 +2,7 @@ stages:          # List of stages for jobs, and their order of execution
   - build
   - test
   - deploy
-  - prune
+#  - prune
 
 include: "build-template.yml"
 
@@ -38,10 +38,10 @@ deploy-job:      # This job runs in the deploy stage.
     - echo "Deploying application..."
     - echo "Application successfully deployed."
 
-prune-images:
-  stage: prune
-  services:
-    - docker:dind
-  script:
-    - docker image prune -f
-  when: always
+#prune-images:
+#  stage: prune
+#  services:
+#    - docker:dind
+#  script:
+#    - docker image prune -f
+#  when: always
