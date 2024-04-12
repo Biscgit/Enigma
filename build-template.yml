@@ -1,5 +1,6 @@
 variables:
-  TYPE: ""
+  PATH: ""
+  NAME: /$PATH
 
 .build-docker:
   # Use the official docker image.
@@ -8,11 +9,11 @@ variables:
   services:
     - docker:dind
   variables:
-    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE/$TYPE:$CI_COMMIT_REF_SLUG
-    IMAGE_TAG_LATEST: $CI_REGISTRY_IMAGE/$TYPE:latest
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE$NAME:$CI_COMMIT_REF_SLUG
+    IMAGE_TAG_LATEST: $CI_REGISTRY_IMAGE$NAME:latest
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - cd $TYPE
+    - cd $PATH
   script:
     - docker build --pull -t "$DOCKER_IMAGE_NAME" .
     - docker push "$DOCKER_IMAGE_NAME"
@@ -27,4 +28,4 @@ variables:
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
-        - $TYPE/Dockerfile
+        - $PATH/Dockerfile

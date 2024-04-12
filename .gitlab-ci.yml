@@ -2,19 +2,18 @@ stages:          # List of stages for jobs, and their order of execution
   - build
   - test
   - deploy
-#  - prune
 
 include: "build-template.yml"
 
 build-backend:
     extends: .build-docker
     variables:
-      TYPE: "backend"
+      PATH: "backend"
 
 build-frontend:
     extends: .build-docker
     variables:
-      TYPE: "frontend"
+      PATH: "frontend"
 
 
 unit-test-job:   # This job runs in the test stage.
@@ -37,11 +36,3 @@ deploy-job:      # This job runs in the deploy stage.
   script:
     - echo "Deploying application..."
     - echo "Application successfully deployed."
-
-#prune-images:
-#  stage: prune
-#  services:
-#    - docker:dind
-#  script:
-#    - docker image prune -f
-#  when: always
