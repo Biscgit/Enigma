@@ -8,12 +8,12 @@ include: "build-template.yml"
 build-backend:
     extends: .build-docker
     variables:
-      PATH: "backend"
+      DOCKERPATH: "backend"
 
 build-frontend:
     extends: .build-docker
     variables:
-      PATH: "frontend"
+      DOCKERPATH: "frontend"
 
 
 unit-test-job:   # This job runs in the test stage.
