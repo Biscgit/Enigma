@@ -6,6 +6,5 @@
 
 ### Project Commands
 
-- Docker Login: `docker login registry.mygit.th-deg.de/ts19084/enigma`
-
+- Docker Login: `docker login registry.mygit.th-deg.de`
 - Run/Restart: `docker compose up --build -d`
