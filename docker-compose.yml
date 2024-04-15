@@ -13,8 +13,7 @@ services:
                 ipv4_address: 172.20.0.100
 
     webserver:
-        build: .
-
+        image: registry.mygit.th-deg.de/ts19084/enigma/backend:latest
         networks:
             enigma-network:
                 ipv4_address: 172.20.0.101
