@@ -1,0 +1,42 @@
+services:
+    database:
+        image: postgres:16-alpine
+        environment:
+            LANG: de_DE.utf8
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: admin1234!
+
+        networks:
+            enigma-network:
+                ipv4_address: 172.20.0.100
+
+    webserver:
+        build: ./backend
+        networks:
+            enigma-network:
+                ipv4_address: 172.20.0.101
+
+        depends_on:
+            database:
+                condition: service_started
+
+    website:
+        build: ./frontend
+        networks:
+            enigma-network:
+                ipv4_address: 172.20.0.102
+
+        depends_on:
+            webserver:
+                condition: service_started
+
+networks:
+    enigma-network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16
+                  gateway: 172.20.0.1
+
+volumes:
+    database-storage:
