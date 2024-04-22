@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
     database:
         image: postgres:16-alpine
@@ -20,6 +18,16 @@ services:
 
         depends_on:
             database:
+                condition: service_started
+
+    website:
+        image: registry.mygit.th-deg.de/ts19084/enigma/frontend:latest
+        networks:
+            enigma-network:
+                ipv4_address: 172.20.0.102
+
+        depends_on:
+            webserver:
                 condition: service_started
 
 networks:
