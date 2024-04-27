@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS machines (
     username text,
     machine_type INTEGER,
     rotors INTEGER[],
+
+    character_pointer INTEGER,
     character_history CHAR[140][2],
 
     PRIMARY KEY (id),
