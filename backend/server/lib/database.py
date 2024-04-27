@@ -1,17 +1,27 @@
+__all__ = ["Database"]
+
 import asyncio
 import logging
 from os import environ
 
 import asyncpg
-
-__all__ = ["Database"]
+import fastapi
 
 
 class Database:
     """Database interface"""
 
-    def __init__(self):
+    def __init__(self, app: fastapi.FastAPI):
         self.conn: asyncpg.Connection | None = None
+
+        # ensure clean startup and shutdown
+        @app.on_event("startup")
+        async def connect_db():
+            await self.connect()
+
+        @app.on_event("shutdown")
+        async def connect_db():
+            await self.disconnect()
 
     async def connect(self) -> None:
         logging.info("Connecting to database...")
@@ -53,3 +63,5 @@ class Database:
     async def disconnect(self) -> None:
         await self.conn.close()
         logging.info("Successfully disconnected to database")
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
