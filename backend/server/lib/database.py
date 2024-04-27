@@ -12,7 +12,7 @@ class Database:
     """Database interface"""
 
     def __init__(self, app: fastapi.FastAPI):
-        self.conn: asyncpg.Connection | None = None
+        self.pool: asyncpg.Pool | None = None
 
         # ensure clean startup and shutdown
         @app.on_event("startup")
@@ -28,7 +28,7 @@ class Database:
 
         for _ in range(12):
             try:
-                conn: asyncpg.Connection = await asyncpg.connect(
+                conn: asyncpg.Pool = await asyncpg.create_pool(
                     user=environ.get("DB_USER"),
                     password=environ.get("DB_PASSWORD"),
                     database=environ.get("DB_NAME"),
@@ -39,7 +39,7 @@ class Database:
                 await asyncio.sleep(5)
 
             else:
-                self.conn = conn
+                self.pool = conn
                 logging.info("Successfully connected to database")
 
                 await self.initialize_db()
@@ -54,14 +54,16 @@ class Database:
         with open("./server/other/initialize.sql") as file:
             content = file.read()
 
-            for qry in content.split(";"):
-                if qry.strip():
-                    await self.conn.execute(qry)
+            async with self.pool.acquire() as conn:
+                async with conn.transaction():
+                    for qry in content.split(";"):
+                        if qry.strip():
+                            await conn.execute(qry)
 
         logging.info("Successfully initialized database")
 
     async def disconnect(self) -> None:
-        await self.conn.close()
+        await self.pool.close()
         logging.info("Successfully disconnected to database")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
