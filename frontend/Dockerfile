@@ -21,13 +21,14 @@ RUN flutter --disable-analytics
 RUN flutter channel stable
 RUN flutter upgrade
 
-# copy files
 WORKDIR /home/builder/frontend
-COPY . .
 
-# build
+# copy and build
 RUN flutter create .
+
+COPY ./pubspec.yaml .
 RUN flutter pub get
+COPY . .
 RUN flutter build web --web-renderer html
 
 # serve site with nginx
