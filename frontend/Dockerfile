@@ -29,7 +29,7 @@ RUN flutter create .
 COPY ./pubspec.yaml .
 RUN flutter pub get
 COPY . .
-RUN flutter build web --web-renderer html
+RUN flutter build web --web-renderer canvaskit
 
 # serve site with nginx
 FROM nginx:1.25-alpine
