@@ -5,7 +5,6 @@ RUN apt update
 RUN apt install -y curl file git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev
 
 # permissions
-RUN adduser builder
 WORKDIR /home/builder
 
 # install flutter
