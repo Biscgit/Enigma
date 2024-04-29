@@ -1,73 +1,88 @@
-# custom
-.metadata
-analysis_options.yaml
-pubspec.lock
-test
-web/
-
-# git
+# Git
 .git
 .gitignore
 .gitattributes
 
-# docker
+# CI
+.codeclimate.yml
+.travis.yml
+.taskcluster.yml
+
+# Docker
 docker-compose.yml
 Dockerfile
 .docker
 .dockerignore
 
-# project
-.venv/
-.idea/
-.vscode/
-.env
-
+# Byte-compiled / optimized / DLL files
 **/__pycache__/
 **/*.py[cod]
 
-.drawio
+# C extensions
+*.so
 
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Miscellaneous
-*.class
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
 *.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
+# Sphinx documentation
+docs/_build/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# PyBuilder
+target/
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
+# Virtual environment
+.env
+.venv/
+venv/
 
-# Symbolication related
-app.*.symbols
+# PyCharm
+.idea
 
-# Obfuscation related
-app.*.map.json
+# Python mode for VIM
+.ropeproject
+**/.ropeproject
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Vim swap files
+**/*.swp
+
+# VS Code
+.vscode/
