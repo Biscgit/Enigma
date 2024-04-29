@@ -1,3 +1,10 @@
+# custom
+.metadata
+analysis_options.yaml
+pubspec.lock
+test
+web/
+
 # git
 .git
 .gitignore
@@ -8,7 +15,6 @@ docker-compose.yml
 Dockerfile
 .docker
 .dockerignore
-
 
 # project
 .venv/
