@@ -5,6 +5,7 @@ RUN apt update
 RUN apt install -y curl file git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev
 
 # permissions
+RUN adduser builder
 WORKDIR /home/builder
 
 # install flutter
@@ -12,12 +13,22 @@ RUN curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable
 RUN tar xvf flutter_linux_*-stable.tar.xz --directory=/home/builder/
 ENV PATH="${PATH}:/home/builder/flutter/bin"
 
-# copy files
+# configure flutter
+RUN chmod +rw /home/builder/
+RUN git config --global --add safe.directory /home/builder/flutter
+RUN flutter config --enable-web
+RUN flutter --disable-analytics
 
+RUN flutter channel stable
+RUN flutter upgrade
+
+# copy files
 WORKDIR /home/builder/frontend
 COPY . .
 
 # build
+RUN flutter create .
+RUN flutter pub get
 RUN flutter build web --web-renderer html
 
 # serve site with nginx
