@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 /*
 
+--------------- TODO ---------------
+
 - Add comments
 - Add tests
 - Restructure some variables
@@ -11,6 +13,10 @@ import 'package:flutter/material.dart';
 
 
 void main() {
+  runApp(Lampfield());
+}
+
+class Lampfield extends StatefulWidget {
   runApp(const Lampfield());
 }
 
@@ -22,8 +28,7 @@ class Lampfield extends StatefulWidget {
 
 class LampfieldState extends State<Lampfield> {
   int counter = 0;
-  final double seizedBoxHeight = 10;
-  final List<GlobalKey<CircularTextBoxState>>listOfGlobalKeys = List.generate(26, (index) => GlobalKey<CircularTextBoxState>());
+  final List<GlobalKey<_CircularTextBoxState>>listOfGlobalKeys = List.generate(26, (index) => GlobalKey<_CircularTextBoxState>());
 
   String lightUpLetter(String characterToLightUp) {
     int letter = characterToLightUp.toUpperCase().codeUnitAt(0) - 65;
@@ -45,9 +50,10 @@ class LampfieldState extends State<Lampfield> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Lamppanel deluxe'),
+          title: Text('Lamppanel deluxe'),
         ),
-        body: Column(
+        body: Positioned(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Row(
@@ -65,7 +71,7 @@ class LampfieldState extends State<Lampfield> {
                   CircularTextBox(key: listOfGlobalKeys[15], text: 'P'),
                 ],
               ),
-              SizedBox(height: seizedBoxHeight),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -80,7 +86,7 @@ class LampfieldState extends State<Lampfield> {
                   CircularTextBox(key: listOfGlobalKeys[11], text: 'L'),
                 ],
               ),
-              SizedBox(height: seizedBoxHeight),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -101,11 +107,12 @@ class LampfieldState extends State<Lampfield> {
                       }
                       counter++;
                     },
-                    child: const Text("TestButton")
+                    child: Text("bruh")
                   )
                 ],
               ),
             ],
+          ),
         ),
       ),
     );
@@ -121,20 +128,20 @@ class CircularTextBox extends StatefulWidget {
   final double diameter;
 
   const CircularTextBox({
-    super.key,
+    Key? key,
     required this.text,
     this.colorText = Colors.black,
     this.defaultColorBox = Colors.grey,
     this.highlightedColor = Colors.yellow,
     this.fontSize = 20,
     this.diameter = 50,
-  });
+  }) : super(key: key);
 
   @override
-  CircularTextBoxState createState() => CircularTextBoxState();
+  _CircularTextBoxState createState() => _CircularTextBoxState();
 }
 
-class CircularTextBoxState extends State<CircularTextBox> {
+class _CircularTextBoxState extends State<CircularTextBox> {
   late Color _colorBox;
 
   @override
@@ -164,7 +171,7 @@ class CircularTextBoxState extends State<CircularTextBox> {
         color: _colorBox,
       ),
       alignment: Alignment.center,
-      margin: const EdgeInsets.all(5),
+      margin: EdgeInsets.all(5),
       child: Text(
         widget.text,
         style: TextStyle(
