@@ -8,3 +8,4 @@
 
 - Docker Login: `docker login registry.mygit.th-deg.de`
 - Run/Restart: `docker compose up --build -d`
+- Run Locally: `docker compose -f docker-compose.local.yml up --build -d` (Clean building can take up to 6 Minutes!)
