@@ -5,9 +5,9 @@
 
 
 ### Infos
-Website can be accessed on `localhost:8080` hosted by nginx.
+- Website can be accessed on `http://localhost:8080` hosted with nginx.
+- Login for GitLab registry builds: `docker login registry.mygit.th-deg.de`
 
 ### Project Commands
-
-- Docker Login: `docker login registry.mygit.th-deg.de`
-- Run/Restart: `docker compose up --build -d`
+- Run GitLab: `docker compose up --build -d` 
+- Run Locally: `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building can take **3 to 6 Minutes!**)
