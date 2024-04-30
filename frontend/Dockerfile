@@ -15,7 +15,6 @@ ENV PATH="${PATH}:/home/builder/flutter/bin"
 # configure flutter
 RUN chmod +rw /home/builder/
 RUN git config --global --add safe.directory /home/builder/flutter
-RUN flutter config --enable-web
 RUN flutter --disable-analytics
 
 RUN flutter channel stable
@@ -24,12 +23,12 @@ RUN flutter upgrade
 WORKDIR /home/builder/frontend
 
 # copy and build
-RUN flutter create .
+RUN flutter create --platforms web .
 
 COPY ./pubspec.yaml .
 RUN flutter pub get
 COPY . .
-RUN flutter build web --web-renderer canvaskit
+RUN flutter build web --release
 
 # serve site with nginx
 FROM nginx:1.25-alpine
