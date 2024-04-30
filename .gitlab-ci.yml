@@ -18,7 +18,17 @@ build-scanner:
   extends: .build-docker
   variables:
     DOCKERPATH: "testing"
-    DOCKERNAME: "/scanner"
+    NAME: "/scanner"
+
+scan-backend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "backend"
+
+scan-frontend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "frontend"
 
 unit-test-job:
   stage: test

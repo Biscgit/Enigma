@@ -33,6 +33,7 @@ variables:
 
 .scan_image:
   stage: test
+  image: registry.mygit.th-deg.de/ts19084/enigma/scanner:cl-1
   services:
     - docker:dind
   variables: 
