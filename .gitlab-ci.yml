@@ -16,7 +16,7 @@ build-frontend:
 
 build-scanner:
   extends: .build-docker
-  varibles:
+  variables:
     DOCKERPATH: "testing"
     DOCKERNAME: "/scanner"
 
