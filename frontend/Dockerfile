@@ -4,7 +4,9 @@ FROM debian:bookworm AS builder
 RUN apt update
 RUN apt install -y curl file git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev
 
-# permissions
+# permissions & security
+RUN useradd -ms /bin/bash builder
+USER builder
 WORKDIR /home/builder
 
 # install flutter
@@ -13,17 +15,16 @@ RUN tar xvf flutter_linux_*-stable.tar.xz --directory=/home/builder/
 ENV PATH="${PATH}:/home/builder/flutter/bin"
 
 # configure flutter
-RUN chmod +rw /home/builder/
 RUN git config --global --add safe.directory /home/builder/flutter
 RUN flutter --disable-analytics
 
 RUN flutter channel stable
 RUN flutter upgrade
 
-WORKDIR /home/builder/frontend
-
 # copy and build
+WORKDIR /home/builder/frontend
 RUN flutter create --platforms web .
+RUN flutter clean
 
 COPY ./pubspec.yaml .
 RUN flutter pub get
