@@ -20,6 +20,16 @@ build-scanner:
     DOCKERPATH: "testing"
     NAME: "/scanner"
 
+scan-backend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "backend"
+
+scan-frontend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "frontend"
+
 unit-test-job:
   stage: test
   script:
