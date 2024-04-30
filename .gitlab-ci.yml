@@ -2,18 +2,23 @@ stages:
   - build
   - test
 
-include: "build-template.yml"
+include: "ci-templates.yml"
 
 build-backend:
-    extends: .build-docker
-    variables:
-      DOCKERPATH: "backend"
+  extends: .build-docker
+  variables:
+    DOCKERPATH: "backend"
 
 build-frontend:
-    extends: .build-docker
-    variables:
-      DOCKERPATH: "frontend"
+  extends: .build-docker
+  variables:
+    DOCKERPATH: "frontend"
 
+build-scanner:
+  extends: .build-docker
+  variables:
+    DOCKERPATH: "testing"
+    DOCKERNAME: "/scanner"
 
 unit-test-job:
   stage: test

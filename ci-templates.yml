@@ -30,3 +30,23 @@ variables:
     - if: $CI_COMMIT_BRANCH
       exists:
         - $DOCKERPATH/Dockerfile
+
+.scan_image:
+  stage: test
+  services:
+    - docker:dind
+  variables: 
+    NAME: "/${DOCKERPATH}"
+    FILE_NAME: "$(date '+%Y-%m-%d-%H:%M:%S').txt"
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE${NAME}:latest
+  before_script:
+  script:
+    - trivy image $DOCKER_IMAGE_NAME
+  artifacts:
+    name: "$FILE_NAME" 
+    paths:
+      - "$DOCKERPATH"
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - $DOCKERPATH/Dockerfile
