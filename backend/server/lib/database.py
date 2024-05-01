@@ -1,4 +1,4 @@
-__all__ = ["Database"]
+__all__ = ["get_database", "Database"]
 
 import asyncio
 import logging
@@ -13,6 +13,7 @@ from .models import LoginForm
 class Database:
     """Database interface"""
     max_chars = 140
+    instance: "Database" = None
 
     def __init__(self):
         self.pool: asyncpg.Pool | None = None
@@ -119,8 +120,9 @@ class Database:
                 return bool(result)
 
 
-db = Database()
-
-
 def get_database() -> Database:
-    return db
+    if Database.instance is None:
+        logging.info("Creating new Database instance...")
+        Database.instance = Database()
+
+    return Database.instance
