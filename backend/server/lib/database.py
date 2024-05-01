@@ -10,6 +10,7 @@ import fastapi
 
 class Database:
     """Database interface"""
+    max_chars = 140
 
     def __init__(self, app: fastapi.FastAPI):
         self.pool: asyncpg.Pool | None = None
