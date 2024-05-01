@@ -43,13 +43,14 @@ class Database:
                 self.pool = conn
                 logging.info("Successfully connected to database")
 
-                await self.initialize_db()
+                await self._initialize_db()
+                await self._load_users()
                 return
 
         logging.critical("Failed to connect to database after 60 seconds")
         exit(1)
 
-    async def initialize_db(self):
+    async def _initialize_db(self) -> None:
         logging.info("Initializing database...")
 
         with open("./server/other/initialize.sql") as file:
@@ -62,6 +63,28 @@ class Database:
                             await conn.execute(qry)
 
         logging.info("Successfully initialized database")
+
+    async def _load_users(self) -> None:
+        logging.info("Loading users from file...")
+        with open("./server/users.json") as file:
+            content = file.read()
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    """
+                    INSERT INTO users(username, password)
+                    SELECT 
+                        (data->>'username')::TEXT, 
+                        (data->>'password')::TEXT
+                    FROM json_array_elements($1::json) as data
+                    ON CONFLICT (username) DO UPDATE
+                    SET password = EXCLUDED.password;
+                    """,
+                    content
+                )
+
+        logging.info("Successfully loaded users from file")
 
     async def disconnect(self) -> None:
         await self.pool.close()
