@@ -1,7 +1,7 @@
 -- Users
 CREATE TABLE IF NOT EXISTS users (
-    username text,
-    password_hash text,
+    username TEXT,
+    password TEXT,
 
     PRIMARY KEY (username)
 );
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Machines
 CREATE TABLE IF NOT EXISTS machines (
     id SERIAL,
-    username text,
+    username TEXT,
     machine_type INTEGER,
     rotors INTEGER[],
 
