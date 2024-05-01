@@ -7,15 +7,24 @@ from os import environ
 import asyncpg
 import fastapi
 
+from .models import LoginForm
+
 
 class Database:
     """Database interface"""
     max_chars = 140
 
-    def __init__(self, app: fastapi.FastAPI):
+    def __init__(self):
         self.pool: asyncpg.Pool | None = None
 
-        # ensure clean startup and shutdown
+        self.__is_inited: bool = False
+
+    def fastapi_init(self, app: fastapi.FastAPI):
+        """Ensure clean startup and shutdown. Needs to be called before start"""
+
+        if self.__is_inited:
+            raise Exception("Database has already been inited with fastapi")
+
         @app.on_event("startup")
         async def connect_db():
             await self.connect()
@@ -23,6 +32,8 @@ class Database:
         @app.on_event("shutdown")
         async def connect_db():
             await self.disconnect()
+
+        self.__is_inited = True
 
     async def connect(self) -> None:
         logging.info("Connecting to database...")
@@ -106,3 +117,10 @@ class Database:
                 )
 
                 return bool(result)
+
+
+db = Database()
+
+
+def get_database() -> Database:
+    return db

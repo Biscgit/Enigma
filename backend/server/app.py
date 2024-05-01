@@ -5,5 +5,9 @@ from server.lib import *
 
 logging.basicConfig(level=logging.INFO)
 
+# init fastapi and db
 app = FastAPI()
-db = Database(app)
+db = get_database()
+db.fastapi_init(app)
+
+# add routes
