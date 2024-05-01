@@ -9,7 +9,6 @@ from .models import LoginForm
 from .database import get_database, Database
 
 router = APIRouter()
-
 current_auth: dict[str, str] = {}
 
 
@@ -17,7 +16,7 @@ current_auth: dict[str, str] = {}
 async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_database)) -> dict[str, str]:
     """Endpoint for login. Returns an 256-bit token"""
     if await db_conn.check_login(login_form):
-        auth_token: str = sha3_256(f"{uuid4()}{login_form.username}".encode()).hexdigest()
+        auth_token: str = sha3_256(f"X{uuid4()}X{login_form.username}X".encode()).hexdigest()
 
         global current_auth
         current_auth |= {login_form.username: auth_token}
