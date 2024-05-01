@@ -12,6 +12,14 @@ router = APIRouter()
 current_auth: dict[str, str] = {}
 
 
+def check_auth(token: str) -> str:
+    """checks auth for provided token and returns the username"""
+    if token in current_auth:
+        return current_auth[token]
+
+    raise HTTPException(status_code=401, detail="Invalid token!")
+
+
 @router.post("/login")
 async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_database)) -> dict[str, str]:
     """Endpoint for login. Returns an 256-bit token"""
@@ -19,9 +27,15 @@ async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_databas
         auth_token: str = sha3_256(f"X{uuid4()}X{login_form.username}X".encode()).hexdigest()
 
         global current_auth
-        current_auth |= {login_form.username: auth_token}
+        current_auth |= {auth_token: login_form.username}
 
         return {"token": auth_token}
 
     else:
         raise HTTPException(status_code=401, detail="Invalid username or password")
+
+
+@router.delete("/logout")
+async def logout(token: str, _: str = Depends(check_auth)) -> None:
+    """Endpoint for logging out of the application"""
+    current_auth.pop(token)
