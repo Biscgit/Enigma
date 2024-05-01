@@ -91,3 +91,18 @@ class Database:
         logging.info("Successfully disconnected to database")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    async def check_login(self, username: str, password: str) -> bool:
+        """returns a bool for weather the credentials are valid"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                result: int = await conn.fetchval(
+                    """
+                    SELECT COUNT(*) 
+                    FROM  users
+                    WHERE username = $1 AND password = $2;
+                    """,
+                    username, password
+                )
+
+                return bool(result)
