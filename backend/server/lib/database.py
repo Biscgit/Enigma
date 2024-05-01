@@ -104,7 +104,7 @@ class Database:
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    async def check_login(self, username: str, password: str) -> bool:
+    async def check_login(self, form: LoginForm) -> bool:
         """returns a bool for weather the credentials are valid"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -114,7 +114,7 @@ class Database:
                     FROM  users
                     WHERE username = $1 AND password = $2;
                     """,
-                    username, password
+                    form.username, form.password
                 )
 
                 return bool(result)
