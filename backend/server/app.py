@@ -13,4 +13,4 @@ logging.info('FastAPI is starting up...')
 db = get_database()
 db.fastapi_init(app)
 
-# add routes
+app.include_router(router)
