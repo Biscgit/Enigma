@@ -45,7 +45,6 @@ variables:
   artifacts:
     reports:
       container_scanning: output.txt
-
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
