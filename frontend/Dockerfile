@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS builder
+FROM debian:stable-slim AS builder
 
 # install dependencies
 RUN apt update
