@@ -1,4 +1,4 @@
-include: "".ci/ci-templates.yml"
+include: "/.ci/ci-templates.yml"
 
 scan-backend:
   extends: .scan_image

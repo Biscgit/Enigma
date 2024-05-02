@@ -7,7 +7,6 @@ stages:
   - e2e-test
 
 include:
-  - local:
-    - ".ci/build.yml"
-    - ".ci/scanner.yml"
-    - ".ci/test.yml"
+  - local: '/.ci/build.yml'
+  - local: '/.ci/scanner.yml'
+  - local: '/.ci/test.yml'

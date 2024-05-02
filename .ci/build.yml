@@ -1,4 +1,4 @@
-include: ".ci/ci-templates.yml"
+include: "/.ci/ci-templates.yml"
 
 build-flutter-builder:
   stage: prebuild
