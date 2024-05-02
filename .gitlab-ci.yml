@@ -1,23 +1,34 @@
 stages:
+  - prebuild
   - build
   - test
 
 include: "ci-templates.yml"
 
+build-flutter-builder:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/flutter"
+    NAME: "/flutter-builder"
+
 build-backend:
+  stage: build
   extends: .build-docker
   variables:
     DOCKERPATH: "backend"
 
 build-frontend:
+  stage: build
   extends: .build-docker
   variables:
     DOCKERPATH: "frontend"
 
 build-scanner:
+  stage: build
   extends: .build-docker
   variables:
-    DOCKERPATH: "testing"
+    DOCKERPATH: ".docker-builds/scanner"
     NAME: "/scanner"
 
 scan-backend:

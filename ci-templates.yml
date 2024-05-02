@@ -4,7 +4,6 @@ variables:
 .build-docker:
   # Use the official docker image.
   image: docker:cli
-  stage: build
   services:
     - docker:dind
   variables:
