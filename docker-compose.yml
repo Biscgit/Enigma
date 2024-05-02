@@ -26,6 +26,8 @@ services:
 
     website:
         image: registry.mygit.th-deg.de/ts19084/enigma/frontend:latest
+        ports:
+            - 8080:8080
         networks:
             enigma-network:
                 ipv4_address: ${IP_FLUTTER}
