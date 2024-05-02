@@ -1,7 +1,105 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+class PageVariants extends StatelessWidget {
+  const PageVariants({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth =
+        MediaQuery.of(context).size.width; // Get the screen width
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          // Center the first button
+          child: SizedBox(
+            width: screenWidth * 0.5,
+            // Set button width to half of the screen width
+            height: 40,
+            // Adjust the height of the buttons
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
+                // Change button color
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20.0), // Set button border radius
+                  ),
+                ),
+              ),
+              child: const Text(
+                'Enigma I',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white), // Adjust the font size and color
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8), // Add some space between buttons
+        Center(
+          // Center the second button
+          child: SizedBox(
+            width: screenWidth * 0.5,
+            // Set button width to half of the screen width
+            height: 40,
+            // Adjust the height of the buttons
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
+                // Change button color
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20.0), // Set button border radius
+                  ),
+                ),
+              ),
+              child: const Text(
+                'Norway Enigma',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white), // Adjust the font size and color
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8), // Add some space between buttons
+        Center(
+          // Center the third button
+          child: SizedBox(
+            width: screenWidth * 0.5,
+            // Set button width to half of the screen width
+            height: 40,
+            // Adjust the height of the buttons
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
+                // Change button color
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20.0), // Set button border radius
+                  ),
+                ),
+              ),
+              child: const Text(
+                'Enigma M3',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white), // Adjust the font size and color
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -10,60 +108,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue, // Set app bar color to blue
+          title: const Text('Choose Enigma mode'), // Set app bar title
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        body: const PageVariants(),
       ),
     );
   }
+}
+
+void main() {
+  runApp(const MyApp());
 }
