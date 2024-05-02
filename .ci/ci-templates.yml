@@ -31,7 +31,7 @@ variables:
         - $DOCKERPATH/Dockerfile
 
 .scan_image:
-  stage: test
+  stage: scanning
   image: $CI_REGISTRY_IMAGE/scanner
   services:
     - docker:dind
