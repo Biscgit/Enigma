@@ -2,7 +2,7 @@ variables:
   DOCKERPATH: ""
 
 .build-docker:
-  # Use the official docker image.
+  stage: build
   image: docker:cli
   services:
     - docker:dind
@@ -31,7 +31,7 @@ variables:
         - $DOCKERPATH/Dockerfile
 
 .scan_image:
-  stage: scanning
+  stage: scanner
   image: $CI_REGISTRY_IMAGE/scanner
   services:
     - docker:dind

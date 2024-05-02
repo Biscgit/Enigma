@@ -10,19 +10,16 @@ build-flutter-builder:
     - if: "$NIGHTLY_BUILD"
 
 build-backend:
-  stage: build
   extends: .build-docker
   variables:
     DOCKERPATH: "backend"
 
 build-frontend:
-  stage: build
   extends: .build-docker
   variables:
     DOCKERPATH: "frontend"
 
 build-scanner:
-  stage: build
   extends: .build-docker
   variables:
     DOCKERPATH: ".docker-builds/scanner"
