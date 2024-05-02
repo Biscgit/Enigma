@@ -11,8 +11,8 @@ build-flutter-builder:
   variables:
     DOCKERPATH: ".docker-builds/flutter"
     NAME: "/flutter-builder"
-  rules:
-    - if: "$NIGHTLY_BUILD"
+      # rules:
+      #- if: "$NIGHTLY_BUILD"
 
 build-backend:
   stage: build
@@ -32,8 +32,8 @@ build-scanner:
   variables:
     DOCKERPATH: ".docker-builds/scanner"
     NAME: "/scanner"
-  rules:
-    - if: "$NIGHTLY_BUILD"
+      #  rules:
+      #    - if: "$NIGHTLY_BUILD"
 
 scan-backend:
   extends: .scan_image
