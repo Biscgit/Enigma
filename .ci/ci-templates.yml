@@ -2,7 +2,7 @@ variables:
   DOCKERPATH: ""
 
 .build-docker:
-  # Use the official docker image.
+  stage: build
   image: docker:cli
   services:
     - docker:dind
@@ -31,7 +31,7 @@ variables:
         - $DOCKERPATH/Dockerfile
 
 .scan_image:
-  stage: test
+  stage: scanner
   image: $CI_REGISTRY_IMAGE/scanner
   services:
     - docker:dind
@@ -43,8 +43,9 @@ variables:
   script:
     - trivy image $DOCKER_IMAGE_NAME | tee output.txt
   artifacts:
-    paths:
-      - output.txt
+    reports:
+      container_scanning: output.txt
+
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:

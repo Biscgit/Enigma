@@ -1,0 +1,18 @@
+include: "/.ci/ci-templates.yml"
+
+scan-backend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "backend"
+
+scan-frontend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "frontend"
+
+lint-test-job:
+  stage: linter
+  script:
+    - echo "Linting code... This will take about 10 seconds."
+    - sleep 10
+    - echo "No lint issues found."
