@@ -32,7 +32,7 @@ variables:
 
 .scan_image:
   stage: test
-  image: $CI_REGISTRY_IMAGE/scanner:cl-1
+  image: $CI_REGISTRY_IMAGE/scanner
   services:
     - docker:dind
   variables: 
