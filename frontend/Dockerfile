@@ -1,5 +1,4 @@
-FROM registry.mygit.th-deg.de/ts19084/enigma/flutter-builder:cl-1 as builder
-# FROM registry.mygit.th-deg.de/ts19084/enigma/flutter-builder as builder
+FROM registry.mygit.th-deg.de/ts19084/enigma/flutter-builder as builder
 
 # setup
 USER builder
