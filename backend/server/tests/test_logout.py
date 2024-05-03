@@ -12,7 +12,7 @@ def test_logout_valid_token():
     routes.current_auth = {token: "testuser"}
 
     # test
-    response = client.get(f"/logout", params={"token": token})
+    response = client.delete(f"/logout", params={"token": token})
 
     # check
     assert response.status_code == 200
@@ -27,7 +27,7 @@ def test_logout_invalid_token():
     routes.current_auth = {token: "testuser"}
 
     # test
-    response = client.get(f"/logout", params={"token": invalid_token})
+    response = client.delete(f"/logout", params={"token": invalid_token})
 
     # check
     assert response.status_code == 401
