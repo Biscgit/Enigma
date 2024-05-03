@@ -24,10 +24,10 @@ class PageVariants extends StatelessWidget {
                 _launchURL('https://enigmaI.com');
               },
               style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(
+                backgroundColor: MaterialStateProperty.all<Color>(
                     const Color.fromARGB(255, 33, 150, 243)),
                 // Change button color
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.circular(20.0), // Set button border radius
@@ -56,10 +56,10 @@ class PageVariants extends StatelessWidget {
                 _launchURL('https://norwayenigma.com');
               },
               style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(
+                backgroundColor: MaterialStateProperty.all<Color>(
                     const Color.fromARGB(255, 33, 150, 243)),
                 // Change button color
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.circular(20.0), // Set button border radius
@@ -88,10 +88,10 @@ class PageVariants extends StatelessWidget {
                 _launchURL('https://enigmam3.com');
               },
               style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(
+                backgroundColor: MaterialStateProperty.all<Color>(
                     const Color.fromARGB(255, 33, 150, 243)),
                 // Change button color
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.circular(20.0), // Set button border radius
