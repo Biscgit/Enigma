@@ -27,6 +27,8 @@ def override_get_database():
 
             return False
 
+    return MockDatabase
+
 
 app.dependency_overrides[database.get_database] = override_get_database
 uuid.uuid4 = MagicMock(return_value="uuid-mock-string")
