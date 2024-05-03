@@ -28,7 +28,7 @@ async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_databas
         global current_auth
 
         # ensure only one token is handed out for each user
-        current_auth = {k: v for k, v in current_auth if not v == login_form.username}
+        current_auth = {k: v for k, v in current_auth.items() if not v == login_form.username}
         current_auth |= {auth_token: login_form.username}
 
         return {"token": auth_token}
