@@ -26,6 +26,9 @@ async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_databas
         auth_token: str = sha3_256(f"X{uuid4()}X{login_form.username}X".encode()).hexdigest()
 
         global current_auth
+
+        # ensure only one token is handed out for each user
+        current_auth = {k: v for k, v in current_auth if not v == login_form.username}
         current_auth |= {auth_token: login_form.username}
 
         return {"token": auth_token}
