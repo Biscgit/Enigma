@@ -33,6 +33,9 @@ void main() {
       await driver!.tap(enigmaM3Button);
       await driver!.waitFor(find.text('Enigma M3'));
 
+      // Add a delay to ensure the error message has time to appear
+      await Future.delayed(Duration(seconds: 2));
+
       // Check if the error message is displayed
       bool isErrorMessageDisplayed = await isErrorMessageVisible(driver!);
       expect(isErrorMessageDisplayed, isTrue);
