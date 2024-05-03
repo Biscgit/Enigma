@@ -36,12 +36,14 @@ user_token2 = "3eb468c87f54151037964eea70a969ee251e7960629a84274c31d5c412b684a6"
 
 
 def test_login_valid_user():
+    uuid.uuid4 = MagicMock(return_value="uuid-mock-string")
+
     # setup
     user = models.LoginForm.model_construct(username="user1", password="password1")
     routes.current_auth = {}
 
     # test
-    response = client.get(f"/login", params=user.dict())
+    response = client.post(f"/login", content=user.model_dump_json())
 
     # check
     assert response.status_code == 200
@@ -55,7 +57,7 @@ def test_login_unknown_user():
     routes.current_auth = {}
 
     # test
-    response = client.get(f"/login", params=user.dict())
+    response = client.post(f"/login", content=user.model_dump_json())
 
     # check
     assert response.status_code == 401
@@ -69,7 +71,7 @@ def test_login_invalid_password():
     routes.current_auth = {"dummy-token": "dummy-user"}
 
     # test
-    response = client.get(f"/login", params=user.dict())
+    response = client.post(f"/login", content=user.model_dump_json())
 
     # check
     assert response.status_code == 401
@@ -83,7 +85,7 @@ def test_login_other_password():
     routes.current_auth = {}
 
     # test
-    response = client.get(f"/login", params=user.dict())
+    response = client.post(f"/login", content=user.model_dump_json())
 
     # check
     assert response.status_code == 401
@@ -98,7 +100,7 @@ def test_login_already_auth():
     expected_token = user_token2
 
     # test
-    response = client.get(f"/login", params=user.dict())
+    response = client.post(f"/login", content=user.model_dump_json())
 
     # check
     assert response.status_code == 401
@@ -113,8 +115,8 @@ def test_different_logins():
     routes.current_auth = {}
 
     # test
-    response1 = client.get(f"/login", params=user1.dict())
-    response2 = client.get(f"/login", params=user2.dict())
+    response1 = client.post(f"/login", content=user1.model_dump_json())
+    response2 = client.post(f"/login", content=user2.model_dump_json())
 
     # check
     assert response1.status_code == 200
