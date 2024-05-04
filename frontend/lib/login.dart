@@ -1,39 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> _login(BuildContext context) async {
-    var response = await http.post(
-      Uri.parse('http://localhost:8080/login'),
-      body: {
-        'username': _usernameController.text,
-        'password': _passwordController.text,
-      },
-    );
+  void _login(BuildContext context) {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
 
-    if (response.statusCode == 200) {
-      var token = jsonDecode(response.body)['token'];
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Login Successful'),
-            content: Text('Your token: $token'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+    // Remove later
+    if (username == 'test' && password == 'test123') {
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
         context: context,
