@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-// Template page
-class TemplatePage extends StatelessWidget {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Exmaple'),
+        title: Text('Home Page'),
       ),
       body: Center(
-        child: Text('successful login'),
+        child: Text('Works'),
       ),
     );
   }
