@@ -5,7 +5,16 @@ from unittest.mock import MagicMock
 from server.app import app
 from server.lib import database, models, routes
 
-client = TestClient(app)
+
+@pytest.fixture
+def mocked_uuid(mocker):
+    # Patching uuid.uuid4() to return a constant string
+    mocked_uuid = mocker.patch('server.lib.routes.uuid4', return_value="uuid-mock-string-0000")
+    return mocked_uuid
+
+
+user_token1 = "594a6a5b2b210a3e2024cc4f2a17caac4c838815c74868931dbde95cded1741d"
+user_token2 = "3a8c8e03f22aebe85cfdd757dccfe91ab737d915bc135e436806dc916a11291e"
 
 
 def override_get_database():
