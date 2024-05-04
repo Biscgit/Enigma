@@ -1,18 +1,19 @@
-from fastapi.testclient import TestClient
+import pytest
+from httpx import AsyncClient
 
 from server.app import app
 from server.lib import routes
 
-client = TestClient(app)
 
-
-def test_logout_valid_token():
+@pytest.mark.anyio
+async def test_logout_valid_token():
     # setup
     token = "token-12345-xxx"
     routes.current_auth = {token: "testuser"}
 
     # test
-    response = client.delete(f"/logout", params={"token": token})
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.delete(f"/logout", params={"token": token})
 
     # check
     assert response.status_code == 200
@@ -20,14 +21,16 @@ def test_logout_valid_token():
     assert routes.current_auth == {}
 
 
-def test_logout_invalid_token():
+@pytest.mark.anyio
+async def test_logout_invalid_token():
     # setup
     token = "token-12345-xxx"
     invalid_token = "token-invalid!"
     routes.current_auth = {token: "testuser"}
 
     # test
-    response = client.delete(f"/logout", params={"token": invalid_token})
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.delete(f"/logout", params={"token": invalid_token})
 
     # check
     assert response.status_code == 401
