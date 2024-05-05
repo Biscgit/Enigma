@@ -8,7 +8,6 @@ class LoginPage extends StatelessWidget {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    // Remove later
     if (username == 'test' && password == 'test123') {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
@@ -65,7 +64,11 @@ class LoginPage extends StatelessWidget {
                 onPressed: () => _login(context),
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 36),
+                  foregroundColor: Colors.white, backgroundColor: Theme.of(context).primaryColor,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ),
             ],
