@@ -1,4 +1,4 @@
-FROM registry.mygit.th-deg.de/ts19084/enigma/flutter-builder as builder
+FROM registry.mygit.th-deg.de/ts19084/enigma/flutter-builder:latest as builder
 
 # setup
 USER builder
