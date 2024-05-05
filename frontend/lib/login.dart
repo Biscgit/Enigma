@@ -1,13 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatelessWidget {
+  static const String apiUrl = 'http://localhost:8080';
+
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _login(BuildContext context) {
+  void _login(BuildContext context) async{
     String username = _usernameController.text;
     String password = _passwordController.text;
 
+    var response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Login failed'),
+            content: Text('Invalid username or password'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+
+
+    /*
     if (username == 'test' && password == 'test123') {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
@@ -29,7 +68,7 @@ class LoginPage extends StatelessWidget {
         },
       );
     }
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
