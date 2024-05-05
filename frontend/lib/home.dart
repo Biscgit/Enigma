@@ -15,7 +15,25 @@ class HomePage extends StatelessWidget {
             icon: Icon(Icons.exit_to_app),
             tooltip: 'Logout',
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/login');
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: Text('Logout Confirmation'),
+                    content: Text('Successfully logged out'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          Navigator.pushReplacementNamed(context, '/login');
+                        },
+                        child: Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],
