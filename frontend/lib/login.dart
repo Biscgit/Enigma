@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LoginPage extends StatelessWidget {
-  static const String apiUrl = 'http://localhost:8080';
+  static const String apiUrl = 'http://172.20.0.101:8001/login';
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
