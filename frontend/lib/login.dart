@@ -25,8 +25,7 @@ class LoginPage extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      final token = jsonResponse['token'];
+      final token = jsonDecode(response.body).token;
 
       Navigator.pushReplacementNamed(context, '/home');
     } else {
