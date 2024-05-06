@@ -4,8 +4,6 @@ variables:
 .build-docker:
   stage: build
   image: docker:cli
-#  services:
-#    - docker:dind
   variables:
     NAME: "/${DOCKERPATH}"
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE${NAME}:$CI_COMMIT_REF_SLUG
@@ -14,7 +12,7 @@ variables:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - cd $DOCKERPATH
   script:
-    - docker build --pull -t "$DOCKER_IMAGE_NAME" .
+    - docker build $NOCACHE --pull -t "$DOCKER_IMAGE_NAME" .
     - docker push "$DOCKER_IMAGE_NAME"
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
@@ -33,8 +31,6 @@ variables:
 .scan_image:
   stage: scanner
   image: $CI_REGISTRY_IMAGE/scanner
-#  services:
-#    - docker:dind
   variables: 
     NAME: "/${DOCKERPATH}"
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE${NAME}:$CI_COMMIT_REF_SLUG
