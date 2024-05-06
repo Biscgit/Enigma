@@ -10,9 +10,9 @@ USER builder
 WORKDIR /home/builder
 
 # install flutter
-RUN curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.6-stable.tar.xz
-RUN tar xvf flutter_linux_*-stable.tar.xz --directory=/home/builder/
-RUN rm flutter_linux_*-stable.tar.xz
+RUN curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.6-stable.tar.xz &&  \
+    tar xvf flutter_linux_*-stable.tar.xz --directory=/home/builder/ && \
+    rm flutter_linux_*-stable.tar.xz \
 ENV PATH="${PATH}:/home/builder/flutter/bin"
 
 # configure flutter
