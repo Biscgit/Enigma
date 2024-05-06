@@ -1,6 +1,7 @@
 include: "/.ci/ci-templates.yml"
 
 build-flutter-builder:
+  stage: prebuild
   extends: .build-docker
   variables:
     DOCKERPATH: ".docker-builds/flutter"
