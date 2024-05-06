@@ -1,11 +1,19 @@
 include: "/.ci/ci-templates.yml"
 
 build-flutter-builder:
-  stage: prebuild
   extends: .build-docker
   variables:
     DOCKERPATH: ".docker-builds/flutter"
     NAME: "/flutter-builder"
+  rules:
+    - if: "$NIGHTLY_BUILD"
+
+build-scanner:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/scanner"
+    NAME: "/scanner"
   rules:
     - if: "$NIGHTLY_BUILD"
 
@@ -18,11 +26,3 @@ build-frontend:
   extends: .build-docker
   variables:
     DOCKERPATH: "frontend"
-
-build-scanner:
-  extends: .build-docker
-  variables:
-    DOCKERPATH: ".docker-builds/scanner"
-    NAME: "/scanner"
-  rules:
-    - if: "$NIGHTLY_BUILD"

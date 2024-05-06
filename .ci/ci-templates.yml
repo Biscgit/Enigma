@@ -4,8 +4,6 @@ variables:
 .build-docker:
   stage: build
   image: docker:cli
-#  services:
-#    - docker:dind
   variables:
     NAME: "/${DOCKERPATH}"
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE${NAME}:$CI_COMMIT_REF_SLUG
@@ -33,8 +31,6 @@ variables:
 .scan_image:
   stage: scanner
   image: $CI_REGISTRY_IMAGE/scanner
-#  services:
-#    - docker:dind
   variables: 
     NAME: "/${DOCKERPATH}"
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE${NAME}:$CI_COMMIT_REF_SLUG
