@@ -19,10 +19,6 @@ services:
         ports:
             - 8001:8001
 
-        depends_on:
-            database:
-                condition: service_started
-
         env_file:
             - .env
 
@@ -33,10 +29,6 @@ services:
         networks:
             enigma-network:
                 ipv4_address: ${IP_FLUTTER}
-
-        depends_on:
-            webserver:
-                condition: service_started
 
 networks:
     enigma-network:
