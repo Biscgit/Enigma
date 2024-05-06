@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import 'dart:html';
+
 
 class LoginPage extends StatelessWidget {
   // replace 172.20.0.101 with localhost on Windows
@@ -24,10 +27,12 @@ class LoginPage extends StatelessWidget {
       }),
     );
 
+    
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
       final token = jsonResponse['token'];
-
+      document.cookie = "token=$token;";
+      print(token);
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
