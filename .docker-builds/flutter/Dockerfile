@@ -17,7 +17,7 @@ ENV PATH="${PATH}:/home/builder/flutter/bin"
 
 # configure flutter
 RUN git config --global --add safe.directory /home/builder/flutter
-RUN flutter --disable-analytics
+RUN flutter config --disable-analytics && flutter config --no-cli-animations
 RUN flutter channel stable && flutter upgrade
 
 # generate build folder
