@@ -9,7 +9,7 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _login(BuildContext context) async{
+  void _login(BuildContext context) async {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
@@ -25,6 +25,9 @@ class LoginPage extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
+      final json_response = jsonDecode(response.body);
+      final token = json_response['token'];
+
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
@@ -81,7 +84,8 @@ class LoginPage extends StatelessWidget {
                 onPressed: () => _login(context),
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).primaryColor,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
