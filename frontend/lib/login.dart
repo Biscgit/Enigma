@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LoginPage extends StatelessWidget {
+  // replace 172.20.0.101 with localhost on Windows
   static const String apiUrl = 'http://172.20.0.101:8001/login';
 
   final TextEditingController _usernameController = TextEditingController();
@@ -44,32 +45,6 @@ class LoginPage extends StatelessWidget {
     }
   }
 
-
-
-    /*
-    if (username == 'test' && password == 'test123') {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Login Failed'),
-            content: Text('Invalid username or password'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  } */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,6 +72,9 @@ class LoginPage extends StatelessWidget {
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
+                onSubmitted: (value) {
+                  _login(context);
+                },
               ),
               SizedBox(height: 20),
               ElevatedButton(
