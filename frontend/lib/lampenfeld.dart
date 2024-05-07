@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart'; // Import von services.dart für InputFormatter
 
 void main() {
   runApp(Lampfield());
@@ -113,12 +113,12 @@ class LampfieldState extends State<Lampfield> {
                     lightUpLetter(value.substring(value.length - 1));
                   } else {
                     lightUpLetter(
-                        "."); //Special characters dont light up anything; as it should be.
+                        "."); 
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.deny(
-                      RegExp(r'\d')), // Not possible anymore to type numbers.
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z\s]')), // Allow only letters and space
                 ],
               ),
             ),
