@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import von services.dart für InputFormatter
+import 'package:flutter/services.dart'; 
 
 void main() {
   runApp(Lampfield());
@@ -24,6 +24,8 @@ class LampfieldState extends State<Lampfield> {
   final double seizedBoxHeight = 10;
   final List<GlobalKey<CircularTextBoxState>> listOfGlobalKeys =
       List.generate(26, (index) => GlobalKey<CircularTextBoxState>());
+
+  final TextEditingController _controller = TextEditingController();
 
   String lightUpLetter(String characterToLightUp) {
     //This method converts all inputs to uppercase, looks at only the first character and then subtracts the 65 that are added to every index due to ASCII indeces
@@ -108,17 +110,19 @@ class LampfieldState extends State<Lampfield> {
               //ONLY FOR MANUAL TEXT INPUTS!!!!! TO BE REMOVED LATER!!
               width: 300,
               child: TextField(
+                controller: _controller,
                 onChanged: (String value) {
                   if (value.isNotEmpty) {
                     lightUpLetter(value.substring(value.length - 1));
                   } else {
                     lightUpLetter(
-                        "."); 
+                        "."); //Special characters dont light up anything; as it should be.
                   }
                 },
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(
                       RegExp(r'[a-zA-Z\s]')), // Allow only letters and space
+                  UpperCaseTextInputFormatter(), // Convert all letters to uppercase
                 ],
               ),
             ),
@@ -190,6 +194,17 @@ class CircularTextBoxState extends State<CircularTextBox> {
           fontWeight: FontWeight.bold,
         ),
       ),
+    );
+  }
+}
+
+class UpperCaseTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
     );
   }
 }
