@@ -23,7 +23,7 @@ async def test_logout_valid_token():
     assert routes.current_auth == {}
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_logout_invalid_token():
     # setup
     token = "token-12345-xxx"

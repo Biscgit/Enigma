@@ -21,7 +21,7 @@ class Database:
         self.__is_inited: bool = False
 
     def fastapi_init(self, app: fastapi.FastAPI):
-        """Ensure clean startup and shutdown. Needs to be called before start"""
+        """Ensure clean startup and shutdown. Needs to be called before the start"""
 
         if self.__is_inited:
             raise Exception("Database has already been inited with fastapi")
@@ -115,7 +115,7 @@ class Database:
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     async def check_login(self, form: LoginForm) -> bool:
-        """returns a bool for weather the credentials are valid"""
+        """Returns a bool for weather the credentials are valid"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 result: int = await conn.fetchval(
