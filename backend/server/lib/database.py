@@ -53,11 +53,17 @@ class Database:
                 )
 
             except ConnectionRefusedError:
+                logging.info('Retrying to connect...')
                 await asyncio.sleep(5)
 
             else:
                 self.pool = conn
-                logging.info("Successfully connected to database")
+
+                async with self.pool.acquire() as c:
+                    async with c.transaction():
+                        version = await conn.fetchval("SELECT version()")
+
+                logging.info(f"Successfully connected to database {version}")
 
                 await self._initialize_db()
                 await self._load_users()
