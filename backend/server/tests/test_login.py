@@ -4,6 +4,8 @@ from httpx import AsyncClient
 from server.app import app
 from server.lib import database, models, routes
 
+pytest_plugins = ('pytest_asyncio',)
+
 
 @pytest.fixture
 def mocked_uuid(mocker):
@@ -41,7 +43,7 @@ def override_get_database():
 app.dependency_overrides[database.get_database] = override_get_database
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_login_valid_user(mocked_uuid):
     # setup
     user = models.LoginForm.model_construct(username="user1", password="password1")
@@ -57,7 +59,7 @@ async def test_login_valid_user(mocked_uuid):
     assert routes.current_auth == {user_token1: "user1"}
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_login_unknown_user(mocked_uuid):
     # setup
     user = models.LoginForm.model_construct(username="user12345", password="no-pass")
@@ -73,7 +75,7 @@ async def test_login_unknown_user(mocked_uuid):
     assert routes.current_auth == {}
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_login_invalid_password(mocked_uuid):
     # setup
     user = models.LoginForm.model_construct(username="user1", password="wrong-password")
@@ -89,7 +91,7 @@ async def test_login_invalid_password(mocked_uuid):
     assert routes.current_auth == {"dummy-token": "dummy-user"}
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_login_other_password(mocked_uuid):
     # setup
     user = models.LoginForm.model_construct(username="user2", password="password1")
@@ -105,7 +107,7 @@ async def test_login_other_password(mocked_uuid):
     assert routes.current_auth == {}
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_login_already_auth(mocked_uuid):
     # setup
     user = models.LoginForm.model_construct(username="user2", password="password2")
@@ -122,7 +124,7 @@ async def test_login_already_auth(mocked_uuid):
     assert routes.current_auth == {expected_token: "user2"}
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_different_logins(mocked_uuid):
     # setup
     user1 = models.LoginForm.model_construct(username="user1", password="password1")

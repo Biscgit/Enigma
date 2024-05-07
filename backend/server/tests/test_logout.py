@@ -4,8 +4,10 @@ from httpx import AsyncClient
 from server.app import app
 from server.lib import routes
 
+pytest_plugins = ('pytest_asyncio',)
 
-@pytest.mark.anyio
+
+@pytest.mark.asyncio
 async def test_logout_valid_token():
     # setup
     token = "token-12345-xxx"
