@@ -39,6 +39,9 @@ class Database:
     async def connect(self) -> None:
         logging.info("Connecting to database...")
 
+        if self.pool is not None:
+            raise Exception("Database connection is already established")
+
         for _ in range(12):
             try:
                 conn: asyncpg.Pool = await asyncpg.create_pool(
