@@ -24,11 +24,8 @@ def test_check_auth_not_exists():
     routes.current_auth = {}
 
     # test
-    with pytest.raises(fastapi.HTTPException) as e:
+    with pytest.raises(fastapi.HTTPException):
         _ = routes.check_auth(token)
-
-        # check
-        assert e.status_code
 
 
 def test_check_auth_incorrect():
