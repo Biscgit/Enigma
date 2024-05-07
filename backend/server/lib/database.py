@@ -49,6 +49,7 @@ class Database:
                     password=environ.get("DB_PASSWORD"),
                     database=environ.get("DB_NAME"),
                     host=environ.get("IP_POSTGRES"),
+                    port=environ.get("DB_PORT"),
                 )
 
             except ConnectionRefusedError:
