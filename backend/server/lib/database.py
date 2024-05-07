@@ -109,7 +109,12 @@ class Database:
         logging.info("Successfully loaded users from file")
 
     async def disconnect(self) -> None:
+        if self.pool is None:
+            raise Exception("There is no connection to close!")
+
         await self.pool.close()
+        self.pool = None
+
         logging.info("Successfully disconnected to database")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

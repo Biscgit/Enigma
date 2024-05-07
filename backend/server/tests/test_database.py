@@ -31,9 +31,13 @@ async def testcontainer_postgres(monkeypatch):
 
         # launch connection
         db = database.get_database()
-        logging.info(os.getcwd())
         await db.connect()
 
         # ensure one connection
         with pytest.raises(Exception):
             await db.connect()
+
+        # clean up
+        await db.disconnect()
+        with pytest.raises(Exception):
+            await db.disconnect()
