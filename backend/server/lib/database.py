@@ -80,6 +80,10 @@ class Database:
 
             async with self.pool.acquire() as conn:
                 async with conn.transaction():
+                    # load module
+                    await conn.execute("CREATE EXTENSION pgcrypto")
+
+                    # fill db
                     for qry in content.split(";"):
                         if qry.strip():
                             await conn.execute(qry)
@@ -98,7 +102,7 @@ class Database:
                     INSERT INTO users(username, password)
                     SELECT 
                         (data->>'username')::TEXT, 
-                        (data->>'password')::TEXT
+                        crypt((data->>'password')::TEXT, gen_salt('bf'))
                     FROM json_array_elements($1::json) as data
                     ON CONFLICT (username) DO UPDATE
                     SET password = EXCLUDED.password;
@@ -123,16 +127,16 @@ class Database:
         """Returns a bool for weather the credentials are valid"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                result: int = await conn.fetchval(
+                result: bool = await conn.fetchval(
                     """
-                    SELECT COUNT(*) 
+                    SELECT crypt($2, password) = password AS password_match 
                     FROM  users
-                    WHERE username = $1 AND password = $2;
+                    WHERE username = $1;
                     """,
                     form.username, form.password
                 )
 
-                return bool(result)
+                return result
 
 
 def get_database() -> Database:
