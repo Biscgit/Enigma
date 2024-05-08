@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS machines (
     character_pointer INTEGER,
     character_history CHAR[140][2],
 
+    plugboard_enabled BOOLEAN,
+    plugboard_config CHAR[10][2],
+
     PRIMARY KEY (id),
     FOREIGN KEY (username) REFERENCES users(username)
 );
