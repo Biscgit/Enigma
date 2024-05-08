@@ -13,8 +13,6 @@ pytest_plugins = ('pytest_asyncio',)
 @pytest.mark.asyncio
 async def testcontainer_postgres(monkeypatch):
     # setup
-    asyncio.get_event_loop()
-
     with PostgresContainer(
             "postgres:16-alpine",
             driver=None
