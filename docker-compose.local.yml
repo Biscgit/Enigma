@@ -13,11 +13,11 @@ services:
 
     webserver:
         build: ./backend
+        ports:
+            - 8001:8001
         networks:
             enigma-network:
                 ipv4_address: ${IP_FASTAPI}
-        ports:
-            - 8001:8001
 
         env_file:
             - .env
