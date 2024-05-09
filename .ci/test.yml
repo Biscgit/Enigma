@@ -4,7 +4,7 @@ unit-integration-test:
   before_script:
     - cd backend
   script:
-    - pytest --cov=./ --cov-report=xml --junitxml=report.xml
+    - python3 -m pytest --cov=./ --cov-report=xml --junitxml=report.xml
   after_script:
       - xmllint --format backend/report.xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'

@@ -25,4 +25,4 @@ lint-backend:
   before_script:
     - cd backend/
   script:
-    - ruff check
+    - python3 -m ruff check
