@@ -1,5 +1,3 @@
-import logging
-
 import asyncpg
 from testcontainers.postgres import PostgresContainer
 import pytest
