@@ -8,14 +8,9 @@ import 'dart:html';
 class HomePage extends StatelessWidget {
 
   void _logout(BuildContext context) async {
-
-    String cookies = document.cookie ?? "";
-    List<String> listValues = cookies.split(";");
-    List<String> map = listValues[0].split("=");
-    String token = map[1].trim();
-    print(token);
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  }  
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
   @override
   Widget build(BuildContext context) {
