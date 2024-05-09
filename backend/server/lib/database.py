@@ -31,7 +31,7 @@ class Database:
             await self.connect()
 
         @app.on_event("shutdown")
-        async def connect_db():
+        async def disconnect_db():
             await self.disconnect()
 
         self.__is_inited = True
