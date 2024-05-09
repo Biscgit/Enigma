@@ -10,9 +10,19 @@ scan-frontend:
   variables:
     DOCKERPATH: "frontend"
 
-lint-test-job:
+lint-frontend:
   stage: linter
+  image: registry.mygit.th-deg.de/ts19084/enigma/flutter-builder:latest
+  before_script:
+    - cd frontend
+    - flutter pub get
   script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
+    - flutter analyze
+
+lint-backend:
+  stage: linter
+  image: registry.mygit.th-deg.de/ts19084/enigma/python-tester-linter:deployment-test
+  before_script:
+    - cd backend/
+  script:
+    - ruff check
