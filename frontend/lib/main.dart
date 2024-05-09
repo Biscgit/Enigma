@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       onGenerateRoute: (settings) {
-        if (settings.name == '/home' && !isUserLoggedIn()) {
+        if (settings.name != '/login' && !isUserLoggedIn()) {
           return MaterialPageRoute(builder: (context) => LoginPage());
         }
         switch (settings.name) {
