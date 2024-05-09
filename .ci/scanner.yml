@@ -21,7 +21,7 @@ lint-frontend:
 
 lint-backend:
   stage: linter
-  image: registry.mygit.th-deg.de/ts19084/enigma/python-tester-linter:deployment-test
+  image: registry.mygit.th-deg.de/ts19084/enigma/python-tester-linter:latest
   before_script:
     - cd backend/
   script:
