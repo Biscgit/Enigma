@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'home.dart';
-//import 'rotor1.dart';
-//import 'rotor2.dart';
-//import 'rotor3.dart';
 import 'dart:html';
+
 
 void main() {
   runApp(MyApp());
