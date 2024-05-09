@@ -1,6 +1,6 @@
-unit-test-job:
+unit-integration-test:
   stage: test
-  image: registry.mygit.th-deg.de/ts19084/enigma/python-tester-linter:deployment-test
+  image: registry.mygit.th-deg.de/ts19084/enigma/python-tester-linter:latest
   before_script:
     - cd backend
   script:
@@ -19,14 +19,13 @@ unit-test-job:
 #       exists:
 #         - backend/server/test/
 
-e2e-test-job:
+e2e-test:
   stage: e2e-test
   image: registry.mygit.th-deg.de/ts19084/enigma/flutter-builder:latest
   before_script:
     - cd frontend
   script:
     - flutter test --file_reporter "json:result.json"
-    - jtm 
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
