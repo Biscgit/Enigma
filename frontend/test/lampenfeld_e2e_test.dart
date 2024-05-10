@@ -35,7 +35,7 @@ void main() {
 
     // TEST INPUT A:
 
-    await lampfield.lampfieldState.sendTextInputToLampfieldAsync("A");
+    await lampfield.currentState!.sendTextInputToLampfieldAsync("A");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //Only one key should be highlighted.
@@ -51,7 +51,7 @@ void main() {
 
     // TEST INPUT WITH TWO LETTERS:
 
-    await lampfield.lampfieldState.sendTextInputToLampfieldAsync("Hi");
+    await lampfield.currentState!.sendTextInputToLampfieldAsync("Hi");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //Only one key should be highlighted.
@@ -67,7 +67,7 @@ void main() {
 
     // TEST INPUT WITH THREE LETTERS:
 
-    await lampfield.lampfieldState.sendTextInputToLampfieldAsync("Lol");
+    await lampfield.currentState!.sendTextInputToLampfieldAsync("Lol");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //Only one key should be highlighted.
@@ -83,7 +83,7 @@ void main() {
 
     // TEST INPUT WITH TWO LETTERS AND A SPECIAL CHARACTER:
 
-    await lampfield.lampfieldState.sendTextInputToLampfieldAsync("Hi? This could also be a longer input, as long as it doesn't end on a letter. Wooo!");
+    await lampfield.currentState!.sendTextInputToLampfieldAsync("Hi? This could also be a longer input, as long as it doesn't end on a letter. Wooo!");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //? Doesnt highlight a key => No key should be highlighted now
