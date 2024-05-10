@@ -81,9 +81,9 @@ void main() {
 
 
 
-    // TEST INPUT WITH TWO LETTERS AND A SPECIAL CHARACTER:
+    // TEST INPUT WITH MANY LETTERS:
 
-    await lampfield.currentState!.sendTextInputToLampfieldAsync("Hi? This could also be a longer input, as long as it doesn't end on a letter. Wooo!");
+    await lampfield.currentState!.sendTextInputToLampfieldAsync("hiThisIsALongInputButWeSadlyCannotUseAnySpacebarsOrSpecialCharactersOrDigitsBecauseTheEnigmaMachineDoesntAllowForThat");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //? Doesnt highlight a key => No key should be highlighted now
@@ -93,6 +93,6 @@ void main() {
         return state.colorBox == Colors.yellow;
       }
       return false;
-    }), findsNothing);
+    }), findsOne);
   });
 }
