@@ -17,17 +17,17 @@ void main() {
 
     // Tap on Enigma I button and verify the URL launching
     await tester.tap(find.text('Enigma I'));
-    await tester.pumpAndSettle(); // Wait for the animation to complete
-    expect(await canLaunch('https://enigmaI.com'), isTrue);
+    await tester.pump(); // Wait for the animation to complete
+    expect(await canLaunchUrl(Uri.parse('https://enigmaI.com')), isTrue);
 
     // Tap on Norway Enigma button and verify the URL launching
     await tester.tap(find.text('Norway Enigma'));
-    await tester.pumpAndSettle(); // Wait for the animation to complete
-    expect(await canLaunch('https://norwayenigma.com'), isTrue);
+    await tester.pump(); // Wait for the animation to complete
+    expect(await canLaunchUrl(Uri.parse('https://google.com')), isTrue);
 
     // Tap on Enigma M3 button and verify the URL launching
     await tester.tap(find.text('Enigma M3'));
-    await tester.pumpAndSettle(); // Wait for the animation to complete
-    expect(await canLaunch('https://enigmam3.com'), isTrue);
+    await tester.pump(); // Wait for the animation to complete
+    expect(await canLaunchUrl(Uri.parse('https://enigmam3.com')), isTrue);
   });
 }

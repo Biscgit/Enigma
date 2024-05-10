@@ -21,7 +21,7 @@ class PageVariants extends StatelessWidget {
             // Adjust the height of the buttons
             child: ElevatedButton(
               onPressed: () {
-                _launchURL('https://enigmaI.com');
+                _launchURL('https://enigmai.com');
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
@@ -53,7 +53,7 @@ class PageVariants extends StatelessWidget {
             // Adjust the height of the buttons
             child: ElevatedButton(
               onPressed: () {
-                _launchURL('https://norwayenigma.com');
+                _launchURL('https://google.com');
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
@@ -112,8 +112,9 @@ class PageVariants extends StatelessWidget {
   }
 
   Future<void> _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
       throw 'Could not launch $url';
     }
