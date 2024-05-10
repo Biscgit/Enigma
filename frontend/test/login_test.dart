@@ -5,8 +5,6 @@ import 'package:enigma/main.dart' as app;
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Login Test', () {
-
     // Successful login
     testWidgets('Successful login test', (tester) async {
       app.main();
@@ -65,5 +63,4 @@ void main() {
       // Are we still on the login page?
       expect(find.text('Login Page'), findsOneWidget);
     });
-  });
 }
