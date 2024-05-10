@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Enigma/main.dart';
+import 'package:enigma/main.dart';
 
 void main() {
   testWidgets('EnigmaPage widget test', (WidgetTester tester) async {
