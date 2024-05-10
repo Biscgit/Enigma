@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 from server.app import app
 from server.lib import database, models, routes
@@ -50,7 +50,7 @@ async def test_login_valid_user(mocked_uuid):
     routes.current_auth = {}
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response = await ac.post(f"/login", content=user.model_dump_json())
 
     # check
@@ -66,7 +66,7 @@ async def test_login_unknown_user(mocked_uuid):
     routes.current_auth = {}
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response = await ac.post(f"/login", content=user.model_dump_json())
 
     # check
@@ -82,7 +82,7 @@ async def test_login_invalid_password(mocked_uuid):
     routes.current_auth = {"dummy-token": "dummy-user"}
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response = await ac.post(f"/login", content=user.model_dump_json())
 
     # check
@@ -98,7 +98,7 @@ async def test_login_other_password(mocked_uuid):
     routes.current_auth = {}
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response = await ac.post(f"/login", content=user.model_dump_json())
 
     # check
@@ -115,7 +115,7 @@ async def test_login_already_auth(mocked_uuid):
     expected_token = user_token2
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response = await ac.post(f"/login", content=user.model_dump_json())
 
     # check
@@ -132,7 +132,7 @@ async def test_different_logins(mocked_uuid):
     routes.current_auth = {}
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response1 = await ac.post(f"/login", content=user1.model_dump_json())
         response2 = await ac.post(f"/login", content=user2.model_dump_json())
 

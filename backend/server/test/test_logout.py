@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 from server.app import app
 from server.lib import routes
@@ -14,7 +14,7 @@ async def test_logout_valid_token():
     routes.current_auth = {token: "testuser"}
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response = await ac.delete(f"/logout", params={"token": token})
 
     # check
@@ -31,7 +31,7 @@ async def test_logout_invalid_token():
     routes.current_auth = {token: "testuser"}
 
     # test
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
         response = await ac.delete(f"/logout", params={"token": invalid_token})
 
     # check
