@@ -25,7 +25,7 @@ e2e-test:
   before_script:
     - cd frontend
   script:
-    - flutter test --file_reporter "json:result.json"
+    - flutter test --file-reporter "json:result.json"
       #  rules:
       #    - if: $CI_COMMIT_BRANCH
       #exists:
