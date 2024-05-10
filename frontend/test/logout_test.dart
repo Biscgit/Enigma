@@ -5,7 +5,6 @@ import 'package:enigma/main.dart' as app;
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Logout', () {
     testWidgets('Successful logout test', (tester) async {
       app.main();
       await tester.pumpAndSettle();
@@ -23,5 +22,4 @@ void main() {
       // check if the user is navigated back to login paage
       expect(find.text('Login Page'), findsOneWidget);
     });
-  });
 }
