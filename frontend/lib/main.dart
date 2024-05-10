@@ -64,7 +64,7 @@ class _EnigmaPageState extends State<EnigmaPage> {
                   loadEnigmaI();
                 },
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.pressed)) {
                         return Colors.green; // Change button color if pressed
@@ -74,7 +74,7 @@ class _EnigmaPageState extends State<EnigmaPage> {
                           : const Color.fromARGB(255, 33, 150, 243);
                     },
                   ),
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -97,7 +97,7 @@ class _EnigmaPageState extends State<EnigmaPage> {
                   loadNorwayEnigma();
                 },
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.pressed)) {
                         return Colors.green; // Change button color if pressed
@@ -107,7 +107,7 @@ class _EnigmaPageState extends State<EnigmaPage> {
                           : const Color.fromARGB(255, 33, 150, 243);
                     },
                   ),
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -130,7 +130,7 @@ class _EnigmaPageState extends State<EnigmaPage> {
                   loadEnigmaM3();
                 },
                 style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.pressed)) {
                         return Colors.green; // Change button color if pressed
@@ -140,7 +140,7 @@ class _EnigmaPageState extends State<EnigmaPage> {
                           : const Color.fromARGB(255, 33, 150, 243);
                     },
                   ),
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
