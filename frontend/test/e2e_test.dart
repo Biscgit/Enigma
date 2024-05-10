@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:enigma_variants/main.dart'; 
+import 'package:enigma/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   testWidgets('PageVariants widget test', (WidgetTester tester) async {
