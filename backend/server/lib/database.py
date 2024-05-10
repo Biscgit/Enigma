@@ -1,6 +1,7 @@
 __all__ = ["get_database", "Database"]
 
 import asyncio
+import contextlib
 import logging
 from os import environ
 
@@ -18,23 +19,14 @@ class Database:
     def __init__(self):
         self.pool: asyncpg.Pool | None = None
 
-        self.__is_inited: bool = False
-
-    def fastapi_init(self, app: fastapi.FastAPI):
+    @contextlib.asynccontextmanager
+    async def fastapi_lifespan(self, app: fastapi.FastAPI):
         """Ensure clean startup and shutdown. Needs to be called before the start"""
 
-        if self.__is_inited:
-            raise Exception("Database has already been inited with fastapi")
+        await self.connect()
+        yield
 
-        @app.on_event("startup")
-        async def connect_db():
-            await self.connect()
-
-        @app.on_event("shutdown")
-        async def disconnect_db():
-            await self.disconnect()
-
-        self.__is_inited = True
+        await self.disconnect()
 
     async def connect(self) -> None:
         logging.info("Connecting to database...")

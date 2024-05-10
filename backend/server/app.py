@@ -6,7 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from server.lib import *
 
 # init fastapi and db
-app = FastAPI()
+configure_logger()
+
+db = get_database()
+app = FastAPI(lifespan=db.fastapi_lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,10 +20,5 @@ app.add_middleware(
 )
 
 # logging
-configure_logger()
 logging.info('FastAPI is starting up...')
-
-db = get_database()
-db.fastapi_init(app)
-
 app.include_router(router)
