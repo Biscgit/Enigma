@@ -6,7 +6,7 @@ void main() {
 }
 
 class Lampfield extends StatefulWidget {
-  late LampfieldState lampfieldState;
+  final LampfieldState lampfieldState = LampfieldState();
 
   @override
   State<Lampfield> createState() {
