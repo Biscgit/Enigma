@@ -1,33 +1,39 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:enigma/main.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:Enigma/main.dart';
 
 void main() {
-  testWidgets('PageVariants widget test', (WidgetTester tester) async {
+  testWidgets('EnigmaPage widget test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Verify that the PageVariants widget is rendered
-    expect(find.byType(PageVariants), findsOneWidget);
+    // Verify that EnigmaPage widget is rendered
+    expect(find.byType(EnigmaPage), findsOneWidget);
 
-    // Verify that Enigma buttons are rendered
+    // Verify that the default machine is 'Enigma I'
     expect(find.text('Enigma I'), findsOneWidget);
-    expect(find.text('Norway Enigma'), findsOneWidget);
-    expect(find.text('Enigma M3'), findsOneWidget);
+    expect(find.text('Norway Enigma'), findsNothing);
+    expect(find.text('Enigma M3'), findsNothing);
 
-    // Tap on Enigma I button and verify the URL launching
-    await tester.tap(find.text('Enigma I'));
-    await tester.pump(); // Wait for the animation to complete
-    expect(await canLaunchUrl(Uri.parse('https://enigmaI.com')), isTrue);
-
-    // Tap on Norway Enigma button and verify the URL launching
+    // Tap on Norway Enigma button and verify the machine change
     await tester.tap(find.text('Norway Enigma'));
-    await tester.pump(); // Wait for the animation to complete
-    expect(await canLaunchUrl(Uri.parse('https://google.com')), isTrue);
+    await tester.pumpAndSettle();
+    expect(find.text('Norway Enigma'), findsOneWidget);
+    expect(find.text('Enigma I'), findsNothing);
+    expect(find.text('Enigma M3'), findsNothing);
 
-    // Tap on Enigma M3 button and verify the URL launching
+    // Tap on Enigma M3 button and verify the machine change
     await tester.tap(find.text('Enigma M3'));
-    await tester.pump(); // Wait for the animation to complete
-    expect(await canLaunchUrl(Uri.parse('https://enigmam3.com')), isTrue);
+    await tester.pumpAndSettle();
+    expect(find.text('Enigma M3'), findsOneWidget);
+    expect(find.text('Enigma I'), findsNothing);
+    expect(find.text('Norway Enigma'), findsNothing);
+
+    // Tap on Enigma I button again and verify the machine change
+    await tester.tap(find.text('Enigma I'));
+    await tester.pumpAndSettle();
+    expect(find.text('Enigma I'), findsOneWidget);
+    expect(find.text('Norway Enigma'), findsNothing);
+    expect(find.text('Enigma M3'), findsNothing);
   });
 }
