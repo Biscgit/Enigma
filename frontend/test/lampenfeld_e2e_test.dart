@@ -35,7 +35,7 @@ void main() {
 
     // TEST INPUT A:
 
-    final lampfieldState lampfieldstateFor1 = tester.state(find.byType(Lampfield));
+    final LampfieldState lampfieldstateFor1 = tester.state(find.byType(Lampfield));
 
     await lampfieldstateFor1.sendTextInputToLampfieldAsync("A");
     await tester.pump();
@@ -53,7 +53,7 @@ void main() {
 
     // TEST INPUT WITH TWO LETTERS:
 
-    final lampfieldState lampfieldstateFor2 = tester.state(find.byType(Lampfield));
+    final LampfieldState lampfieldstateFor2 = tester.state(find.byType(Lampfield));
 
     await lampfieldstateFor2.sendTextInputToLampfieldAsync("Hi");
     await tester.pump();
@@ -71,7 +71,7 @@ void main() {
 
     // TEST INPUT WITH THREE LETTERS:
 
-    final lampfieldState lampfieldstateFor3 = tester.state(find.byType(Lampfield));
+    final LampfieldState lampfieldstateFor3 = tester.state(find.byType(Lampfield));
 
     await lampfieldstateFor3.sendTextInputToLampfieldAsync("Lol");
     await tester.pump();
@@ -89,7 +89,7 @@ void main() {
 
     // TEST INPUT WITH MANY LETTERS:
 
-    final lampfieldState lampfieldstateForX = tester.state(find.byType(Lampfield));
+    final LampfieldState lampfieldstateForX = tester.state(find.byType(Lampfield));
 
     await lampfieldstateForX.sendTextInputToLampfieldAsync("hiThisIsALongInputButWeSadlyCannotUseAnySpacebarsOrSpecialCharactersOrDigitsBecauseTheEnigmaMachineDoesntAllowForThat");
     await tester.pump();
