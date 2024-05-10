@@ -1,13 +1,10 @@
-FROM archlinux:base-devel
+FROM python:3.12
 
-RUN pacman-key --init
-RUN pacman -Syu --noconfirm libxml2 docker python python-pip
+RUN apt update && apt install -y libxml2 libxml2-utils
 
-# setup venv
-WORKDIR /app
-RUN python -m venv venv
-ENV PATH="/app/venv/bin:$PATH"
+RUN python3 -m ensurepip
+RUN python3 -m pip install --no-cache --upgrade pip setuptools
 
-# install dependencies
+# install testing requiremenets
 COPY ./requirements.txt ./
-RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
