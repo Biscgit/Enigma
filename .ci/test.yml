@@ -32,4 +32,4 @@ e2e-test:
       #  - frontend/test/
   artifacts:
     reports:
-      junit: result.json
+      junit: frontend/result.json
