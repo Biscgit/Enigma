@@ -31,5 +31,5 @@ e2e-test:
       #exists:
       #  - frontend/test/
   artifacts:
-    reports:
-      junit: result.json
+    paths: 
+      - frontend/result.json
