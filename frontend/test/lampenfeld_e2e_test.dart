@@ -35,9 +35,9 @@ void main() {
 
     // TEST INPUT A:
 
-    lampfieldstate = tester.state(find.byType(Lampfield));
+    final lampfieldstateFor1 = tester.state(find.byType(Lampfield));
 
-    await lampfieldstate.sendTextInputToLampfieldAsync("A");
+    await lampfieldstateFor1.sendTextInputToLampfieldAsync("A");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //Only one key should be highlighted.
@@ -53,9 +53,9 @@ void main() {
 
     // TEST INPUT WITH TWO LETTERS:
 
-    lampfieldstate = tester.state(find.byType(Lampfield));
+    final lampfieldstateFor2 = tester.state(find.byType(Lampfield));
 
-    await lampfieldstate.sendTextInputToLampfieldAsync("Hi");
+    await lampfieldstateFor2.sendTextInputToLampfieldAsync("Hi");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //Only one key should be highlighted.
@@ -71,9 +71,9 @@ void main() {
 
     // TEST INPUT WITH THREE LETTERS:
 
-    lampfieldstate = tester.state(find.byType(Lampfield));
+    final lampfieldstateFor3 = tester.state(find.byType(Lampfield));
 
-    await lampfieldstate.sendTextInputToLampfieldAsync("Lol");
+    await lampfieldstateFor3.sendTextInputToLampfieldAsync("Lol");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //Only one key should be highlighted.
@@ -89,8 +89,9 @@ void main() {
 
     // TEST INPUT WITH MANY LETTERS:
 
-    lampfieldstate = tester.state(find.byType(Lampfield));
-    await lampfieldstate.sendTextInputToLampfieldAsync("hiThisIsALongInputButWeSadlyCannotUseAnySpacebarsOrSpecialCharactersOrDigitsBecauseTheEnigmaMachineDoesntAllowForThat");
+    final lampfieldstateForX = tester.state(find.byType(Lampfield));
+
+    await lampfieldstateForX.sendTextInputToLampfieldAsync("hiThisIsALongInputButWeSadlyCannotUseAnySpacebarsOrSpecialCharactersOrDigitsBecauseTheEnigmaMachineDoesntAllowForThat");
     await tester.pump();
 
     expect(find.byWidgetPredicate((widget) { //? Doesnt highlight a key => No key should be highlighted now
