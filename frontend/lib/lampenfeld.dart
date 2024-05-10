@@ -6,16 +6,9 @@ void main() {
 }
 
 class Lampfield extends StatefulWidget {
-  final LampfieldState lampfieldState = LampfieldState();
 
   @override
-  State<Lampfield> createState() {
-    return lampfieldState;
-  }
-
-  Lampfield getLampfield() {
-    return this; //Maybe useful? idk
-  }
+  State<Lampfield> createState() => LampfieldState();
 }
 
 class LampfieldState extends State<Lampfield> {
