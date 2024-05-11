@@ -23,4 +23,4 @@ async def test_postgres_credentials(monkeypatch):
         monkeypatch.setenv("IP_POSTGRES", pg.get_container_host_ip())
 
         # prepare database
-        await asyncpg.connect(pg.get_connection_url())
+        await asyncpg.connect(connection_url)
