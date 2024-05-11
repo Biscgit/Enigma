@@ -1,3 +1,5 @@
+import asyncio
+
 import asyncpg
 from testcontainers.postgres import PostgresContainer
 import pytest
@@ -10,23 +12,20 @@ pytest_plugins = ('pytest_asyncio',)
 @pytest.mark.asyncio
 async def test_postgres_credentials(monkeypatch):
     # setup
-    with PostgresContainer(
-            "postgres:16-alpine",
-            driver=None
-    ) as pg:
+    with PostgresContainer("postgres:16-alpine") as pg:
         # issue with testcontainers: wrong port mapping on postgres
         connection_url = pg.get_connection_url()
         port = connection_url.split(":")[-1].split('/')[0]
 
         # set env for to be tested db connection
-        monkeypatch.setenv("DB_USER", pg.username)
-        monkeypatch.setenv("DB_PASSWORD", pg.password)
-        monkeypatch.setenv("DB_NAME", pg.dbname)
+        monkeypatch.setenv("DB_USER", pg.POSTGRES_USER)
+        monkeypatch.setenv("DB_PASSWORD", pg.POSTGRES_PASSWORD)
+        monkeypatch.setenv("DB_NAME", pg.POSTGRES_DB)
         monkeypatch.setenv("DB_PORT", port)
         monkeypatch.setenv("IP_POSTGRES", pg.get_container_host_ip())
 
         # prepare database
-        test_client: asyncpg.Connection = await asyncpg.connect(pg.get_connection_url())
+        test_client: asyncpg.Connection = await asyncpg.connect(connection_url)
         users = [
             {"username": "user1", "password": "pass1"},
             {"username": "user2", "password": "pass2"},
