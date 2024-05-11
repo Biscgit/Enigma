@@ -15,8 +15,6 @@ build-python-tester-linter:
   variables:
     DOCKERPATH: ".docker-builds/linter-tester"
     NAME: "/python-tester-linter"
-  rules:
-    - if: "$NIGHTLY_BUILD"
 
 build-scanner:
   stage: prebuild
