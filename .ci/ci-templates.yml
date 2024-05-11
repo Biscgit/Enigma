@@ -4,6 +4,9 @@ variables:
 .build-docker:
   stage: build
   image: docker:cli
+  services:
+  - name: docker:dind
+    command: ["--tls=false"]
   variables:
     NAME: "/${DOCKERPATH}"
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE${NAME}:$CI_COMMIT_REF_SLUG
