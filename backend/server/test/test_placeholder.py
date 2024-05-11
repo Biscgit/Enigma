@@ -10,10 +10,7 @@ pytest_plugins = ('pytest_asyncio',)
 @pytest.mark.asyncio
 async def test_postgres_credentials(monkeypatch):
     # setup
-    with PostgresContainer(
-            "postgres:16-alpine",
-            driver=None
-    ) as pg:
+    with PostgresContainer("postgres:16-alpine") as pg:
         # issue with testcontainers: wrong port mapping on postgres
         connection_url = pg.get_connection_url()
         port = connection_url.split(":")[-1].split('/')[0]
