@@ -12,7 +12,7 @@ async def test_postgres_credentials(monkeypatch):
     # setup
     with PostgresContainer("postgres:16-alpine") as pg:
         # issue with testcontainers: wrong port mapping on postgres
-        connection_url = pg.get_connection_url()
+        connection_url = pg.get_connection_url().replace("postgresql+psycopg2", "postgresql")
         port = connection_url.split(":")[-1].split('/')[0]
 
         # set env for to be tested db connection
