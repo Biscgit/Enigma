@@ -14,10 +14,9 @@ unit-integration-test:
       coverage_report:
         coverage_format: cobertura
         path: backend/coverage.xml
-#   rules:
-#     - if: $CI_COMMIT_BRANCH
-#       exists:
-#         - backend/server/test/
+  rules:
+     - exists:
+       - backend/server/test/*
 
 e2e-test:
   stage: e2e-test
