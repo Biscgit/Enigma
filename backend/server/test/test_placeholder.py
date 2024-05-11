@@ -16,9 +16,9 @@ async def test_postgres_credentials(monkeypatch):
         port = connection_url.split(":")[-1].split('/')[0]
 
         # set env for to be tested db connection
-        monkeypatch.setenv("DB_USER", pg.username)
-        monkeypatch.setenv("DB_PASSWORD", pg.password)
-        monkeypatch.setenv("DB_NAME", pg.dbname)
+        monkeypatch.setenv("DB_USER", pg.POSTGRES_USER)
+        monkeypatch.setenv("DB_PASSWORD", pg.POSTGRES_PASSWORD)
+        monkeypatch.setenv("DB_NAME", pg.POSTGRES_DB)
         monkeypatch.setenv("DB_PORT", port)
         monkeypatch.setenv("IP_POSTGRES", pg.get_container_host_ip())
 
