@@ -28,7 +28,7 @@ e2e-test:
   rules:
     - if: $CI_COMMIT_BRANCH
       exists:
-        - frontend/test/
+        - frontend/test/*
   artifacts:
     reports:
       junit: result.json
