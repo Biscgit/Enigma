@@ -1,6 +1,6 @@
 unit-integration-test:
   stage: test
-  image: registry.mygit.th-deg.de/ts19084/enigma/python-tester-linter:testcontainer-implementation
+  image: registry.mygit.th-deg.de/ts19084/enigma/python-tester-linter:latest
   before_script:
     - cd backend
   script:
