@@ -5,40 +5,37 @@ class SideBar extends StatelessWidget {
 
   SideBar({required this.onItemSelected});
 
+  ListTile genMachinewithcon(String name, String backendID, context) {
+    return ListTile(
+      title: Text('$name'),
+      onTap: () {
+        onItemSelected('$name');
+        // Backendcall with backendID
+        Navigator.pop(context);
+      });
+  }
+  final DrawerHeader header =  DrawerHeader(
+                           child: Text('Wähle deine Enigma'),
+                           decoration: BoxDecoration(
+                             color: Colors.blue,
+                           ),
+                         );
+
+  ListTile addMachine(BuildContext context) => ListTile(
+                          title: Text('Neue Enigma'),
+                          onTap: () {
+                            // Backendcall with backendID
+                            Navigator.pop(context);
+                          });
+  
+
   @override
   Widget build(BuildContext context) {
+  ListTile genMachine(String name, String backendID) => genMachinewithcon(name, backendID, context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Text('Wähle deine Enigma'),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
-          ),
-          ListTile(
-            title: Text('Enigma I'),
-            onTap: () {
-              onItemSelected('Enigma I');
-	      Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: Text('Norway Enigma'),
-            onTap: () {
-              onItemSelected('Norway Enigma');
-	      Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: Text('Enigma 3'),
-            onTap: () {
-              onItemSelected('Enigma 3');
-	      Navigator.pop(context);
-            },
-          ),
-        ],
+        children: <Widget>[header, genMachine('Enigma I', ""), genMachine('Norway Enigma', ""), genMachine('Enigma M3', ""), addMachine(context)],
       ),
     );
   }
