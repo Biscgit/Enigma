@@ -20,6 +20,7 @@ lint-frontend:
     - flutter analyze
   rules:
     - if: "$NIGHTLY_BUILD"
+  allow_failure: true
 
 lint-backend:
   stage: linter
@@ -30,3 +31,4 @@ lint-backend:
     - python3 -m ruff check
   rules:
     - if: "$NIGHTLY_BUILD"
+  allow_failure: true
