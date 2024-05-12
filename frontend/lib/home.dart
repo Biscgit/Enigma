@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'utils.dart';
 
-// choose between 3 different enigma machines
-//...
-
-//----------------------------------------------------
 class HomePage extends StatelessWidget {
   void _logout(BuildContext context) async {
     await Cookie.delete('token');
     Navigator.pushReplacementNamed(context, '/login');
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
