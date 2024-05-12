@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'home.dart';
-import 'dart:html';
 
 
 void main() {
@@ -9,19 +8,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  bool isUserLoggedIn() {
-    String cookies = document.cookie ?? "";
-    Map<String, String> cookieMap = {};
-    cookies.split(";").forEach((String cookie) {
-      List<String> kv = cookie.split("=");
-      if (kv.length == 2) {
-        cookieMap[kv[0].trim()] = kv[1].trim();
-      }
-    });
-    return cookieMap.containsKey("token") && cookieMap["token"]!.isNotEmpty;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Enigma Web App',
@@ -30,9 +16,6 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       onGenerateRoute: (settings) {
-        if (settings.name != '/login' && !isUserLoggedIn()) {
-          return MaterialPageRoute(builder: (context) => LoginPage());
-        }
         switch (settings.name) {
           case '/login':
             return MaterialPageRoute(builder: (context) => LoginPage());

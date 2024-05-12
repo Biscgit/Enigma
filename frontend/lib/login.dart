@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 // import 'dart:io';
-import 'dart:html';
+import 'utils.dart';
 
 class LoginPage extends StatelessWidget {
   // replace 172.20.0.101 with localhost on Windows
@@ -29,7 +29,7 @@ class LoginPage extends StatelessWidget {
     if (response.statusCode == 200) {
       final token = jsonDecode(response.body)["token"];
 
-      document.cookie = "token=$token; path=/;";
+      await Cookie.save('token', token);
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(

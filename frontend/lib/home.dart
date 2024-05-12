@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:html';
+import 'utils.dart';
 
 // choose between 3 different enigma machines
 //...
@@ -8,7 +8,7 @@ import 'dart:html';
 class HomePage extends StatelessWidget {
 
   void _logout(BuildContext context) async {
-    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    await Cookie.delete('token');
     Navigator.pushReplacementNamed(context, '/login');
   }
 
