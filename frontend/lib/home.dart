@@ -6,7 +6,6 @@ import 'utils.dart';
 
 //----------------------------------------------------
 class HomePage extends StatelessWidget {
-
   void _logout(BuildContext context) async {
     await Cookie.delete('token');
     Navigator.pushReplacementNamed(context, '/login');
