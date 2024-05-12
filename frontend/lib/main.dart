@@ -1,4 +1,5 @@
-import 'package:enigma/lampenfeld.dart' as lampenfeld;
+import 'package:enigma/home.dart';
+import 'package:flutter/material.dart';
 
 //Collect all frontend packages here for now; they will be fused together later on.
 //Other flutter files can be run via flutter run <filepath>
@@ -17,12 +18,12 @@ class MyApp extends StatelessWidget {
       ),
       onGenerateRoute: (settings) {
         switch (settings.name) {
-          case '/login':
-            return MaterialPageRoute(builder: (context) => LoginPage());
+//          case '/login':
+//            return MaterialPageRoute(builder: (context) => LoginPage());
           case '/home':
             return MaterialPageRoute(builder: (context) => HomePage());
           default:
-            return MaterialPageRoute(builder: (context) => LoginPage());
+            return MaterialPageRoute(builder: (context) => HomePage());
         }
       },
     );

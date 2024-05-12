@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class EnigmaPage extends StatefulWidget {
-//  const EnigmaPage({Key? key}) : super(key: key);
+class SideBar extends StatefulWidget {
+//  const SideBar({Key? key}) : super(key: key);
 
   @override
-  State<EnigmaPage> createState() => _EnigmaPageState();
+  State<SideBar> createState() => SideBarState();
 }
 
-class _EnigmaPageState extends State<EnigmaPage> {
+class SideBarState extends State<SideBar> {
   String currentMachine = 'Enigma I';
 
   void loadEnigmaI() {
