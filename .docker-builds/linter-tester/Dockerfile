@@ -1,7 +1,6 @@
-FROM archlinux:base-devel
+FROM python:3.12-alpine
 
-RUN pacman-key --init
-RUN pacman -Syu --noconfirm libxml2 docker python python-pip
+RUN apk update && apk add libxml2 libxml2-utils openrc docker
 
 # setup venv
 WORKDIR /app
