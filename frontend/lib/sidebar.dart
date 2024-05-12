@@ -30,52 +30,49 @@ class SideBarState extends State<SideBar> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+ //   final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text(
-          'Choose Enigma mode',
-          style: TextStyle(fontSize: 24, color: Colors.white),
-        ),
-        centerTitle: true,
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: Text('Wähle deine Enigma'),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+          ),
+          ListTile(
+            title: Text('Enigma I'),
+            onTap: () {
+	      Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Norway Enigma'),
+            onTap: () {
+	      Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Enigma 3'),
+            onTap: () {
+	      Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+/*
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(
-            child: SizedBox(
-              width: screenWidth * 0.5,
-              height: 40,
-              child: ElevatedButton(
-                onPressed: () {
-                  loadEnigmaI();
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.pressed)) {
-                        return Colors.green; // Change button color if pressed
-                      }
-                      return currentMachine == 'Enigma I'
-                          ? Colors.green // Change button color if selected
-                          : const Color.fromARGB(255, 33, 150, 243);
-                    },
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                ),
-                child: const Text(
-                  'Enigma I',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ),
-            ),
-          ),
+          ,
           const SizedBox(height: 8),
           Center(
             child: SizedBox(
@@ -147,4 +144,4 @@ class SideBarState extends State<SideBar> {
     );
   }
 }
-
+*/
