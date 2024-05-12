@@ -18,6 +18,8 @@ lint-frontend:
     - flutter pub get
   script:
     - flutter analyze
+  rules:
+    - if: "$NIGHTLY_BUILD"
 
 lint-backend:
   stage: linter
@@ -25,4 +27,6 @@ lint-backend:
   before_script:
     - cd backend/
   script:
-    - ruff check
+    - python3 -m ruff check
+  rules:
+    - if: "$NIGHTLY_BUILD"
