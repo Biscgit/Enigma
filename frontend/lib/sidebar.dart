@@ -1,21 +1,10 @@
 import 'package:flutter/material.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const EnigmaPage(),
-    );
-  }
-}
-
 class EnigmaPage extends StatefulWidget {
-  const EnigmaPage({Key? key}) : super(key: key);
+//  const EnigmaPage({Key? key}) : super(key: key);
 
   @override
-  _EnigmaPageState createState() => _EnigmaPageState();
+  State<EnigmaPage> createState() => _EnigmaPageState();
 }
 
 class _EnigmaPageState extends State<EnigmaPage> {
@@ -159,6 +148,3 @@ class _EnigmaPageState extends State<EnigmaPage> {
   }
 }
 
-void main() {
-  runApp(const MyApp());
-}
