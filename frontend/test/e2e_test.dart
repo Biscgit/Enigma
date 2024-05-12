@@ -22,7 +22,7 @@ void main() {
     // Build our app and trigger a frame.
     HomePage home = HomePage();
     await tester.pumpWidget(home);
-    print(home.selectedItem);
+    print(home.getselectedItem());
     // Verify that the default machine is 'Enigma I'
     ////expect(find.text('Enigma I'), findsOneWidget);
     expect(find.text('Norway Enigma'), findsNothing);

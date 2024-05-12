@@ -25,10 +25,9 @@ e2e-test:
     - cd frontend
   script:
     - flutter test --file-reporter "json:result.json"
-  rules:
-    - if: $CI_COMMIT_BRANCH
-      exists:
-        - frontend/test/*
   artifacts:
     paths: 
       - frontend/result.json
+  rules:
+    - exists:
+        - frontend/test/*

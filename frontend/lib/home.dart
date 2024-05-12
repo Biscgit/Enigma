@@ -9,11 +9,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String selectedItem = 'Enigma I'; 
+  String _selectedItem = 'Enigma I'; 
 
+  String get selectedItem => _selectedItem;
   void updateSelectedItem(String item) {
     setState(() {
-      selectedItem = item;
+      _selectedItem = item;
     });
   }
 
