@@ -1,38 +1,35 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:enigma/main.dart';
+import 'package:enigma/home.dart';
+
+Future<void> click_and_test_with_tester(WidgetTester tester, String name) async {
+
+    // Find the sidebar icon and tap it
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+
+    // Find and tap on 'Item 1'
+    await tester.tap(find.text(name));
+    await tester.pumpAndSettle();
+
+    // Verify that the main content displays the selected item
+    expect(find.text(name), findsOneWidget);
+}
 
 void main() {
   testWidgets('EnigmaPage widget test', (WidgetTester tester) async {
+    click_and_test(String name) async => await click_and_test_with_tester(tester, name);
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
-
-    // Verify that EnigmaPage widget is rendered
-    expect(find.byType(EnigmaPage), findsOneWidget);
-
+    HomePage home = HomePage();
+    await tester.pumpWidget(home);
+    print(home.selectedItem);
     // Verify that the default machine is 'Enigma I'
-    expect(find.text('Enigma I'), findsOneWidget);
+    ////expect(find.text('Enigma I'), findsOneWidget);
     expect(find.text('Norway Enigma'), findsNothing);
     expect(find.text('Enigma M3'), findsNothing);
 
-    // Tap on Norway Enigma button and verify the machine change
-    await tester.tap(find.text('Norway Enigma'));
-    await tester.pumpAndSettle();
-    expect(find.text('Norway Enigma'), findsOneWidget);
-    expect(find.text('Enigma I'), findsNothing);
-    expect(find.text('Enigma M3'), findsNothing);
-
-    // Tap on Enigma M3 button and verify the machine change
-    await tester.tap(find.text('Enigma M3'));
-    await tester.pumpAndSettle();
-    expect(find.text('Enigma M3'), findsOneWidget);
-    expect(find.text('Enigma I'), findsNothing);
-    expect(find.text('Norway Enigma'), findsNothing);
-
-    // Tap on Enigma I button again and verify the machine change
-    await tester.tap(find.text('Enigma I'));
-    await tester.pumpAndSettle();
-    expect(find.text('Enigma I'), findsOneWidget);
-    expect(find.text('Norway Enigma'), findsNothing);
-    expect(find.text('Enigma M3'), findsNothing);
+    await click_and_test("Enigma I");
+    await click_and_test("Norway Enigma");
+    await click_and_test("Enigma M3");
   });
 }

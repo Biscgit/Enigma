@@ -14,6 +14,7 @@ class SideBar extends StatelessWidget {
         Navigator.pop(context);
       });
   }
+
   final DrawerHeader header =  DrawerHeader(
                            child: Text('Wähle deine Enigma'),
                            decoration: BoxDecoration(
@@ -24,10 +25,9 @@ class SideBar extends StatelessWidget {
   ListTile addMachine(BuildContext context) => ListTile(
                           title: Text('Neue Enigma'),
                           onTap: () {
-                            // Backendcall with backendID
+                            // Backendcall
                             Navigator.pop(context);
                           });
-  
 
   @override
   Widget build(BuildContext context) {
