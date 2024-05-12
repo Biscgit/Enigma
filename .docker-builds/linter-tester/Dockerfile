@@ -1,6 +1,6 @@
-FROM python:3.12
+FROM python:3.12-alpine
 
-RUN apt update && apt install -y libxml2 libxml2-utils
+RUN apk update && apk add libxml2 libxml2-utils openrc docker
 
 RUN python3 -m ensurepip
 RUN python3 -m pip install --no-cache --upgrade pip setuptools
