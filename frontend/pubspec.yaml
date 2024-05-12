@@ -10,14 +10,16 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter_driver:
-    sdk: flutter
+  http: ^1.2.1
+  flutter_secure_storage: ^9.1.1
 
   cupertino_icons: ^1.0.6
   url_launcher: ^6.0.13
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   test: any

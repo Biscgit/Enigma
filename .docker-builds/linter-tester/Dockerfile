@@ -2,9 +2,11 @@ FROM python:3.12-alpine
 
 RUN apk update && apk add libxml2 libxml2-utils openrc docker
 
-RUN python3 -m ensurepip
-RUN python3 -m pip install --no-cache --upgrade pip setuptools
+# setup venv
+WORKDIR /app
+RUN python -m venv venv
+ENV PATH="/app/venv/bin:$PATH"
 
-# install testing requiremenets
+# install dependencies
 COPY ./requirements.txt ./
-RUN python3 -m pip install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install -r requirements.txt

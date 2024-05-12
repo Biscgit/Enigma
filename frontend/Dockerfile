@@ -1,4 +1,4 @@
-FROM registry.mygit.th-deg.de/ts19084/enigma/flutter-builder as builder
+FROM registry.mygit.th-deg.de/ts19084/enigma/flutter-builder:latest as builder
 
 # setup
 USER builder
@@ -13,11 +13,8 @@ RUN flutter build web --release
 # serve site with nginx
 FROM nginx:1.25-alpine
 
-# permission security
-RUN addgroup -S sgroup && adduser -S webserver -G sgroup
-WORKDIR /home/webserver
-
 # copy files
+WORKDIR /home/webserver
 COPY --from=builder /home/builder/frontend/build/web /home/webserver/enigma
 COPY ./nginx.conf /etc/nginx/
 

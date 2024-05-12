@@ -1,6 +1,7 @@
 __all__ = ["get_database", "Database"]
 
 import asyncio
+import contextlib
 import logging
 from os import environ
 
@@ -18,26 +19,20 @@ class Database:
     def __init__(self):
         self.pool: asyncpg.Pool | None = None
 
-        self.__is_inited: bool = False
+    @contextlib.asynccontextmanager
+    async def fastapi_lifespan(self, app: fastapi.FastAPI):
+        """Ensure clean startup and shutdown. Needs to be called before the start"""
 
-    def fastapi_init(self, app: fastapi.FastAPI):
-        """Ensure clean startup and shutdown. Needs to be called before start"""
+        await self.connect()
+        yield
 
-        if self.__is_inited:
-            raise Exception("Database has already been inited with fastapi")
-
-        @app.on_event("startup")
-        async def connect_db():
-            await self.connect()
-
-        @app.on_event("shutdown")
-        async def disconnect_db():
-            await self.disconnect()
-
-        self.__is_inited = True
+        await self.disconnect()
 
     async def connect(self) -> None:
         logging.info("Connecting to database...")
+
+        if self.pool is not None:
+            raise Exception("Database connection is already established")
 
         for _ in range(12):
             try:
@@ -46,14 +41,21 @@ class Database:
                     password=environ.get("DB_PASSWORD"),
                     database=environ.get("DB_NAME"),
                     host=environ.get("IP_POSTGRES"),
+                    port=environ.get("DB_PORT"),
                 )
 
             except ConnectionRefusedError:
+                logging.info('Retrying to connect...')
                 await asyncio.sleep(5)
 
             else:
                 self.pool = conn
-                logging.info("Successfully connected to database")
+
+                async with self.pool.acquire() as c:
+                    async with c.transaction():
+                        version = await conn.fetchval("SELECT version()")
+
+                logging.info(f"Successfully connected to database {version}")
 
                 await self._initialize_db()
                 await self._load_users()
@@ -70,6 +72,10 @@ class Database:
 
             async with self.pool.acquire() as conn:
                 async with conn.transaction():
+                    # load module
+                    await conn.execute("CREATE EXTENSION pgcrypto")
+
+                    # fill db
                     for qry in content.split(";"):
                         if qry.strip():
                             await conn.execute(qry)
@@ -88,7 +94,7 @@ class Database:
                     INSERT INTO users(username, password)
                     SELECT 
                         (data->>'username')::TEXT, 
-                        (data->>'password')::TEXT
+                        crypt((data->>'password')::TEXT, gen_salt('bf'))
                     FROM json_array_elements($1::json) as data
                     ON CONFLICT (username) DO UPDATE
                     SET password = EXCLUDED.password;
@@ -99,25 +105,30 @@ class Database:
         logging.info("Successfully loaded users from file")
 
     async def disconnect(self) -> None:
+        if self.pool is None:
+            raise Exception("There is no connection to close!")
+
         await self.pool.close()
+        self.pool = None
+
         logging.info("Successfully disconnected to database")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     async def check_login(self, form: LoginForm) -> bool:
-        """returns a bool for weather the credentials are valid"""
+        """Returns a bool for weather the credentials are valid"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                result: int = await conn.fetchval(
+                result: bool = await conn.fetchval(
                     """
-                    SELECT COUNT(*) 
+                    SELECT crypt($2, password) = password AS password_match 
                     FROM  users
-                    WHERE username = $1 AND password = $2;
+                    WHERE username = $1;
                     """,
                     form.username, form.password
                 )
 
-                return bool(result)
+                return result
 
 
 def get_database() -> Database:
