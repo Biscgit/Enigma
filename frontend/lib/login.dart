@@ -65,7 +65,7 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextField(
-                key: ValueKey('username'),
+                key: const ValueKey('username'),
                 controller: _usernameController,
                 decoration: const InputDecoration(
                   labelText: 'Username',
@@ -74,7 +74,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
-                key: ValueKey('password'),
+                key: const ValueKey('password'),
                 controller: _passwordController,
                 decoration: const InputDecoration(
                   labelText: 'Password',
@@ -85,7 +85,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                key: ValueKey('Login'),
+                key: const ValueKey('Login'),
                 onPressed: () => _login(context),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
