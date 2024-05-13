@@ -2,28 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:enigma/home.dart';
 
-Future<void> click_and_test_with_tester(WidgetTester tester, String name) async {
 
-    // Find the sidebar icon and tap it
-    await tester.tap(find.byIcon(Icons.menu));
-    await tester.pumpAndSettle();
+class FakeTesterApp extends StatelessWidget {
+  final Widget child;
 
-    // Find and tap on 'Item 1'
-    await tester.tap(find.text(name));
-    await tester.pumpAndSettle();
+  const FakeTesterApp({Key? key, required this.child}) : super(key: key);
 
-    // Verify that the main content displays the selected item
-    expect(find.text(name), findsOneWidget);
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Testing App',
+      home: child,
+    );
+  }
+}
+
+Future<void> click_and_test_with_tester(
+    WidgetTester tester, String name) async {
+  // Find the sidebar icon and tap it
+  await tester.tap(find.byIcon(Icons.menu));
+  await tester.pumpAndSettle();
+
+  // Find and tap on 'Item 1'
+  await tester.tap(find.text(name));
+  await tester.pumpAndSettle();
+
+  // Verify that the main content displays the selected item
+  expect(find.text(name), findsOneWidget);
 }
 
 void main() {
   testWidgets('EnigmaPage widget test', (WidgetTester tester) async {
-    click_and_test(String name) async => await click_and_test_with_tester(tester, name);
+    click_and_test(String name) async =>
+        await click_and_test_with_tester(tester, name);
     // Build our app and trigger a frame.
-    HomePage home = HomePage();
-    var state = home.createState();
-    print(state.selectedItem);
 
+    Widget home = FakeTesterApp(child: HomePage());
     await tester.pumpWidget(home);
 
     // Verify that the default machine is 'Enigma I'
