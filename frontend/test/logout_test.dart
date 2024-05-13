@@ -9,7 +9,7 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      // Navigato to homepage
+      // Navigation to homepage
       await tester.tap(find.byIcon(Icons.exit_to_app));
       await tester.pumpAndSettle();
 
@@ -19,7 +19,7 @@ void main() {
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
 
-      // check if the user is navigated back to login paage
+      // check if the user is navigated back to login page
       expect(find.text('Login Page'), findsOneWidget);
     });
 }

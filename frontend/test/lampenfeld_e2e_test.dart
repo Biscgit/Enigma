@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:enigma/lampenfeld.dart';
 
 void main() {
-  testWidgets('Lamppanel E2E test', (WidgetTester tester) async {
+  testWidgets('LampPanel E2E test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     Lampfield lampfield = Lampfield();
     await tester.pumpWidget(lampfield);

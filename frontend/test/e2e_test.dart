@@ -22,12 +22,13 @@ Future<void> click_and_test_with_tester(
   await tester.tap(find.byIcon(Icons.menu));
   await tester.pumpAndSettle();
 
-  // Find and tap on 'Item 1'
+  // Find on sidebar and tap on 'Item 1'
   final sideBarButton = find.descendant(
     of: find.byKey(const Key('enigma_sidebar')),
     matching: find.text(name),
   );
   expect(sideBarButton, findsOneWidget);
+
   await tester.tap(sideBarButton);
   await tester.pumpAndSettle();
 

@@ -13,7 +13,7 @@ void main() {
     // Show login page
     expect(find.text('Login Page'), findsOneWidget);
 
-    // Valid usernaem and password
+    // Valid username and password
     await tester.enterText(find.byType(TextField).at(0), 'valid_username');
     await tester.enterText(find.byType(TextField).at(1), 'valid_password');
     await tester.pumpAndSettle();
