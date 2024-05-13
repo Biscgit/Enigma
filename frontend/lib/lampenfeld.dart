@@ -139,10 +139,10 @@ class CircularTextBox extends StatefulWidget {
   const CircularTextBox({
     super.key,
     required this.text,
-    this.colorText = Colors.black,
-    this.defaultColorBox = Colors.grey,
+    this.colorText = Colors.black54,
+    this.defaultColorBox = Colors.black12,
     this.highlightedColor = Colors.yellow,
-    this.fontSize = 20,
+    this.fontSize = 25,
     this.diameter = 50,
   });
 
@@ -186,6 +186,7 @@ class CircularTextBoxState extends State<CircularTextBox> {
           color: widget.colorText,
           fontSize: widget.fontSize,
           fontWeight: FontWeight.bold,
+          fontFamily: "Wallau"
         ),
       ),
     );
