@@ -22,7 +22,7 @@ Future<void> clickAndTestWithTester(
   await tester.tap(find.byIcon(Icons.menu));
   await tester.pumpAndSettle();
 
-  // Find on sidebar and tap on 'Item 1'
+  // Find on sidebar
   final sideBarButton = find.descendant(
     of: find.byKey(const Key('enigma_sidebar')),
     matching: find.text(name),
@@ -46,7 +46,7 @@ void main() {
     await tester.pumpWidget(home);
 
     // Verify that the default machine is 'Enigma I'
-    ////expect(find.text('Enigma I'), findsOneWidget);
+    expect(find.text('Enigma I'), findsOneWidget);
     expect(find.text('Norway Enigma'), findsNothing);
     expect(find.text('Enigma M3'), findsNothing);
 
