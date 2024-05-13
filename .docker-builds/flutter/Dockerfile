@@ -1,3 +1,4 @@
+# by David Horvát, 2024
 FROM debian:stable-slim
 
 # install dependencies
