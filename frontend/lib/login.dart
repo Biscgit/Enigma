@@ -37,7 +37,7 @@ class LoginPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            key: ValueKey('failedLogin'),
+            key: const ValueKey('failedLogin'),
             title: const Text('Login failed'),
             content: const Text('Invalid username or password'),
             actions: <Widget>[
