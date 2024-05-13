@@ -9,9 +9,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _selectedItem = 'Enigma I'; 
+  String _selectedItem = 'Enigma I';
 
   String get selectedItem => _selectedItem;
+
   void updateSelectedItem(String item) {
     setState(() {
       _selectedItem = item;
@@ -57,9 +58,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: SideBar(onItemSelected: updateSelectedItem),
+      drawer: SideBar(
+        onItemSelected: updateSelectedItem,
+        key: const Key('enigma_sidebar'),
+      ),
       body: Lampfield(),
     );
   }
 }
-

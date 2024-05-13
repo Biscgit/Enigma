@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:enigma/home.dart';
 
-
 class FakeTesterApp extends StatelessWidget {
   final Widget child;
 
-  const FakeTesterApp({Key? key, required this.child}) : super(key: key);
+  const FakeTesterApp({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,12 @@ Future<void> click_and_test_with_tester(
   await tester.pumpAndSettle();
 
   // Find and tap on 'Item 1'
-  await tester.tap(find.text(name));
+  final sideBarButton = find.descendant(
+    of: find.byKey(const Key('enigma_sidebar')),
+    matching: find.text(name),
+  );
+  expect(sideBarButton, findsOneWidget);
+  await tester.tap(sideBarButton);
   await tester.pumpAndSettle();
 
   // Verify that the main content displays the selected item
