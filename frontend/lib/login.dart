@@ -37,6 +37,7 @@ class LoginPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            key: ValueKey('failedLogin'),
             title: const Text('Login failed'),
             content: const Text('Invalid username or password'),
             actions: <Widget>[
@@ -64,6 +65,7 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextField(
+                key: ValueKey('username'),
                 controller: _usernameController,
                 decoration: const InputDecoration(
                   labelText: 'Username',
@@ -72,6 +74,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               TextField(
+                key: ValueKey('password'),
                 controller: _passwordController,
                 decoration: const InputDecoration(
                   labelText: 'Password',
@@ -82,6 +85,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                key: ValueKey('Login'),
                 onPressed: () => _login(context),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,

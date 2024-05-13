@@ -1,6 +1,5 @@
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
-//import 'package:enigma/utils.dart' as utils;
 
 void main() {
   group('App E2E Test', () {
@@ -24,11 +23,11 @@ void main() {
       print(health?.status);
     });
 
-    test('Verify Button Tap', () async {
+    test('Try right credentials', () async {
       // Find the button by its label.
       final username_field = find.byValueKey('username');
       final password_field = find.byValueKey('password');
-      final button = find.byValueKey('Login');
+      final button = find.text('Login');
 
       await driver?.tap(username_field);
       await driver?.enterText("user1");
@@ -38,7 +37,29 @@ void main() {
 
       await driver?.tap(button);
 
- //     print(await utils.Cookie.read('token'));
+
+
+    });
+
+    test('Try false credentials', () async {
+      // Find the button by its label.
+      final username_field = find.byValueKey('username');
+      final password_field = find.byValueKey('password');
+      final button = find.byValueKey('Login');
+
+      await driver?.tap(username_field);
+      await driver?.enterText("user");
+
+      await driver?.tap(password_field);
+      await driver?.enterText("pass");
+
+      await driver?.tap(button);
+
+      final failedWidget = find.byValueKey('failedLogin');
+
+      final oneWidget = await driver?.findWidgets(failedWidget).evaluate();
+      expect(oneWidget, hasLength(1));
+
     });
   });
 }
