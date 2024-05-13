@@ -21,8 +21,11 @@ void main() {
     click_and_test(String name) async => await click_and_test_with_tester(tester, name);
     // Build our app and trigger a frame.
     HomePage home = HomePage();
+    var state = home.createState();
+    print(state.selectedItem);
+
     await tester.pumpWidget(home);
-    print(home.getselectedItem());
+
     // Verify that the default machine is 'Enigma I'
     ////expect(find.text('Enigma I'), findsOneWidget);
     expect(find.text('Norway Enigma'), findsNothing);
