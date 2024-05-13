@@ -73,7 +73,7 @@ class Database:
             async with self.pool.acquire() as conn:
                 async with conn.transaction():
                     # load module
-                    await conn.execute("CREATE EXTENSION pgcrypto")
+                    await conn.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
 
                     # fill db
                     for qry in content.split(";"):
