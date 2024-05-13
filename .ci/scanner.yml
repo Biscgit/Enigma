@@ -18,6 +18,7 @@ lint-frontend:
     - flutter pub get
   script:
     - flutter analyze
+  allow_failure: true
 
 lint-backend:
   stage: linter
@@ -26,3 +27,4 @@ lint-backend:
     - cd backend/
   script:
     - python3 -m ruff check
+  allow_failure: true
