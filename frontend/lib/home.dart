@@ -22,8 +22,8 @@ class HomePageState extends State<HomePage> {
   }
 
   void _logout(BuildContext context) async {
-    await Cookie.delete('token');
     Navigator.pushReplacementNamed(context, '/login');
+    await Cookie.delete('token');
   }
 
   @override
