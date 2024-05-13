@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:enigma/home.dart';
 import 'package:enigma/lampenfeld.dart';
+
+class FakeTesterApp extends StatelessWidget {
+  final Widget child;
+
+  const FakeTesterApp({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Testing App',
+      home: child,
+    );
+  }
+}
 
 void main() {
   testWidgets('LampPanel E2E test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    Lampfield lampfield = const Lampfield();
-    await tester.pumpWidget(lampfield);
+    Widget home = const FakeTesterApp(child: HomePage());
+    await tester.pumpWidget(home);
 
     //await tester.tap(find.byType(TextField)); //Might be useful at some point
     //await tester.pump();
