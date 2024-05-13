@@ -17,7 +17,7 @@ lint-frontend:
     - cd frontend/
     - flutter pub get
   script:
-    - flutter analyze
+    - flutter analyze --no-fatal-infos
   allow_failure: true
 
 lint-backend:

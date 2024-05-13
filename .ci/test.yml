@@ -24,7 +24,7 @@ e2e-test:
   before_script:
     - cd frontend
   script:
-    - flutter test --no-fatal-info --file-reporter "json:result.json"
+    - flutter test --file-reporter "json:result.json"
   artifacts:
     paths: 
       - frontend/result.json
