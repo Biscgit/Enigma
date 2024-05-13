@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 class Cookie {
-  static final _storage = FlutterSecureStorage();
+  static const _storage = FlutterSecureStorage();
 
   static void executeInIsolate(List<dynamic> args) async {
     print('Spawned isolate: Starting async task...');

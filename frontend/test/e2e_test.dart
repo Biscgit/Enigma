@@ -42,7 +42,7 @@ void main() {
         await click_and_test_with_tester(tester, name);
     // Build our app and trigger a frame.
 
-    Widget home = FakeTesterApp(child: HomePage());
+    Widget home = const FakeTesterApp(child: HomePage());
     await tester.pumpWidget(home);
 
     // Verify that the default machine is 'Enigma I'

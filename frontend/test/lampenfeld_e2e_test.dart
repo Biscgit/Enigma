@@ -6,7 +6,7 @@ import 'package:enigma/lampenfeld.dart';
 void main() {
   testWidgets('LampPanel E2E test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    Lampfield lampfield = Lampfield();
+    Lampfield lampfield = const Lampfield();
     await tester.pumpWidget(lampfield);
 
     //await tester.tap(find.byType(TextField)); //Might be useful at some point

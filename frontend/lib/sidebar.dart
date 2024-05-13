@@ -3,27 +3,27 @@ import 'package:flutter/material.dart';
 class SideBar extends StatelessWidget {
   final Function(String) onItemSelected;
 
-  SideBar({super.key, required this.onItemSelected});
+  const SideBar({super.key, required this.onItemSelected});
 
   ListTile genMachinewithcon(String name, String backendID, context) {
     return ListTile(
-        title: Text('$name'),
+        title: Text(name),
         onTap: () {
-          onItemSelected('$name');
+          onItemSelected(name);
           // Backendcall with backendID
           Navigator.pop(context);
         });
   }
 
-  final DrawerHeader header = DrawerHeader(
-    child: Text('Wähle deine Enigma'),
+  final DrawerHeader header = const DrawerHeader(
     decoration: BoxDecoration(
       color: Colors.blue,
     ),
+    child: Text('Wähle deine Enigma'),
   );
 
   ListTile addMachine(BuildContext context) => ListTile(
-      title: Text('Neue Enigma'),
+      title: const Text('Neue Enigma'),
       onTap: () {
         // Backendcall
         Navigator.pop(context);

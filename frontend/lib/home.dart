@@ -4,6 +4,8 @@ import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -28,10 +30,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('$selectedItem'),
+        title: Text(selectedItem),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             tooltip: 'Logout',
             onPressed: () {
               _logout(context);
@@ -40,15 +42,15 @@ class _HomePageState extends State<HomePage> {
                 barrierDismissible: false,
                 builder: (BuildContext dialogContext) {
                   return AlertDialog(
-                    title: Text('Logout Confirmation'),
-                    content: Text('Successfully logged out'),
+                    title: const Text('Logout Confirmation'),
+                    content: const Text('Successfully logged out'),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
                           Navigator.pushReplacementNamed(context, '/login');
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       ),
                     ],
                   );
@@ -62,7 +64,7 @@ class _HomePageState extends State<HomePage> {
         onItemSelected: updateSelectedItem,
         key: const Key('enigma_sidebar'),
       ),
-      body: Lampfield(),
+      body: const Lampfield(),
     );
   }
 }

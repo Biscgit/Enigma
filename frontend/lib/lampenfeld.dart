@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; 
 
 void main() {
-  runApp(Lampfield());
+  runApp(const Lampfield());
 }
 
 class Lampfield extends StatefulWidget {
+  const Lampfield({super.key});
+
 
   @override
   State<Lampfield> createState() => LampfieldState();

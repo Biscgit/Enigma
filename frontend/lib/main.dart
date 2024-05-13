@@ -3,10 +3,13 @@ import 'package:enigma/home.dart';
 import 'package:enigma/login.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Enigma Web App',
@@ -19,7 +22,7 @@ class MyApp extends StatelessWidget {
           case '/login':
             return MaterialPageRoute(builder: (context) => LoginPage());
           case '/home':
-            return MaterialPageRoute(builder: (context) => HomePage());
+            return MaterialPageRoute(builder: (context) => const HomePage());
           default:
             return MaterialPageRoute(builder: (context) => LoginPage());
         }
