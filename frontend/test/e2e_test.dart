@@ -16,7 +16,7 @@ class FakeTesterApp extends StatelessWidget {
   }
 }
 
-Future<void> click_and_test_with_tester(
+Future<void> clickAndTestWithTester(
     WidgetTester tester, String name) async {
   // Find the sidebar icon and tap it
   await tester.tap(find.byIcon(Icons.menu));
@@ -38,8 +38,8 @@ Future<void> click_and_test_with_tester(
 
 void main() {
   testWidgets('EnigmaPage widget test', (WidgetTester tester) async {
-    click_and_test(String name) async =>
-        await click_and_test_with_tester(tester, name);
+    clickAndTest(String name) async =>
+        await clickAndTestWithTester(tester, name);
     // Build our app and trigger a frame.
 
     Widget home = const FakeTesterApp(child: HomePage());
@@ -50,8 +50,8 @@ void main() {
     expect(find.text('Norway Enigma'), findsNothing);
     expect(find.text('Enigma M3'), findsNothing);
 
-    await click_and_test("Enigma I");
-    await click_and_test("Norway Enigma");
-    await click_and_test("Enigma M3");
+    await clickAndTest("Enigma I");
+    await clickAndTest("Norway Enigma");
+    await clickAndTest("Enigma M3");
   });
 }
