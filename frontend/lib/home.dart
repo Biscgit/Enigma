@@ -35,6 +35,7 @@ class HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             tooltip: 'Logout',
+            key: const ValueKey('logoutButton'),
             onPressed: () {
               _logout(context);
               showDialog(
@@ -44,6 +45,7 @@ class HomePageState extends State<HomePage> {
                   return AlertDialog(
                     title: const Text('Logout Confirmation'),
                     content: const Text('Successfully logged out'),
+                    key: const ValueKey('logoutDialog'),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {

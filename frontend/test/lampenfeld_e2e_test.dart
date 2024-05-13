@@ -34,7 +34,7 @@ void main() {
       if (widget is CircularTextBox) {
         final finder = find.byKey(widget.key!);
         final state = tester.state<CircularTextBoxState>(finder);
-        return state.colorBox == Colors.grey;
+        return state.colorBox == Colors.black12;
       }
       return false;
     }), findsExactly(26));
