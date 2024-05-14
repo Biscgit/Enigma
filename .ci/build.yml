@@ -8,6 +8,8 @@ build-flutter-builder:
     NAME: "/flutter-builder"
   rules:
     - if: "$NIGHTLY_BUILD"
+  needs: []
+
 
 build-python-tester-linter:
   stage: prebuild
@@ -15,6 +17,9 @@ build-python-tester-linter:
   variables:
     DOCKERPATH: ".docker-builds/linter-tester"
     NAME: "/python-tester-linter"
+  rules:
+    - if: "$NIGHTLY_BUILD"
+  needs: []
 
 build-scanner:
   stage: prebuild
@@ -24,13 +29,21 @@ build-scanner:
     NAME: "/scanner"
   rules:
     - if: "$NIGHTLY_BUILD"
+  needs: []
 
 build-backend:
   extends: .build-docker
   variables:
     DOCKERPATH: "backend"
+  needs:
+    - job: unit-integration-test
+    - job: lint-backend
 
 build-frontend:
   extends: .build-docker
   variables:
     DOCKERPATH: "frontend"
+  needs:
+    - job: lint-frontend
+    - job: build-flutter-builder
+      optional: true

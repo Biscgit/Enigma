@@ -17,6 +17,9 @@ unit-integration-test:
   rules:
      - exists:
        - backend/server/test/*
+  needs:
+    - job: build-python-tester-linter
+      optional: true
 
 e2e-test:
   stage: e2e-test
@@ -32,3 +35,6 @@ e2e-test:
   rules:
     - exists:
         - frontend/test/*
+  needs:
+    - build-frontend
+    - build-backend

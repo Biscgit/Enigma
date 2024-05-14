@@ -4,11 +4,19 @@ scan-backend:
   extends: .scan_image
   variables:
     DOCKERPATH: "backend"
+  needs:
+    - job: build-backend
+    - job: build-scanner
+      optional: true
 
 scan-frontend:
   extends: .scan_image
   variables:
     DOCKERPATH: "frontend"
+  needs:
+    - job: build-frontend
+    - job: build-scanner
+      optional: true
 
 lint-frontend:
   stage: linter
@@ -19,6 +27,9 @@ lint-frontend:
   script:
     - flutter analyze --no-fatal-infos
   allow_failure: true
+  needs:
+    - job: build-flutter-builder
+      optional: true
 
 lint-backend:
   stage: linter
@@ -28,3 +39,6 @@ lint-backend:
   script:
     - python3 -m ruff check
   allow_failure: true
+  needs:
+    - job: build-python-tester-linter
+      optional: true
