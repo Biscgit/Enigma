@@ -18,7 +18,8 @@ unit-integration-test:
      - exists:
        - backend/server/test/*
   needs:
-    - lint-backend
+    - job: build-python-tester-linter
+      optional: true
 
 e2e-test:
   stage: e2e-test
