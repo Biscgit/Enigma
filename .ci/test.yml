@@ -17,6 +17,8 @@ unit-integration-test:
   rules:
      - exists:
        - backend/server/test/*
+  needs:
+    - lint-backend
 
 e2e-test:
   stage: e2e-test
@@ -32,3 +34,6 @@ e2e-test:
   rules:
     - exists:
         - frontend/test/*
+  needs:
+    - build-frontend
+    - build-backend
