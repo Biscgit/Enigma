@@ -36,5 +36,5 @@ e2e-test:
     - exists:
         - frontend/test/*
   needs:
-    - build-frontend
-    - build-backend
+    - job: build-frontend
+    - job: build-backend
