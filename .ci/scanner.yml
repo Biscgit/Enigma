@@ -49,7 +49,7 @@ lint-backend-rust:
   before_script:
     - cd backend/
   script:
-    - python3 -m ruff check
+    - cargo clippy --manifest-path=./rustlib/Cargo.toml -q
   allow_failure: true
   needs:
     - job: build-backend-rust
