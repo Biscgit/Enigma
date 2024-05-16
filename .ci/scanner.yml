@@ -31,15 +31,25 @@ lint-frontend:
     - job: build-flutter-builder
       optional: true
 
-lint-backend:
+lint-backend-python:
   stage: linter
   image: ${CI_REGISTRY_IMAGE}/python-tester-linter:latest
   before_script:
     - cd backend/
   script:
     - python3 -m ruff check
-    - cargo clippy --manifest-path=./rustlib/Cargo.toml -q
   allow_failure: true
   needs:
     - job: build-python-tester-linter
       optional: true
+
+lint-backend-rust:
+  stage: linter
+  image: ${CI_REGISTRY_IMAGE}/build-backend-rust:cl-19
+  before_script:
+    - cd backend/
+  script:
+    - python3 -m ruff check
+  allow_failure: true
+  needs:
+    - job: build-backend-rust

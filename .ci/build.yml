@@ -10,13 +10,6 @@ build-flutter-builder:
     - if: "$NIGHTLY_BUILD"
   needs: []
 
-build-backend-rust:
-  stage: prebuild
-  extends: .build-docker
-  variables:
-    DOCKERPATH: "backend/rustlib"
-  needs: []
-
 build-python-tester-linter:
   stage: prebuild
   extends: .build-docker
@@ -38,6 +31,13 @@ build-scanner:
     - if: "$NIGHTLY_BUILD"
   needs: []
 
+build-backend-rust:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: "backend/rustlib"
+  needs: []
+
 build-backend:
   extends: .build-docker
   variables:
@@ -45,7 +45,8 @@ build-backend:
   needs:
     - job: build-backend-rust
     - job: unit-integration-test
-    - job: lint-backend
+    - job: lint-backend-python
+    - job: lint-backend-rust
 
 build-frontend:
   extends: .build-docker
