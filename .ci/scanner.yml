@@ -45,7 +45,7 @@ lint-backend-python:
 
 lint-backend-rust:
   stage: linter
-  image: ${CI_REGISTRY_IMAGE}/backend/rustlib:cl-19
+  image: ${CI_REGISTRY_IMAGE}/backend/rustlib:latest
   before_script:
     - cd backend/
   script:
