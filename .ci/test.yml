@@ -1,6 +1,6 @@
 unit-integration-test:
   stage: test
-  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:latest
+  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:$CI_COMMIT_REF_SLUG
   before_script:
     - cd backend
   script:

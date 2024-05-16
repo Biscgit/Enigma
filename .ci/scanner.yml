@@ -33,7 +33,7 @@ lint-frontend:
 
 lint-backend:
   stage: linter
-  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:cl-19
+  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:latest
   before_script:
     - cd backend/
   script:
