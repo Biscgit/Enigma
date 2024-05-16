@@ -1,21 +1,48 @@
 # by David Horvát, 2024
+
+# build fastapi
+FROM python:3.12-alpine as builder
+
+RUN apk update && apk add --no-cache curl gcc musl-dev
+RUN curl --proto '=https' --tlsv1.3 -sSf https://sh.rustup.rs > rustup.sh && \
+    chmod +x rustup.sh && \
+    ./rustup.sh -y && \
+    rm rustup.sh
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN rustup default stable
+
+# setup python
+RUN python3 -m ensurepip
+RUN python3 -m pip install --no-cache --upgrade pip setuptools maturin
+
+# install rustlib
+ENV PYO3_PYTHON=python3.12
+WORKDIR /home/fastapi/rustlib
+
+COPY ./rustlib .
+RUN python3 -m maturin build -o wheel
+RUN cargo clean
+
 FROM python:3.12-alpine
 
 # permission security
 RUN addgroup -S sgroup && adduser -S fastapi -G sgroup
 WORKDIR /home/fastapi
 
-# setup python
-RUN python3 -m ensurepip
-RUN python3 -m pip install --no-cache --upgrade pip setuptools
-
 # install dependencies
+RUN apk update && apk add --no-cache gcc
+
 COPY requirements.txt ./
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
-COPY . .
 
-# run service with uvicorn
+# install rustlib
+COPY --from=builder /home/fastapi/rustlib/wheel/rustlib-0.1.0-cp312-cp312-linux_x86_64.whl ./packeges/
+RUN python3 -m pip install --no-cache-dir ./packeges/*.whl && rm -r ./packeges
+
+# copy files and run
 USER fastapi
+WORKDIR /home/fastapi
+COPY ./server ./server
 
 EXPOSE 8001
 ENTRYPOINT ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "8001"]

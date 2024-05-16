@@ -9,7 +9,7 @@ import asyncpg
 import fastapi
 
 from .models import LoginForm
-
+from rustlib import list_length
 
 class Database:
     """Database interface"""
@@ -30,6 +30,7 @@ class Database:
 
     async def connect(self) -> None:
         logging.info("Connecting to database...")
+        logging.info(f"Length 3 = {list_length([1, 2, 3])}")
 
         if self.pool is not None:
             raise Exception("Database connection is already established")
