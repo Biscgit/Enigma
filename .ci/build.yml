@@ -31,11 +31,18 @@ build-scanner:
     - if: "$NIGHTLY_BUILD"
   needs: []
 
+build-backend-rust:
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/rustlib"
+  needs: []
+
 build-backend:
   extends: .build-docker
   variables:
     DOCKERPATH: "backend"
   needs:
+    - job: build-backend-rust
     - job: unit-integration-test
     - job: lint-backend
 

@@ -11,6 +11,7 @@ import fastapi
 from .models import LoginForm
 from rustlib import list_length
 
+
 class Database:
     """Database interface"""
     max_chars = 140
