@@ -19,7 +19,8 @@ build-python-tester-linter:
     NAME: "/python-tester-linter"
   rules:
     - if: "$NIGHTLY_BUILD"
-  needs: []
+  needs:
+    - job: build-backend-rust
 
 build-scanner:
   stage: prebuild
