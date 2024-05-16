@@ -45,7 +45,6 @@ build-backend:
     DOCKERPATH: "backend"
   needs:
     - job: build-backend-rust
-      optional: true
     - job: unit-integration-test
     - job: lint-backend-python
     - job: lint-backend-rust

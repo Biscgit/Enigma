@@ -53,4 +53,3 @@ lint-backend-rust:
   allow_failure: true
   needs:
     - job: build-backend-rust
-      optional: true
