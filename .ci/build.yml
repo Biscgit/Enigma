@@ -15,8 +15,6 @@ build-backend-rust:
   extends: .build-docker
   variables:
     DOCKERPATH: "backend/rustlib"
-  rules:
-    - if: "$NIGHTLY_BUILD"
   needs: []
 
 build-python-tester-linter:
@@ -29,7 +27,6 @@ build-python-tester-linter:
     - if: "$NIGHTLY_BUILD"
   needs:
     - job: build-backend-rust
-      optional: true
 
 build-scanner:
   stage: prebuild
