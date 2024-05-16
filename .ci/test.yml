@@ -1,6 +1,6 @@
 unit-integration-test:
   stage: test
-  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:$CI_COMMIT_REF_SLUG
+  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:cl-19
   before_script:
     - cd backend
   script:
@@ -36,5 +36,5 @@ e2e-test:
     - exists:
         - frontend/test/*
   needs:
-    - build-frontend
-    - build-backend
+    - job: build-frontend
+    - job: build-backend
