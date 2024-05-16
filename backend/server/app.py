@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.lib import *
+from server.lib.routes import *
 
 # init fastapi and db
 configure_logger()

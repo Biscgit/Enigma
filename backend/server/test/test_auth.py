@@ -1,7 +1,7 @@
 import fastapi
 import pytest
 
-from server.lib import routes
+from server.lib.routes import authentication as routes
 
 
 def test_check_auth_exits():
