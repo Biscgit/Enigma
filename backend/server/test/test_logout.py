@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 
 from server.app import app
-from server.lib import routes
+from server.lib.routes import authentication as routes
 
 pytest_plugins = ('pytest_asyncio',)
 

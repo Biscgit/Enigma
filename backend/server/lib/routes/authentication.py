@@ -4,8 +4,8 @@ from uuid import uuid4
 from hashlib import sha3_256
 
 from fastapi import APIRouter, Depends, HTTPException
-from .models import LoginForm
-from .database import get_database, Database
+from server.lib.models import LoginForm
+from server.lib.database import get_database, Database
 
 router = APIRouter()
 current_auth: dict[str, str] = {}
