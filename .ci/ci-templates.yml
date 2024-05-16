@@ -24,8 +24,7 @@ variables:
     - docker image rm $IMAGE_TAG_LATEST -f
   # Run this job in a branch where a Dockerfile exists
   rules:
-    - if: $CI_COMMIT_BRANCH
-      exists:
+    - exists:
         - $DOCKERPATH/Dockerfile
 
 .scan_image:
@@ -42,6 +41,5 @@ variables:
     reports:
       container_scanning: output.txt
   rules:
-    - if: $CI_COMMIT_BRANCH
-      exists:
+    - exists:
         - $DOCKERPATH/Dockerfile
