@@ -39,6 +39,7 @@ build-backend-rust:
   needs: []
 
 build-backend:
+  stage: build
   extends: .build-docker
   variables:
     DOCKERPATH: "backend"
@@ -49,6 +50,7 @@ build-backend:
     - job: lint-backend-rust
 
 build-frontend:
+  stage: build
   extends: .build-docker
   variables:
     DOCKERPATH: "frontend"

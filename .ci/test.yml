@@ -37,4 +37,6 @@ e2e-test:
         - frontend/test/*
   needs:
     - job: build-frontend
+      optional: true
     - job: build-backend
+      optional: true
