@@ -25,7 +25,9 @@ variables:
   # Run this job in a branch where a Dockerfile exists
   rules:
     - exists:
-        - $DOCKERPATH/Dockerfile
+      - $DOCKERPATH/Dockerfile
+    - changes:
+      - "$DOCKERPATH/**"
 
 .scan_image:
   stage: scanner
@@ -42,4 +44,4 @@ variables:
       container_scanning: output.txt
   rules:
     - exists:
-        - $DOCKERPATH/Dockerfile
+      - $DOCKERPATH/Dockerfile

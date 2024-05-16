@@ -6,6 +6,7 @@ scan-backend:
     DOCKERPATH: "backend"
   needs:
     - job: build-backend
+      optional: true
     - job: build-scanner
       optional: true
 
@@ -15,6 +16,7 @@ scan-frontend:
     DOCKERPATH: "frontend"
   needs:
     - job: build-frontend
+      optional: true
     - job: build-scanner
       optional: true
 
@@ -27,6 +29,9 @@ lint-frontend:
   script:
     - flutter analyze --no-fatal-infos
   allow_failure: true
+  rules: 
+   - changes:
+      - "frontend/**"
   needs:
     - job: build-flutter-builder
       optional: true
@@ -39,6 +44,9 @@ lint-backend-python:
   script:
     - python3 -m ruff check
   allow_failure: true
+  rules: 
+   - changes:
+      - "backend/**"
   needs:
     - job: build-python-tester-linter
       optional: true
@@ -51,6 +59,9 @@ lint-backend-rust:
   script:
     - cargo clippy --manifest-path=./rustlib/Cargo.toml -q
   allow_failure: true
+  rules: 
+   - changes:
+      - "backend/rustlib/**"
   needs:
     - job: build-backend-rust
       optional: true
