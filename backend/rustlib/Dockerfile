@@ -17,5 +17,5 @@ RUN python3 -m pip install --no-cache --upgrade pip setuptools maturin
 ENV PYO3_PYTHON=python3.12
 WORKDIR /home/
 
-COPY ./rustlib .
+COPY . .
 RUN python3 -m maturin build -o wheel && cargo clean

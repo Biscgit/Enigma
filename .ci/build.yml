@@ -34,7 +34,7 @@ build-scanner:
 build-backend-rust:
   extends: .build-docker
   variables:
-    DOCKERPATH: ".docker-builds/rustlib"
+    DOCKERPATH: "backend/rustlib"
   needs: []
 
 build-backend:
