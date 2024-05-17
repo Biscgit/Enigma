@@ -148,7 +148,7 @@ class Database:
                 await conn.execute(
                     f"""
                     UPDATE machines
-                    SET character_history[{pointer}] = $4,
+                    SET character_history[{pointer}] = $4::json,
                         character_pointer = $3
                     WHERE username = $1 AND id = $2
                     """,
@@ -162,6 +162,7 @@ class Database:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
+
                 result = await conn.fetchval(
                     f"""
                     WITH indexed_history AS (
