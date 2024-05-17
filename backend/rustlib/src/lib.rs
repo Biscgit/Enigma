@@ -1,7 +1,6 @@
 #![allow(deprecated)]
 
 use pyo3::prelude::*;
-use serde_json;
 
 
 /// return the filtered plugboard list
