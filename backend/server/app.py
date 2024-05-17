@@ -1,3 +1,4 @@
+import this  # noqa
 import logging
 
 from fastapi import FastAPI
