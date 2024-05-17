@@ -6,7 +6,7 @@ class Rotor():
     alphabet = string.ascii_lowercase  
     len_al = len(alphabet)
     ord_reducer=ord('a')
-    def __init__(self, alphabet: str, start: chr, notch: chr):
+    def __init__(self, alphabet: str, start: chr, notch: ststr):
         self.mapped_alphabet = str.lower(alphabet)
         self.start = Rotor.get_ord(start)
         self.notch = list(map(Rotor.get_ord, notch)) #[Rotor.get_ord(i) for i in notch ]
