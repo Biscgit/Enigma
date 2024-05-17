@@ -7,7 +7,7 @@ RUN addgroup -S sgroup && adduser -S fastapi -G sgroup
 WORKDIR /home/fastapi
 
 # install dependencies
-RUN apk update && apk add --no-cache gcc
+# RUN apk update && apk add --no-cache gcc
 
 COPY requirements.txt ./
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
