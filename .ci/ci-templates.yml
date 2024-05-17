@@ -27,7 +27,7 @@ variables:
     - exists:
       - $DOCKERPATH/Dockerfile
     - changes:
-      - "$DOCKERPATH/**"
+      - "$DOCKERPATH/**/*"
 
 .scan_image:
   stage: scanner

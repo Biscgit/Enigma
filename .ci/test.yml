@@ -18,7 +18,7 @@ unit-integration-test:
     - exists:
       - backend/server/test/*
     - changes:
-      - "backend/**"
+      - "backend/**/*"
   needs:
     - job: build-python-tester-linter
       optional: true

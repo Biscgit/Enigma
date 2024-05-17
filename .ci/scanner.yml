@@ -31,7 +31,7 @@ lint-frontend:
   allow_failure: true
   rules: 
    - changes:
-      - "frontend/**"
+      - "frontend/**/*"
   needs:
     - job: build-flutter-builder
       optional: true
@@ -46,7 +46,7 @@ lint-backend-python:
   allow_failure: true
   rules: 
    - changes:
-      - "backend/**"
+      - "backend/**/*"
   needs:
     - job: build-python-tester-linter
       optional: true
@@ -61,7 +61,7 @@ lint-backend-rust:
   allow_failure: true
   rules: 
    - changes:
-      - "backend/rustlib/**"
+      - "backend/rustlib/**/*"
   needs:
     - job: build-backend-rust
       optional: true
