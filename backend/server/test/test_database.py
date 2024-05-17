@@ -105,12 +105,16 @@ async def test_postgres_credentials(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_postgres_key_storage(monkeypatch):
+async def test_postgres_keypair_storage(monkeypatch):
     # setup
-    with PostgresContainer("postgres:16-alpine") as pg:
-        # issue with testcontainers: wrong port mapping on postgres
+    with PostgresContainer("postgres:16") as pg:
         users = [
             {"username": "user1", "password": "pass1"},
             {"username": "user2", "password": "pass2"},
         ]
+        machines = [3596, 2375, 9465, 5767, 8451]
+
+        user = users[0]["username"]
+        machine = machines[0]
+
         test_client = await _create_db_with_users(pg, users, monkeypatch)
