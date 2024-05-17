@@ -2,6 +2,7 @@ __all__ = ["get_database", "Database"]
 
 import asyncio
 import contextlib
+import json
 import logging
 from os import environ
 
@@ -133,6 +134,28 @@ class Database:
                 return result
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    async def save_keyboard_pair(self, username: str, machine: int, clear: str, encrypted: str) -> None:
+        """saves a key pair into the database history"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                pointer = await self._get_history_pointer_position(conn, username, machine)
+                pointer = (pointer + 1) % Database.max_chars
+
+                # update the pointer and add character-pair
+                await conn.execute(
+                    f"""
+                    UPDATE machines
+                    SET character_history[{pointer}] = $4,
+                        character_pointer = $3
+                    WHERE username = $1 AND id = $2
+                    """,
+                    username, machine, pointer, json.dumps([clear, encrypted])
+                )
+
+                logging.info(f"Saved key-pair to database with index {pointer}")
 
     @staticmethod
     async def _get_history_pointer_position(conn: asyncpg.Connection, username: str, machine: int) -> int:
