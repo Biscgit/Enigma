@@ -2,8 +2,10 @@ __all__ = ["get_database", "Database"]
 
 import asyncio
 import contextlib
+import itertools
 import json
 import logging
+import string
 from os import environ
 
 import asyncpg
@@ -157,7 +159,7 @@ class Database:
 
                 logging.info(f"Saved key-pair to database with index {pointer}")
 
-    async def get_key_pairs(self, username: str, machine: int) -> list:
+    async def get_key_pairs(self, username: str, machine: int) -> list[list[str]]:
         """returns key-pairs in last inserted first order"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
