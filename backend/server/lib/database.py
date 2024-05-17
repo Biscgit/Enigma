@@ -212,9 +212,9 @@ class Database:
                     flatten_plugs = set(itertools.chain.from_iterable(current_plugs))
 
                     if any(e in flatten_plugs for e in plugboard):
-                        raise Exception(f"Invalid configuration: At least one with that configuration already exist!")
+                        raise Exception("Invalid configuration: At least one with that configuration already exist!")
                     if any(e.lower() not in string.ascii_lowercase for e in plugboard):
-                        raise Exception(f"One of the symbols cannot be inserted to the plugboard!")
+                        raise Exception("One of the symbols cannot be inserted to the plugboard!")
 
                     # insert into database
                     await conn.execute(
