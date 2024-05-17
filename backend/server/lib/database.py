@@ -10,9 +10,9 @@ from os import environ
 
 import asyncpg
 import fastapi
+import rustlib
 
 from .models import LoginForm
-from rustlib import list_length
 
 
 class Database:
@@ -34,7 +34,6 @@ class Database:
 
     async def connect(self) -> None:
         logging.info("Connecting to database...")
-        logging.info(f"Length 3 = {list_length([1, 2, 3])}")
 
         if self.pool is not None:
             raise Exception("Database connection is already established")
@@ -242,7 +241,8 @@ class Database:
                 count = await self._get_plugboard_count(username, machine)
 
                 boards = await self.get_plugboards(username, machine)
-                boards = [json.dumps(b) for b in boards if set(b) != set(plugboard)]
+                boards = rustlib.drop_plugboard_pair(boards, plugboard)
+                # boards = [json.dumps(b) for b in boards if set(b) != set(plugboard)]
 
                 if count == len(boards):
                     raise Exception(f"Trying to remove non-existent plugboard {plugboard} for {username}.{machine}")
