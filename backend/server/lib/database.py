@@ -15,7 +15,7 @@ from rustlib import list_length
 
 class Database:
     """Database interface"""
-    max_chars = 140
+    char_max = 140
     instance: "Database" = None
 
     def __init__(self):
@@ -142,7 +142,7 @@ class Database:
                 conn: asyncpg.Connection
 
                 pointer = await self._get_history_pointer_position(conn, username, machine)
-                pointer = (pointer + 1) % Database.max_chars
+                pointer = (pointer + 1) % Database.char_max
 
                 # update the pointer and add character-pair
                 await conn.execute(
@@ -167,7 +167,7 @@ class Database:
                     WITH indexed_history AS (
                         SELECT 
                             elem,
-                            (character_pointer - index + 1 + 140) % 140 AS shifted_index
+                            (character_pointer - index + 1 + {Database.char_max}) % {Database.char_max} AS shifted_index
                         FROM machines,
                         UNNEST(character_history) WITH ORDINALITY AS unnested(elem, index)
                         WHERE username = $1 AND id = $2
