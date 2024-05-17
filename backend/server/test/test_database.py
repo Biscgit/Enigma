@@ -330,3 +330,17 @@ async def test_postgres_plugboard_configuration(monkeypatch):
 
         pair_number = await db._get_plugboard_count(user, machine)
         assert len(test_pairs) == pair_number
+
+        # raise exception on too many valid connections
+        for pair in [['x', 'y'], ['q', 'z'], ['j', 'p'], ['c', 'f'], ['v', 'n'], ['e', 's'], ['r', 'u']]:
+            await db.save_plugboard(user, machine, *pair)
+
+        pair_number = await db._get_plugboard_count(user, machine)
+        assert pair_number == 10
+
+        with pytest.raises(asyncpg.CheckViolationError):
+            await db.save_plugboard(user, machine, *['m', 'i'])
+
+        # clean up
+        await db.disconnect()
+        await test_client.close()
