@@ -1,7 +1,7 @@
 FROM registry.mygit.th-deg.de/ts19084/enigma/backend/rustlib:cl-19 as builder
 FROM python:3.12-alpine
 
-RUN apk update && apk add libxml2 libxml2-utils openrc docker gcc
+RUN apk update && apk add libxml2 libxml2-utils openrc docker
 
 # setup venv
 WORKDIR /app
