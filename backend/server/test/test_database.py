@@ -238,3 +238,8 @@ async def test_postgres_keypair_storage(monkeypatch):
 
         chars = await db.get_key_pairs(users[1]["username"], machines[1])
         assert chars == expected_arr
+
+        # clean up
+        await db.disconnect()
+        await test_client.close()
+
