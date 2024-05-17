@@ -4,7 +4,7 @@ import string
 
 class Rotor():
     alphabet = string.ascii_lowercase  
-    len_al = len(Rotor.alphabet)
+    len_al = len(alphabet)
     ord_reducer=ord('a')
     def __init__(self, alphabet: str, start: chr, notch: chr):
         self.mapped_alphabet = str.lower(alphabet)
