@@ -243,3 +243,90 @@ async def test_postgres_keypair_storage(monkeypatch):
         await db.disconnect()
         await test_client.close()
 
+
+@pytest.mark.asyncio
+async def test_postgres_plugboard_configuration(monkeypatch):
+    # setup
+    with PostgresContainer("postgres:16-alpine") as pg:
+        users = [
+            {"username": "user1", "password": "pass1"},
+            {"username": "user2", "password": "pass2"},
+        ]
+        machines = [3596, 2375, 9465, 5767, 8451]
+
+        user = users[0]["username"]
+        machine = machines[0]
+
+        test_client = await _create_db_with_users(pg, users, monkeypatch)
+        await test_client.set_type_codec(
+            'json',
+            encoder=json.dumps,
+            decoder=json.loads,
+            schema='pg_catalog'
+        )
+
+        async with test_client.transaction():
+            # minimal database
+            await test_client.execute(
+                """
+                CREATE TABLE machines (
+                    id SERIAL,
+                    username TEXT,
+
+                    plugboard_config JSON[10],
+
+                    PRIMARY KEY (id, username),
+                    CHECK (array_length(plugboard_config, 1) <= 10)
+                )
+                """
+            )
+
+            for u in users:
+                for machine in machines:
+                    await test_client.execute(
+                        """
+                        INSERT INTO machines(id, username, plugboard_config)
+                        VALUES (
+                            $1, 
+                            $2, 
+                            ARRAY[]::JSON[]
+                        )
+                        """,
+                        machine, u["username"],
+                    )
+
+        db = database.get_database()
+        await db.connect()
+
+        # insert pairs and read
+        test_pairs = [['a', 'b'], ['w', 'g'], ['l', 'h']]
+        for pair in test_pairs:
+            await db.save_plugboard(user, machine, *pair)
+
+        result = await db.get_plugboards(user, machine)
+        for item in result:
+            assert set(item) in [set(x) for x in test_pairs]
+
+        # test length
+        pair_number = await db._get_plugboard_count(user, machine)
+        assert len(test_pairs) == pair_number
+
+        # insert with pair exists
+        with pytest.raises(Exception):
+            await db.save_plugboard(user, machine, *test_pairs[0])
+
+        # insert with one letter exists
+        with pytest.raises(Exception):
+            await db.save_plugboard(user, machine, *['k', 'w'])
+
+        # insert no latter
+        with pytest.raises(Exception):
+            await db.save_plugboard(user, machine, *['o', '+'])
+
+        # ensure that nothing got inserted
+        result = await db.get_plugboards(user, machine)
+        for item in result:
+            assert set(item) in [set(x) for x in test_pairs]
+
+        pair_number = await db._get_plugboard_count(user, machine)
+        assert len(test_pairs) == pair_number
