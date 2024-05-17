@@ -132,6 +132,22 @@ class Database:
 
                 return result
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    @staticmethod
+    async def _get_history_pointer_position(conn: asyncpg.Connection, username: str, machine: int) -> int:
+        """Returns the point position of the current history. The value is between 0-139 or -1 if not set"""
+        return int(await conn.fetchval(
+            """
+            SELECT character_pointer
+            FROM machines
+            WHERE username = $1 AND id = $2
+            """,
+            username, machine
+        ))
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 def get_database() -> Database:
     if Database.instance is None:
