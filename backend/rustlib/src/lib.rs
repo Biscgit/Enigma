@@ -4,7 +4,7 @@ use pyo3::prelude::*;
 
 /// returns the length of a list
 #[pyfunction]
-fn list_length(letters: Vec<usize>) -> PyResult<usize> {
+fn list_length(letters: Vec<PyAny>) -> PyResult<usize> {
     Ok(letters.len())
 }
 
