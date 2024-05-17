@@ -203,3 +203,38 @@ async def test_postgres_keypair_storage(monkeypatch):
         await db.save_keyboard_pair(user, machines[3], 'x', 'y')
         pointer = await db._get_history_pointer_position(test_client, user, machines[3])
         assert pointer == 0
+
+        # test getting characters
+        chars = await db.get_key_pairs(user, machines[3])
+        assert chars == [['x', 'y'] for _ in range(140)]
+
+        chars = await db.get_key_pairs(user, machine)
+        test_pairs.reverse()
+        assert chars == test_pairs
+
+        # test with no characters inserted
+        chars = await db.get_key_pairs(user, machines[2])
+        assert chars == []
+
+        # test getting lastly inserted characters with pointer overflow
+        expected_arr = [['l', 'h'], ['r', 's'], ['v', 't']] + [['r', 's'] for _ in range(136)] + [['o', 'p']]
+
+        async with test_client.transaction():
+            for i in range(70):
+                await db.save_keyboard_pair(users[1]["username"], machines[1], 'r', 's')
+            await db.save_keyboard_pair(users[1]["username"], machines[1], "u", "i")
+
+            # should be the 140th element on pointer 70:
+            await db.save_keyboard_pair(users[1]["username"], machines[1], "o", "p")
+            for i in range(136):
+                await db.save_keyboard_pair(users[1]["username"], machines[1], 'r', 's')
+
+            await db.save_keyboard_pair(users[1]["username"], machines[1], "v", "t")
+            await db.save_keyboard_pair(users[1]["username"], machines[1], "r", "s")
+            await db.save_keyboard_pair(users[1]["username"], machines[1], "l", "h")
+
+        pointer = await db._get_history_pointer_position(test_client, users[1]["username"], machines[1])
+        assert pointer == 70
+
+        chars = await db.get_key_pairs(users[1]["username"], machines[1])
+        assert chars == expected_arr
