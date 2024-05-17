@@ -157,6 +157,32 @@ class Database:
 
                 logging.info(f"Saved key-pair to database with index {pointer}")
 
+    async def get_key_pairs(self, username: str, machine: int) -> list:
+        """returns key-pairs in last inserted first order"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+                result = await conn.fetchval(
+                    f"""
+                    WITH indexed_history AS (
+                        SELECT 
+                            elem,
+                            (character_pointer - index + 1 + 140) % 140 AS shifted_index
+                        FROM machines,
+                        UNNEST(character_history) WITH ORDINALITY AS unnested(elem, index)
+                        WHERE username = $1 AND id = $2
+                    )
+                    SELECT
+                      ARRAY_AGG(elem ORDER BY shifted_index) AS sorted_array
+                    FROM
+                      indexed_history
+                    """,
+                    username, machine
+                )
+
+                logging.info(f"Fetched key-pairs for {username}.{machine}: {str(result)[:80]}")
+                return [json.loads(pair) for pair in result or []]
+
     @staticmethod
     async def _get_history_pointer_position(conn: asyncpg.Connection, username: str, machine: int) -> int:
         """Returns the point position of the current history. The value is between 0-139 or -1 if not set"""
