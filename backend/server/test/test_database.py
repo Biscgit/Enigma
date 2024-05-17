@@ -341,6 +341,32 @@ async def test_postgres_plugboard_configuration(monkeypatch):
         with pytest.raises(asyncpg.CheckViolationError):
             await db.save_plugboard(user, machine, *['m', 'i'])
 
+        # remove valid configurations
+        for pair in test_pairs:
+            await db.remove_plugboard(user, machine, *pair)
+
+        pair_number = await db._get_plugboard_count(user, machine)
+        assert pair_number == 7
+
+        # exception on removing non-valid plug
+        with pytest.raises(Exception):
+            await db.remove_plugboard(user, machine, *test_pairs[0])
+
+        pair_number = await db._get_plugboard_count(user, machine)
+        assert pair_number == 7
+
+        # remove all plugs
+        all_plugs = await db.get_plugboards(user, machine)
+        for pair in all_plugs:
+            await db.remove_plugboard(user, machine, *pair)
+
+        pair_number = await db._get_plugboard_count(user, machine)
+        assert pair_number == 0
+
+        # check empty plugboard request
+        result = await db.get_plugboards(user, machine)
+        assert result == []
+
         # clean up
         await db.disconnect()
         await test_client.close()
