@@ -200,6 +200,39 @@ class Database:
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    async def save_plugboard(self, username: str, machine: int, key_1: str, key_2: str) -> None:
+        """saves a plugboard configuration to a machine"""
+        try:
+            async with self.pool.acquire() as conn:
+                async with conn.transaction():
+                    conn: asyncpg.Connection
+                    plugboard = [key_1, key_2]
+
+                    # execute a check before inserting
+                    current_plugs = await self.get_plugboards(username, machine)
+                    flatten_plugs = set(itertools.chain.from_iterable(current_plugs))
+
+                    if any(e in flatten_plugs for e in plugboard):
+                        raise Exception(f"Invalid configuration: At least one with that configuration already exist!")
+                    if any(e.lower() not in string.ascii_lowercase for e in plugboard):
+                        raise Exception(f"One of the symbols cannot be inserted to the plugboard!")
+
+                    # insert into database
+                    await conn.execute(
+                        """
+                        UPDATE machines
+                        SET plugboard_config = plugboard_config || $3::json
+                        WHERE username = $1 AND id = $2
+                        """,
+                        username, machine, json.dumps(plugboard)
+                    )
+
+                    logging.info(f"Saved plugboard [{plugboard}] to database for {username}.{machine}")
+
+        except asyncpg.CheckViolationError:
+            logging.error("There are already 10 Plugboards saved!")
+            raise
+
     async def get_plugboards(self, username: str, machine: int) -> list:
         """returns all plugboard configurations for a machine"""
         async with self.pool.acquire() as conn:
