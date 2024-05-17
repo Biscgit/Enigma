@@ -1,7 +1,3 @@
-.idea
-.vscode
-
-# flutter
 # Miscellaneous
 *.class
 *.log
@@ -34,7 +30,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-/web/
+pubspec.lock
+screenshots/**/*
 
 # Symbolication related
 app.*.symbols
@@ -46,10 +43,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-
-# Python venvs
-backend/.venv/**/*
-backend/venv/**/*
-backend/env/**/*
-backend/.env/**/*
