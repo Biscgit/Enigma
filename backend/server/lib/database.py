@@ -233,6 +233,29 @@ class Database:
             logging.error("There are already 10 Plugboards saved!")
             raise
 
+    async def remove_plugboard(self, username: str, machine: int, key_1: str, key_2: str) -> None:
+        """removed a plugboard configuration if exists"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+                plugboard = [key_1, key_2]
+                count = await self._get_plugboard_count(username, machine)
+
+                boards = await self.get_plugboards(username, machine)
+                boards = [json.dumps(b) for b in boards if set(b) != set(plugboard)]
+
+                if count == len(boards):
+                    raise Exception(f"Trying to remove non-existent plugboard {plugboard} for {username}.{machine}")
+
+                await conn.execute(
+                    """
+                    UPDATE machines
+                    SET plugboard_config = $3
+                    WHERE username = $1 AND id = $2
+                    """,
+                    username, machine, boards
+                )
+
     async def get_plugboards(self, username: str, machine: int) -> list:
         """returns all plugboard configurations for a machine"""
         async with self.pool.acquire() as conn:
