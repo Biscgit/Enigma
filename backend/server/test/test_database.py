@@ -118,3 +118,76 @@ async def test_postgres_keypair_storage(monkeypatch):
         machine = machines[0]
 
         test_client = await _create_db_with_users(pg, users, monkeypatch)
+        await test_client.set_type_codec(
+            'json',
+            encoder=json.dumps,
+            decoder=json.loads,
+            schema='pg_catalog'
+        )
+
+        async with test_client.transaction():
+            # minimal database
+            await test_client.execute(
+                """
+                CREATE TABLE machines (
+                    id SERIAL,
+                    username TEXT,
+                
+                    character_pointer INTEGER,
+                    character_history JSON[140],
+                    
+                    PRIMARY KEY (id, username),
+                    CHECK (array_length(character_history, 1) <= 140)
+                )
+                """
+            )
+
+            for u in users:
+                for machine in machines:
+                    await test_client.execute(
+                        """
+                        INSERT INTO machines(id, username, character_pointer, character_history)
+                        VALUES (
+                            $1, 
+                            $2, 
+                            $3,
+                            ARRAY[]::JSON[]
+                        )
+                        """,
+                        machine, u["username"], -1
+                    )
+
+        # launch connection
+        db = database.get_database()
+        await db.connect()
+
+        # pointer and save test
+        pointer = await db._get_history_pointer_position(test_client, user, machine)
+        assert pointer == -1
+
+        test_pairs = [['a', 'b'], ['w', 'a'], ['g', 'f'], ['b', 'q']]
+        await db.save_keyboard_pair(user, machine, *test_pairs[0])
+        pointer = await db._get_history_pointer_position(test_client, user, machine)
+        assert pointer == 0
+
+        # save to multiples
+        async with test_client.transaction():
+            for pair in test_pairs[1:]:
+                await db.save_keyboard_pair(
+                    user, machine, *pair,
+                )
+
+            await db.save_keyboard_pair(
+                users[1]["username"], machines[3], 'a', 'c'
+            )
+
+        pointer = await db._get_history_pointer_position(test_client, user, machine)
+        assert pointer == 3
+
+        # other state checks
+        other_machine_ptr = await db._get_history_pointer_position(test_client, user, machines[3])
+        assert other_machine_ptr == -1
+
+        other_user_ptr = await db._get_history_pointer_position(test_client, users[1]["username"], machines[3])
+        assert other_user_ptr == 0
+
