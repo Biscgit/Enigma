@@ -1,9 +1,13 @@
+import asyncio
+import json
+
 import asyncpg
 from testcontainers.postgres import PostgresContainer
 import pytest
 
-from server.lib import database, models
+from server.lib import database, models, logger
 
+logger.configure_logger(no_stdout=True)
 pytest_plugins = ('pytest_asyncio',)
 
 
