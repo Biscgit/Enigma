@@ -200,6 +200,31 @@ class Database:
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    async def get_plugboards(self, username: str, machine: int) -> list:
+        """returns all plugboard configurations for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                SELECT plugboard_config
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username, machine,
+            )
+
+            logging.info(f"Fetched plugboard for {username}.{machine}: {str(result)}")
+            return [json.loads(pair) for pair in result or []]
+
+    async def _get_plugboard_count(self, username: str, machine: int) -> int:
+        """counts the number of currently set plugboards"""
+        boards = await self.get_plugboards(username, machine)
+        return len(boards)
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 def get_database() -> Database:
     if Database.instance is None:
