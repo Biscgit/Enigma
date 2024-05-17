@@ -107,7 +107,7 @@ async def test_postgres_credentials(monkeypatch):
 @pytest.mark.asyncio
 async def test_postgres_keypair_storage(monkeypatch):
     # setup
-    with PostgresContainer("postgres:16") as pg:
+    with PostgresContainer("postgres:16-alpine") as pg:
         users = [
             {"username": "user1", "password": "pass1"},
             {"username": "user2", "password": "pass2"},
@@ -191,3 +191,15 @@ async def test_postgres_keypair_storage(monkeypatch):
         other_user_ptr = await db._get_history_pointer_position(test_client, users[1]["username"], machines[3])
         assert other_user_ptr == 0
 
+        # test cycle of pointer
+        async with test_client.transaction():
+            for i in range(140):
+                await db.save_keyboard_pair(user, machines[3], 'x', 'y')
+
+                pointer = await db._get_history_pointer_position(test_client, user, machines[3])
+                assert pointer == i
+
+        # pointer overflow occurs here
+        await db.save_keyboard_pair(user, machines[3], 'x', 'y')
+        pointer = await db._get_history_pointer_position(test_client, user, machines[3])
+        assert pointer == 0
