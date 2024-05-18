@@ -38,7 +38,7 @@ class Database:
         if self.pool is not None:
             raise Exception("Database connection is already established")
 
-        for _ in range(12):
+        for _ in range(6):
             try:
                 conn: asyncpg.Pool = await asyncpg.create_pool(
                     user=environ.get("DB_USER"),
@@ -220,6 +220,8 @@ class Database:
                         raise Exception("Invalid configuration: At least one with that configuration already exist!")
                     if any(e.lower() not in string.ascii_lowercase for e in plugboard):
                         raise Exception("One of the symbols cannot be inserted to the plugboard!")
+                    if any(len(e) != 1 for e in plugboard):
+                        raise Exception("One of the symbols is not a single character!")
 
                     # insert into database
                     await conn.execute(
