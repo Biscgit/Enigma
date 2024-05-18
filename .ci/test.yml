@@ -7,7 +7,7 @@ unit-integration-test:
     - python3 -m pytest --cov=./ --cov-report=xml --junitxml=report.xml
   after_script:
       - xmllint --format backend/report.xml
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  coverage: '/(?i)total.*? (\d.\d+(?="\sbranches-covered))$/'
   artifacts:
     reports:
       junit: backend/report.xml
