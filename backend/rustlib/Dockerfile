@@ -18,4 +18,4 @@ ENV PYO3_PYTHON=python3.12
 WORKDIR /home/
 
 COPY . .
-RUN python3 -m maturin build -o wheel && cargo clean
+RUN python3 -m maturin build --release --strip --color never -o wheel && cargo clean
