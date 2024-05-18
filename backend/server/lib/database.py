@@ -115,7 +115,7 @@ class Database:
         await self.pool.close()
         self.pool = None
 
-        logging.info("Successfully disconnected to database")
+        logging.info("Successfully disconnected from database")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
