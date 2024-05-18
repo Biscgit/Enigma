@@ -1,10 +1,11 @@
+import this  # noqa
 import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.lib import *
-from server.lib.routes import *
+from server.lib.routes import authentication, key_input
 
 # init fastapi and db
 configure_logger()
@@ -20,6 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# logging
-logging.info('FastAPI is starting up...')
-app.include_router(router)
+# load routes
+logging.info('Loading routes...')
+app.include_router(authentication.router)
+app.include_router(key_input.router)

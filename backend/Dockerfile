@@ -1,5 +1,5 @@
 # by David Horvát, 2024
-FROM registry.mygit.th-deg.de/ts19084/enigma/backend/rustlib:latest as builder
+FROM registry.mygit.th-deg.de/ts19084/enigma/backend/rustlib:dev as builder
 FROM python:3.12-alpine
 
 # permission security

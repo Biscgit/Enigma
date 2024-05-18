@@ -11,7 +11,7 @@ pytest_plugins = ('pytest_asyncio',)
 @pytest.fixture
 def mocked_uuid(mocker):
     # Patching uuid.uuid4() to return a constant string
-    mocked_uuid = mocker.patch('server.lib.authentication.uuid4', return_value="uuid-mock-string-0000")
+    mocked_uuid = mocker.patch('server.lib.routes.authentication.uuid4', return_value="uuid-mock-string-0000")
     return mocked_uuid
 
 

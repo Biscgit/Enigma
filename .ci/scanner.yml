@@ -59,6 +59,8 @@ lint-backend-rust:
   script:
     - cargo clippy --manifest-path=./rustlib/Cargo.toml -q
   allow_failure: true
+  needs:
+    - job: build-backend-rust
   rules: 
    - changes:
       - "backend/rustlib/**/*"

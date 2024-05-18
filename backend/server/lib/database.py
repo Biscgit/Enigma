@@ -2,19 +2,22 @@ __all__ = ["get_database", "Database"]
 
 import asyncio
 import contextlib
+import itertools
+import json
 import logging
+import string
 from os import environ
 
 import asyncpg
 import fastapi
+import rustlib
 
 from .models import LoginForm
-from rustlib import list_length
 
 
 class Database:
     """Database interface"""
-    max_chars = 140
+    char_max = 140
     instance: "Database" = None
 
     def __init__(self):
@@ -31,12 +34,11 @@ class Database:
 
     async def connect(self) -> None:
         logging.info("Connecting to database...")
-        logging.info(f"Length 3 = {list_length([1, 2, 3])}")
 
         if self.pool is not None:
             raise Exception("Database connection is already established")
 
-        for _ in range(12):
+        for _ in range(6):
             try:
                 conn: asyncpg.Pool = await asyncpg.create_pool(
                     user=environ.get("DB_USER"),
@@ -113,7 +115,7 @@ class Database:
         await self.pool.close()
         self.pool = None
 
-        logging.info("Successfully disconnected to database")
+        logging.info("Successfully disconnected from database")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -131,6 +133,165 @@ class Database:
                 )
 
                 return result
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    async def save_keyboard_pair(self, username: str, machine: int, clear: str, encrypted: str) -> None:
+        """saves a key pair into the database history"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                if any(e.lower() not in string.ascii_lowercase for e in [clear, encrypted]):
+                    raise Exception("One of the symbols cannot be inserted as history!")
+                if any(len(e) != 1 for e in [clear, encrypted]):
+                    raise Exception("One of the symbols is not a single character!")
+
+                pointer = await self._get_history_pointer_position(conn, username, machine)
+                pointer = (pointer + 1) % Database.char_max
+
+                # update the pointer and add character-pair
+                await conn.execute(
+                    f"""
+                    UPDATE machines
+                    SET character_history[{pointer}] = $4::json,
+                        character_pointer = $3
+                    WHERE username = $1 AND id = $2
+                    """,
+                    username, machine, pointer, json.dumps([clear, encrypted])
+                )
+
+                logging.info(f"Saved key-pair to database with index {pointer}")
+
+    async def get_key_pairs(self, username: str, machine: int) -> list[list[str]]:
+        """returns key-pairs in last inserted first order"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                result = await conn.fetchval(
+                    f"""
+                    WITH indexed_history AS (
+                        SELECT 
+                            elem,
+                            (character_pointer - index + 1 + {Database.char_max}) % {Database.char_max} AS shifted_index
+                        FROM machines,
+                        UNNEST(character_history) WITH ORDINALITY AS unnested(elem, index)
+                        WHERE username = $1 AND id = $2
+                    )
+                    SELECT
+                      ARRAY_AGG(elem ORDER BY shifted_index) AS sorted_array
+                    FROM
+                      indexed_history
+                    """,
+                    username, machine
+                )
+
+                logging.info(f"Fetched key-pairs for {username}.{machine}: {str(result)[:80]}")
+                return [json.loads(pair) for pair in result or []]
+
+    @staticmethod
+    async def _get_history_pointer_position(conn: asyncpg.Connection, username: str, machine: int) -> int:
+        """Returns the point position of the current history. The value is between 0-139 or -1 if not set"""
+        try:
+            return int(await conn.fetchval(
+                """
+                SELECT character_pointer
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username, machine
+            ))
+
+        except TypeError:
+            logging.error(f"Machine {username}.{machine} does not exist!")
+            raise
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    async def save_plugboard(self, username: str, machine: int, key_1: str, key_2: str) -> None:
+        """saves a plugboard configuration to a machine"""
+        try:
+            async with self.pool.acquire() as conn:
+                async with conn.transaction():
+                    conn: asyncpg.Connection
+                    plugboard = [key_1, key_2]
+
+                    # execute a check before inserting
+                    current_plugs = await self.get_plugboards(username, machine)
+                    flatten_plugs = set(itertools.chain.from_iterable(current_plugs))
+
+                    if any(e in flatten_plugs for e in plugboard):
+                        raise Exception("Invalid configuration: At least one with that configuration already exist!")
+                    if any(e.lower() not in string.ascii_lowercase for e in plugboard):
+                        raise Exception("One of the symbols cannot be inserted to the plugboard!")
+                    if any(len(e) != 1 for e in plugboard):
+                        raise Exception("One of the symbols is not a single character!")
+
+                    # insert into database
+                    await conn.execute(
+                        """
+                        UPDATE machines
+                        SET plugboard_config = plugboard_config || $3::json
+                        WHERE username = $1 AND id = $2
+                        """,
+                        username, machine, json.dumps(plugboard)
+                    )
+
+                    logging.info(f"Saved plugboard [{plugboard}] to database for {username}.{machine}")
+
+        except asyncpg.CheckViolationError:
+            logging.error("There are already 10 Plugboards saved!")
+            raise
+
+    async def remove_plugboard(self, username: str, machine: int, key_1: str, key_2: str) -> None:
+        """removed a plugboard configuration if exists"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+                plugboard = [key_1, key_2]
+                count = await self._get_plugboard_count(username, machine)
+
+                boards = await self.get_plugboards(username, machine)
+                boards = rustlib.drop_plugboard_pair(boards, plugboard)
+                # boards = [json.dumps(b) for b in boards if set(b) != set(plugboard)]
+
+                if count == len(boards):
+                    raise Exception(f"Trying to remove non-existent plugboard {plugboard} for {username}.{machine}")
+
+                await conn.execute(
+                    """
+                    UPDATE machines
+                    SET plugboard_config = $3
+                    WHERE username = $1 AND id = $2
+                    """,
+                    username, machine, boards
+                )
+
+    async def get_plugboards(self, username: str, machine: int) -> list:
+        """returns all plugboard configurations for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                SELECT plugboard_config
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username, machine,
+            )
+
+            logging.info(f"Fetched plugboard for {username}.{machine}: {str(result)}")
+            return [json.loads(pair) for pair in result or []]
+
+    async def _get_plugboard_count(self, username: str, machine: int) -> int:
+        """counts the number of currently set plugboards"""
+        boards = await self.get_plugboards(username, machine)
+        return len(boards)
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 def get_database() -> Database:
