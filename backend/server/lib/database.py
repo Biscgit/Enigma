@@ -142,6 +142,11 @@ class Database:
             async with conn.transaction():
                 conn: asyncpg.Connection
 
+                if any(e.lower() not in string.ascii_lowercase for e in [clear, encrypted]):
+                    raise Exception("One of the symbols cannot be inserted as history!")
+                if any(len(e) != 1 for e in [clear, encrypted]):
+                    raise Exception("One of the symbols is not a single character!")
+
                 pointer = await self._get_history_pointer_position(conn, username, machine)
                 pointer = (pointer + 1) % Database.char_max
 

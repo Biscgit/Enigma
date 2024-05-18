@@ -238,6 +238,23 @@ async def test_postgres_keypair_storage(monkeypatch):
         chars = await db.get_key_pairs(users[1]["username"], machines[1])
         assert chars == expected_arr
 
+        # test with adding invalid inputs
+        with pytest.raises(Exception):
+            await db.save_keyboard_pair(user, machine, *['o', '+'])
+
+        with pytest.raises(Exception):
+            await db.save_keyboard_pair(user, machine, *['', 'i'])
+
+        with pytest.raises(Exception):
+            await db.save_keyboard_pair(user, machine, *['p', 'long'])
+
+        # nothing should change after invalid inputs
+        pointer = await db._get_history_pointer_position(test_client, users[1]["username"], machines[1])
+        assert pointer == 70
+
+        chars = await db.get_key_pairs(users[1]["username"], machines[1])
+        assert chars == expected_arr
+
         # clean up
         await db.disconnect()
         await test_client.close()
