@@ -10,4 +10,4 @@
 
 ### Project Commands
 - Run GitLab: `docker compose up --build -d` 
-- Run Locally: `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building can take **3 to 6 Minutes!**)
+- Run Locally: `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building can take **3 to 8 Minutes!**)
