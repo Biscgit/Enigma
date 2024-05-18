@@ -16,6 +16,7 @@ async def encrypt_key(
 
     # ToDo: implement encryption here and store it to `encrypted_key`
     # ToDo: implement check if machine exists
+    # ToDo: add unit + integration tests when completed
     encrypted_key: str = "o"
 
     # save to history and return key
