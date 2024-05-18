@@ -1,4 +1,4 @@
-__all__ = ["router"]
+__all__ = ["router", "check_auth"]
 
 from uuid import uuid4
 from hashlib import sha3_256
