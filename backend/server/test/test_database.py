@@ -1,4 +1,3 @@
-import asyncio
 import json
 
 import asyncpg
@@ -322,6 +321,14 @@ async def test_postgres_plugboard_configuration(monkeypatch):
         # insert no latter
         with pytest.raises(Exception):
             await db.save_plugboard(user, machine, *['o', '+'])
+
+        # insert nothing
+        with pytest.raises(Exception):
+            await db.save_plugboard(user, machine, *['', 'i'])
+
+        # insert too many
+        with pytest.raises(Exception):
+            await db.save_plugboard(user, machine, *['p', 'long'])
 
         # ensure that nothing got inserted
         result = await db.get_plugboards(user, machine)
