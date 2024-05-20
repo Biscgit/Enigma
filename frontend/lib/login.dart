@@ -28,10 +28,10 @@ class LoginPage extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      final token = jsonDecode(response.body)["token"];
-
-      await Cookie.save('token', token);
       Navigator.pushReplacementNamed(context, '/home');
+
+      final token = jsonDecode(response.body)["token"];
+      await Cookie.save('token', token);
     } else {
       showDialog(
         context: context,
