@@ -41,7 +41,7 @@ async def test_postgres_keypair_storage(monkeypatch):
                     username TEXT,
                 
                     character_pointer INTEGER,
-                    character_history JSON[140],
+                    character_history JSON ARRAY[140],
                     
                     PRIMARY KEY (id, username),
                     CHECK (array_length(character_history, 1) <= 140)
@@ -197,7 +197,7 @@ async def test_postgres_plugboard_configuration(monkeypatch):
                     id SERIAL,
                     username TEXT,
 
-                    plugboard_config JSON[10],
+                    plugboard_config JSON ARRAY[10],
 
                     PRIMARY KEY (id, username),
                     CHECK (array_length(plugboard_config, 1) <= 10)
