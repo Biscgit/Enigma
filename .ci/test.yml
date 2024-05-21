@@ -9,6 +9,7 @@ unit-integration-test:
       - xmllint --format backend/report.xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
+    name: coverage
     reports:
       junit: backend/report.xml
       coverage_report:
