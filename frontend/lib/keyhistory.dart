@@ -11,7 +11,7 @@ class KeyHistoryList extends StatefulWidget {
 
 class _KeyHistoryState extends State<KeyHistoryList> {
   static const String apiUrl = 'http://172.20.0.101:8001/login';
-  static const MaxKeys = 140;
+  static const maxKeys = 140;
 
   final List<(String, String)> _keyHistory = <(String, String)>[];
 
@@ -36,7 +36,7 @@ class _KeyHistoryState extends State<KeyHistoryList> {
     /// Add the key to the key history
     _keyHistory.insert(0, (clear, encrypted));
 
-    if (_keyHistory.length > MaxKeys) {
+    if (_keyHistory.length > maxKeys) {
       _keyHistory.removeLast();
     }
   }
