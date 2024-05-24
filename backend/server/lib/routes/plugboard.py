@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel, validator
-from typing import List, Dict
 from server.lib.database import Database, get_database
 
 app = FastAPI()
