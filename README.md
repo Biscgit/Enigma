@@ -9,5 +9,7 @@
 - Login for GitLab registry builds: `docker login registry.mygit.th-deg.de`
 
 ### Project Commands
-- Run GitLab: `docker compose up --build -d` 
-- Run Locally: `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building can take **3 to 8 Minutes!**)
+- **Run** GitLab: `docker compose up --build -d` 
+- **Run** Locally: `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building can take **3 to 8 Minutes!**)
+- **Stop** Compose: `docker compose down`
+- **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!**)
