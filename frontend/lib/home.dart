@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:enigma/lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
+import 'package:enigma/keyhistory.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -66,7 +67,24 @@ class HomePageState extends State<HomePage> {
         onItemSelected: updateSelectedItem,
         key: const Key('enigma_sidebar'),
       ),
-      body: const Lampfield(),
+      body: Stack(
+        children: [
+          const Lampfield(),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: Container(
+              width: 200,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const KeyHistoryList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
