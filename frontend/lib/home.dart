@@ -74,8 +74,8 @@ class HomePageState extends State<HomePage> {
             bottom: 20,
             right: 20,
             child: Container(
-              width: 200,
-              height: 150,
+              width: 500,
+              height: 300,
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(10),
