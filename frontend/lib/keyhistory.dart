@@ -43,6 +43,17 @@ class _KeyHistoryState extends State<KeyHistoryList> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return ListView.builder(
+      itemCount: _keyHistory.length,
+      itemBuilder: (context, index) {
+        final keyPair = _keyHistory[index];
+        return ListTile(
+          title: Text(
+            '${keyPair.$1} -> ${keyPair.$2}',
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 }
