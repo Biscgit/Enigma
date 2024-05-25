@@ -77,7 +77,7 @@ class HomePageState extends State<HomePage> {
               width: 500,
               height: 300,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.grey,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const KeyHistoryList(),
