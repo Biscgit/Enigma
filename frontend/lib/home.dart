@@ -75,7 +75,7 @@ class HomePageState extends State<HomePage> {
             bottom: 10,
             right: 20,
             child: Container(
-              width: 500,
+              width: 300,
               height: 300,
               decoration: BoxDecoration(
                 color: Colors.black12,
