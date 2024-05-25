@@ -71,7 +71,8 @@ class HomePageState extends State<HomePage> {
         children: [
           const Lampfield(),
           Positioned(
-            bottom: 20,
+            top: 0,
+            bottom: 10,
             right: 20,
             child: Container(
               width: 500,
