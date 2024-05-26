@@ -5,7 +5,7 @@ from server.lib.routes import plugboard
 
 @pytest.fixture
 def client():
-    return TestClient(plugboard.app)
+    return TestClient(plugboard)
 
 
 @pytest.mark.asyncio
