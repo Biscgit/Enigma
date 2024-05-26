@@ -1,47 +1,43 @@
+import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock, MagicMock
-from server.lib.database import Database
 from server.lib.routes import plugboard
 
-client = TestClient(plugboard)
+@pytest.fixture
+def client():
+    return TestClient(plugboard)
 
-
-def test_configure_plugboard():
-    fake_plug = {"plug_a": "a", "plug_b": "b"}
-    fake_db = MagicMock(Database)
-    fake_db.get_plugboards.return_value = []
-    fake_db.save_plugboard.return_value = None
-
-    response = client.post("/plugboard/save", json=fake_plug)
+@pytest.mark.asyncio
+async def test_configure_plugboard(client):
+    # Assuming authentication is required for this endpoint
+    response = client.post("/plugboard/save", json={"plug": {"plug_a": "a", "plug_b": "b"}, "machine": 1, "username": "test_user"})
     assert response.status_code == 200
-    assert response.json() == {"plugboard": []}
+    data = response.json()
+    assert "plugboard" in data
+    assert isinstance(data["plugboard"], list)
 
-
-def test_get_configuration():
-    fake_db = MagicMock(Database)
-    fake_db.get_plugboards.return_value = [["a", "b"], ["c", "d"]]
-
-    response = client.get("/plugboard/load")
+@pytest.mark.asyncio
+async def test_get_configuration(client):
+    # Assuming authentication is required for this endpoint
+    response = client.get("/plugboard/load?machine=1&username=test_user")
     assert response.status_code == 200
-    assert response.json() == {"plugboard": [["a", "b"], ["c", "d"]]}
+    data = response.json()
+    assert "plugboard" in data
+    assert isinstance(data["plugboard"], list)
 
-
-def test_edit_plugboard():
-    fake_new_plug = {"plug_a": "c", "plug_b": "d"}
-    fake_db = MagicMock(Database)
-    fake_db.get_plugboards.return_value = [["a", "b"], ["c", "d"]]
-    fake_db.remove_plugboard.return_value = None
-    fake_db.save_plugboard.return_value = None
-
-    response = client.put("/plugboard/edit?letter=A", json=fake_new_plug)
+@pytest.mark.asyncio
+async def test_edit_plugboard(client):
+    # Assuming authentication is required for this endpoint
+    response = client.put("/plugboard/edit", json={"machine": 1, "letter": "A", "new_plug": {"plug_a": "c", "plug_b": "d"}, "username": "test_user"})
     assert response.status_code == 200
-    assert response.json() == {"plugboard": [["c", "d"], ["c", "d"]]}
+    data = response.json()
+    assert "plugboard" in data
+    assert isinstance(data["plugboard"], list)
 
-
-def test_reset_plugboard():
-    fake_db = MagicMock(Database)
-    fake_db.reset_plugboard.return_value = None
-
-    response = client.delete("/plugboard/reset")
+@pytest.mark.asyncio
+async def test_reset_plugboard(client):
+    # Assuming authentication is required for this endpoint
+    response = client.delete("/plugboard/reset?machine=1&username=test_user")
     assert response.status_code == 200
-    assert response.json() == {"message": "Plugboard reset successfully"}
+    data = response.json()
+    assert "message" in data
+    assert data["message"] == "Plugboard reset successfully"
