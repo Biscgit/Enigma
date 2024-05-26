@@ -1,6 +1,6 @@
 import pytest
 from starlette.testclient import TestClient
-from server.lib.routers import plugboard
+from server.lib.routes import plugboard
 
 client = TestClient(plugboard)
 
