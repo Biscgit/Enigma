@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from server.lib.routers import plugboard
+from server.lib.routes import plugboard
 
 client = TestClient(plugboard)
 
