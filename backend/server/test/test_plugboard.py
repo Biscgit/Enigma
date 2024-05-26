@@ -1,51 +1,47 @@
-import pytest
-from starlette.testclient import TestClient
-from server.lib.routes import plugboard  
+from fastapi.testclient import TestClient
+from unittest.mock import AsyncMock, MagicMock
+from server.lib.database import Database
+from server.lib.routes import plugboard
 
-# Instantiate the test client
 client = TestClient(plugboard)
 
-# Test cases for plugboard configuration
-@pytest.mark.asyncio
-async def test_configure_plugboard():
-    # Test successful plugboard configuration
-    response = await client.post(
-        "/plugboard/save",
-        json={"plug": {"plug_a": "a", "plug_b": "b"}, "machine": 1, "username": "test_user"}
-    )
+
+def test_configure_plugboard():
+    fake_plug = {"plug_a": "a", "plug_b": "b"}
+    fake_db = MagicMock(Database)
+    fake_db.get_plugboards.return_value = []
+    fake_db.save_plugboard.return_value = None
+
+    response = client.post("/plugboard/save", json=fake_plug)
     assert response.status_code == 200
+    assert response.json() == {"plugboard": []}
 
-@pytest.mark.asyncio
-async def test_configure_plugboard_invalid_input():
-    # Test plugboard configuration with invalid input
-    response = await client.post(
-        "/plugboard/save",
-        json={"plug": {"plug_a": "a", "plug_b": "b", "plug_c": "c"}, "machine": 1, "username": "test_user"}
-    )
-    assert response.status_code == 400
-    
 
-# Test case for retrieving plugboard configuration
-@pytest.mark.asyncio
-async def test_get_plugboard_configuration():
-    # Test retrieving plugboard configuration
-    response = await client.get("/plugboard/1")
+def test_get_configuration():
+    fake_db = MagicMock(Database)
+    fake_db.get_plugboards.return_value = [["a", "b"], ["c", "d"]]
+
+    response = client.get("/plugboard/load")
     assert response.status_code == 200
+    assert response.json() == {"plugboard": [["a", "b"], ["c", "d"]]}
 
 
-# Test case for updating plugboard configuration
-@pytest.mark.asyncio
-async def test_update_plugboard_configuration():
-    # Test updating plugboard configuration
-    response = await client.put(
-        "/plugboard/update",
-        json={"plug": {"plug_a": "b", "plug_b": "a"}, "machine": 1, "username": "test_user"}
-    )
+def test_edit_plugboard():
+    fake_new_plug = {"plug_a": "c", "plug_b": "d"}
+    fake_db = MagicMock(Database)
+    fake_db.get_plugboards.return_value = [["a", "b"], ["c", "d"]]
+    fake_db.remove_plugboard.return_value = None
+    fake_db.save_plugboard.return_value = None
+
+    response = client.put("/plugboard/edit?letter=A", json=fake_new_plug)
     assert response.status_code == 200
+    assert response.json() == {"plugboard": [["c", "d"], ["c", "d"]]}
 
-# Test case for deleting plugboard configuration
-@pytest.mark.asyncio
-async def test_delete_plugboard_configuration():
-    # Test deleting plugboard configuration
-    response = await client.delete("/plugboard/delete/1")
+
+def test_reset_plugboard():
+    fake_db = MagicMock(Database)
+    fake_db.reset_plugboard.return_value = None
+
+    response = client.delete("/plugboard/reset")
     assert response.status_code == 200
+    assert response.json() == {"message": "Plugboard reset successfully"}
