@@ -215,7 +215,7 @@ class Database:
             async with self.pool.acquire() as conn:
                 async with conn.transaction():
                     conn: asyncpg.Connection
-                    plugboard = [key_1, key_2]
+                    plugboard = [key_1.lower(), key_2.lower()]
 
                     # execute a check before inserting
                     current_plugs = await self.get_plugboards(username, machine)
