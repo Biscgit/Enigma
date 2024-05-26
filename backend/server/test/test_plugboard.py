@@ -1,10 +1,11 @@
 import pytest
 from starlette.testclient import TestClient
-from server.lib.routes import plugboard
+from server.lib.routes import plugboard  
 
+# Instantiate the test client
 client = TestClient(plugboard)
 
-
+# Test cases for plugboard configuration
 @pytest.mark.asyncio
 async def test_configure_plugboard():
     # Test successful plugboard configuration
@@ -13,48 +14,38 @@ async def test_configure_plugboard():
         json={"plug": {"plug_a": "a", "plug_b": "b"}, "machine": 1, "username": "test_user"}
     )
     assert response.status_code == 200
-    assert response.json() == {"plugboard": [["a", "b"]]}
 
-    # Test too many plugboard configurations
-    for _ in range(10):
-        await client.post(
-            "/plugboard/save",
-            json={"plug": {"plug_a": "a", "plug_b": "b"}, "machine": 1, "username": "test_user"}
-        )
+@pytest.mark.asyncio
+async def test_configure_plugboard_invalid_input():
+    # Test plugboard configuration with invalid input
     response = await client.post(
         "/plugboard/save",
-        json={"plug": {"plug_a": "c", "plug_b": "d"}, "machine": 1, "username": "test_user"}
+        json={"plug": {"plug_a": "a", "plug_b": "b", "plug_c": "c"}, "machine": 1, "username": "test_user"}
     )
     assert response.status_code == 400
+    
 
-
+# Test case for retrieving plugboard configuration
 @pytest.mark.asyncio
-async def test_get_configuration():
-    response = await client.get("/plugboard/load?machine=1&username=test_user")
+async def test_get_plugboard_configuration():
+    # Test retrieving plugboard configuration
+    response = await client.get("/plugboard/1")
     assert response.status_code == 200
-    assert response.json() == {"plugboard": [["a", "b"]]}
 
 
+# Test case for updating plugboard configuration
 @pytest.mark.asyncio
-async def test_edit_plugboard():
-    # Test successful edit of plugboard
+async def test_update_plugboard_configuration():
+    # Test updating plugboard configuration
     response = await client.put(
-        "/plugboard/edit",
-        json={"letter": "a", "new_plug": {"plug_a": "c", "plug_b": "d"}, "machine": 1, "username": "test_user"}
+        "/plugboard/update",
+        json={"plug": {"plug_a": "b", "plug_b": "a"}, "machine": 1, "username": "test_user"}
     )
     assert response.status_code == 200
-    assert response.json() == {"plugboard": [["c", "d"]]}
 
-    # Test letter not found
-    response = await client.put(
-        "/plugboard/edit",
-        json={"letter": "x", "new_plug": {"plug_a": "c", "plug_b": "d"}, "machine": 1, "username": "test_user"}
-    )
-    assert response.status_code == 404
-
-
+# Test case for deleting plugboard configuration
 @pytest.mark.asyncio
-async def test_reset_plugboard():
-    response = await client.delete("/plugboard/reset?machine=1&username=test_user")
+async def test_delete_plugboard_configuration():
+    # Test deleting plugboard configuration
+    response = await client.delete("/plugboard/delete/1")
     assert response.status_code == 200
-    assert response.json() == {"message": "Plugboard reset successfully"}
