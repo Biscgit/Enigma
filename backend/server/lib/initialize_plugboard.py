@@ -1,16 +1,14 @@
+from typing import Dict
+
+
 class Plugboard:
-    def __init__(self, plugs):
+    def __init__(self, plugs: Dict[str, str]):
         self.plugs = plugs
 
-    def substitute_letter(self, letter):
-        for plug_pair in self.plugs:
-            if letter in plug_pair:
-                return plug_pair[1] if letter == plug_pair[0] else plug_pair[0]
-        return letter
+    def switch_letter(self, letter: str) -> str:
+        """Switches the letter with its connected plug if available."""
+        return self.plugs.get(letter, letter)
 
-    @staticmethod
-    def initialize_plugboard(plugboard_response):
-        plugs = []
-        for plug_pair in plugboard_response["plugboard"]:
-            plugs.append((plug_pair[0], plug_pair[1]))
-        return Plugboard(plugs)
+    def key_press(self, key: str) -> str:
+        """Routes the key press through the plugboard."""
+        return self.switch_letter(key.lower()).upper()
