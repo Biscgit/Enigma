@@ -5,7 +5,7 @@ class SideBar extends StatelessWidget {
 
   const SideBar({super.key, required this.onItemSelected});
 
-  ListTile genMachinewithcon(String name, String backendID, context) {
+  ListTile genMachineWithCon(String name, String backendID, context) {
     return ListTile(
         title: Text(name),
         onTap: () {
@@ -32,7 +32,7 @@ class SideBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ListTile genMachine(String name, String backendID) =>
-        genMachinewithcon(name, backendID, context);
+        genMachineWithCon(name, backendID, context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
