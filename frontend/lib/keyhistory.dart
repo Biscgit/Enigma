@@ -34,11 +34,14 @@ class _KeyHistoryState extends State<KeyHistoryList> {
 
   void addKey(String clear, String encrypted) {
     /// Add the key to the key history
-    _keyHistory.insert(0, (clear, encrypted));
 
-    if (_keyHistory.length > maxKeys) {
-      _keyHistory.removeLast();
-    }
+    setState(() {
+      _keyHistory.insert(0, (clear, encrypted));
+
+      if (_keyHistory.length > maxKeys) {
+        _keyHistory.removeLast();
+      }
+    });
   }
 
   @override
