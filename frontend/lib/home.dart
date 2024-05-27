@@ -51,7 +51,7 @@ class HomePageState extends State<HomePage> {
                       TextButton(
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
-                          Navigator.pushReplacementNamed(context, '/login');
+                          // Navigator.pushReplacementNamed(context, '/login');
                         },
                         child: const Text('OK'),
                       ),
