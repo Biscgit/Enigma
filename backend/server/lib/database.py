@@ -150,7 +150,7 @@ class Database:
                 pointer = await self._get_history_pointer_position(conn, username, machine)
                 pointer = (pointer + 1) % Database.char_max
 
-                # update the pointer and add character-pair
+                # update the pointer and add character-pair in O(1) time
                 await conn.execute(
                     f"""
                     UPDATE machines

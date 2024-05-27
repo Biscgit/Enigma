@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS machines (
     rotors INTEGER[],
 
     character_pointer INTEGER,
-    character_history JSON[140],
+    character_history JSON ARRAY[140],
 
     plugboard_enabled BOOLEAN,
-    plugboard_config JSON[10],
+    plugboard_config JSON ARRAY[10],
 
     PRIMARY KEY (id, username),
     FOREIGN KEY (username) REFERENCES users(username),
