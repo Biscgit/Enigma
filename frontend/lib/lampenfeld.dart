@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const Lampfield());
@@ -7,7 +7,6 @@ void main() {
 
 class Lampfield extends StatefulWidget {
   const Lampfield({super.key});
-
 
   @override
   State<Lampfield> createState() => LampfieldState();
@@ -114,9 +113,10 @@ class LampfieldState extends State<Lampfield> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                      RegExp(r'[a-zA-Z\s]')), // Allow only letters and space
-                  UpperCaseTextInputFormatter(), // Convert all letters to uppercase
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                  // Allow only letters and space
+                  UpperCaseTextInputFormatter(),
+                  // Convert all letters to uppercase
                 ],
               ),
             ),
@@ -183,11 +183,10 @@ class CircularTextBoxState extends State<CircularTextBox> {
       child: Text(
         widget.text,
         style: TextStyle(
-          color: widget.colorText,
-          fontSize: widget.fontSize,
-          fontWeight: FontWeight.bold,
-          fontFamily: "Wallau"
-        ),
+            color: widget.colorText,
+            fontSize: widget.fontSize,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Wallau"),
       ),
     );
   }
