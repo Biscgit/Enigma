@@ -1,3 +1,4 @@
+import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -81,11 +82,7 @@ class SquareButton extends StatelessWidget {
   const SquareButton({
     required this.label,
   });
-
-  String event() { //Insert API for rotors here when possible
-    return this.label;
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -93,23 +90,71 @@ class SquareButton extends StatelessWidget {
       height: size,
       child: ElevatedButton(
         onPressed: () {
-          event();
+          sendPressedKeyToRotors(label);
         },
+        child: Text(label),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color, // background color lol
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8), // rounded corners
+          ),
+        ),
+      ),
+    );
+  }
+
+// This can be used for manual debugging kind of; shows an alertDialog whenever a button is pressed; shows error or correct functionality
+  /*@override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: ElevatedButton(
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) {
+              return FutureBuilder<String>(
+                future: event(label),
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.hasError) {
+                    return AlertDialog(
+                      title: const Text('Error'),
+                      content: Text('Error: ${snapshot.data}'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return AlertDialog(
+                      title: const Text('Result'),
+                      content: Text(snapshot.data ?? 'No response'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              );
+            },
+          );
+        },
+        child: Text(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: color, // background color
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // rounded corners
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: size * 0.3, // font size relative to button size
-            color: Colors.white, // text color
-          ),
-          textAlign: TextAlign.center,
-        ),
       ),
     );
-  }
+  }*/
+
+
 }

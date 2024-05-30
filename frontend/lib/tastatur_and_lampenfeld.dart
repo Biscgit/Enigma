@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'lampenfeld.dart'; // Make sure to import your Lampfield widget here
-import 'tastatur.dart'; // Import the Tastatur widget
+import 'lampenfeld.dart';
+import 'tastatur.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,19 +19,26 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Stack(
         children: [
-          Expanded(
-            flex: 1,
-            child: Lampfield(), // Add the Lampfield widget here
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.of(context).size.height / 2,
+            child: Lampfield(),
           ),
-          Expanded(
-            flex: 1,
-            child: Tastatur(), // Add the Tastatur widget here
+          Positioned(
+            top: MediaQuery.of(context).size.height / 2,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Tastatur(),
           ),
         ],
       ),
     );
   }
 }
+
+
