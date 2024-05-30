@@ -1,5 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Cookie {
   static const _storage = FlutterSecureStorage();
@@ -22,6 +24,38 @@ class Cookie {
   static Future<bool> isUserLoggedIn() {
     return Cookie.read('token').then((token) => token != "");
   }
+}
+
+final String apiUrl = "http://localhost:8001/key_press"; // Windows
+//final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
+
+Future<String> sendPressedKeyToRotors(String pressedKey) async {
+  // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
+  // replace API call in future by new implementation
+
+
+  var token = await Cookie.read('token');
+  var machineID = await Cookie.read('machine_id'); //Implement machine_id in cookies? Or how else can the global variable be accessed?
+  var uri = Uri.parse(apiUrl).replace(queryParameters: {
+    'token': token,
+    'key': pressedKey,
+    'machine': machineID
+  });
+
+  var response = await http.post(
+    uri,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+  );
+
+  if(response.statusCode != 200) {
+    return '?';
+  }
+
+  var jsonReponse = jsonDecode(response.body);
+
+  return jsonReponse['key'];
 }
 
 /*Future<String> post(String key) async {
