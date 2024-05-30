@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
+import 'utils.dart';
 
 void main() {
   runApp(const Lampfield());
@@ -107,15 +108,12 @@ class LampfieldState extends State<Lampfield> {
                 controller: _controller,
                 onChanged: (String value) {
                   if (value.isNotEmpty) {
-                    lightUpLetter(value.substring(value.length - 1));
-                  } else {
-                    lightUpLetter(
-                        "."); //Special characters dont light up anything; as it should be.
+                    sendPressedKeyToRotors(value.substring(value.length - 1));
                   }
                 },
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(
-                      RegExp(r'[a-zA-Z\s]')), // Allow only letters and space
+                      RegExp(r'[a-zA-Z]')), // Allow only letters and space
                   UpperCaseTextInputFormatter(), // Convert all letters to uppercase
                 ],
               ),
@@ -143,7 +141,7 @@ class CircularTextBox extends StatefulWidget {
     this.defaultColorBox = Colors.black12,
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
-    this.diameter = 50,
+    this.diameter = 48,
   });
 
   @override
