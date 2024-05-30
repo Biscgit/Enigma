@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:enigma/lampenfeld.dart';
+import 'package:enigma/tastatur_and_lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
 
@@ -66,7 +66,7 @@ class HomePageState extends State<HomePage> {
         onItemSelected: updateSelectedItem,
         key: const Key('enigma_sidebar'),
       ),
-      body: const Lampfield(),
+      body: MainScreen(),
     );
   }
 }
