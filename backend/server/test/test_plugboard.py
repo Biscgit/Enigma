@@ -48,7 +48,7 @@ def client():
 def test_configure_plugboard(client, monkeypatch):
     monkeypatch.setattr("server.lib.routes.authentication.check_auth", override_check_auth)
 
-    response = client.post("/plugboard/save?token=test_token",
+    response = client.post("/plugboard/save?token=token-12345-xxx",
                            json={"plug_a": "c", "plug_b": "d", "machine": 1})
     assert response.status_code == 401
     data = response.json()
