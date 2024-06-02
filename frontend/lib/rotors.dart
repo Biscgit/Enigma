@@ -5,7 +5,7 @@ class RotorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Enigma Rotoren'),
+        title: Text('Enigma Rotors'),
       ),
       body: Stack(
         children: [
