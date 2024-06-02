@@ -8,6 +8,7 @@ router = APIRouter(prefix="/plugboard")
 
 MAX_PLUGS = 10
 
+
 # Pydantic model for plug configurations
 class PlugConfig(BaseModel):
     plug_a: str
@@ -19,13 +20,16 @@ class PlugConfig(BaseModel):
             raise ValueError("Letters must be a single alphabetic character")
         return v.lower()
 
+
 # Response model
 class PlugboardResponse(BaseModel):
     plugboard: List[List[str]]
 
+
 # Additional Response model for reset operation
 class ResetPlugboardResponse(BaseModel):
     message: str
+
 
 @router.post("/save", response_model=PlugboardResponse)
 async def configure_plugboard(
@@ -48,6 +52,7 @@ async def configure_plugboard(
     await db.save_plugboard(username, machine, plug_a, plug_b)
     return {"plugboard": plugs}
 
+
 @router.get("/load", response_model=PlugboardResponse)
 async def get_configuration(
         machine: int,
@@ -60,6 +65,7 @@ async def get_configuration(
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"plugboard": plugs}
+
 
 @router.put("/edit", response_model=PlugboardResponse)
 async def edit_plugboard(
@@ -88,6 +94,7 @@ async def edit_plugboard(
     await db.save_plugboard(username, machine, new_plug_a_upper, new_plug_b_upper)
     return {"plugboard": plugs}
 
+
 @router.delete("/reset", response_model=ResetPlugboardResponse)  # Change response model here
 async def reset_plugboard(
         machine: int,
@@ -102,4 +109,3 @@ async def reset_plugboard(
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"message": "Plugboard reset successfully"}  # Return a ResetPlugboardResponse instance
-
