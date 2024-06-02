@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, field_validator
 from typing import List
 from server.lib.database import get_database, Database
 from .authentication import check_auth
@@ -13,7 +13,7 @@ class PlugConfig(BaseModel):
     plug_a: str
     plug_b: str
 
-    @validator('plug_a', 'plug_b')
+    @field_validator('plug_a', 'plug_b')
     def validate_letters(cls, v):
         if len(v) != 1 or not v.isalpha():
             raise ValueError("Letters must be a single alphabetic character")
