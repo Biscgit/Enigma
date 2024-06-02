@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
 from typing import List
 from server.lib.database import get_database, Database
 from .authentication import check_auth
@@ -7,7 +7,6 @@ from .authentication import check_auth
 router = APIRouter(prefix="/plugboard")
 
 MAX_PLUGS = 10
-
 
 # Pydantic model for plug configurations
 class PlugConfig(BaseModel):
@@ -20,11 +19,13 @@ class PlugConfig(BaseModel):
             raise ValueError("Letters must be a single alphabetic character")
         return v.lower()
 
-
 # Response model
 class PlugboardResponse(BaseModel):
     plugboard: List[List[str]]
 
+# Additional Response model for reset operation
+class ResetPlugboardResponse(BaseModel):
+    message: str
 
 @router.post("/save", response_model=PlugboardResponse)
 async def configure_plugboard(
@@ -47,7 +48,6 @@ async def configure_plugboard(
     await db.save_plugboard(username, machine, plug_a, plug_b)
     return {"plugboard": plugs}
 
-
 @router.get("/load", response_model=PlugboardResponse)
 async def get_configuration(
         machine: int,
@@ -60,7 +60,6 @@ async def get_configuration(
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"plugboard": plugs}
-
 
 @router.put("/edit", response_model=PlugboardResponse)
 async def edit_plugboard(
@@ -89,16 +88,18 @@ async def edit_plugboard(
     await db.save_plugboard(username, machine, new_plug_a_upper, new_plug_b_upper)
     return {"plugboard": plugs}
 
-
-@router.delete("/reset", response_model=PlugboardResponse)
+@router.delete("/reset", response_model=ResetPlugboardResponse)  # Change response model here
 async def reset_plugboard(
         machine: int,
+        key_1: str,
+        key_2: str,
         username: str = Depends(check_auth),
         db: Database = Depends(get_database)
 ):
     try:
-        await db.reset_plugboard(username, machine)
+        await db.remove_plugboard(username, machine, key_1, key_2)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    return {"message": "Plugboard reset successfully"}
+    return {"message": "Plugboard reset successfully"}  # Return a ResetPlugboardResponse instance
+
