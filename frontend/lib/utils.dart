@@ -26,8 +26,8 @@ class Cookie {
   }
 }
 
-final String apiUrl = "http://localhost:8001/key_press"; // Windows
-//final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
+//final String apiUrl = "http://localhost:8001/key_press"; // Windows
+final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
 
 Future<String> sendPressedKeyToRotors(String pressedKey) async {
   // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
