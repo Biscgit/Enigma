@@ -37,7 +37,7 @@ Future<String> sendPressedKeyToRotors(String pressedKey) async {
   // replace API call in future by new implementation
 
   var token = await Cookie.read('token');
-  var machineID = await Cookie.read('machine_id'); //Implement machine_id in cookies? Or how else can the global variable be accessed?
+  //var machineID = await Cookie.read('machine_id'); //Implement machine_id in cookies? Or how else can the global variable be accessed?
   var uri = Uri.parse(apiUrl).replace(queryParameters: {
     'token': token,
     'key': pressedKey,
