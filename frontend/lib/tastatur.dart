@@ -88,6 +88,7 @@ class SquareButton extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
+      key: ValueKey("Tastatur-Button-$label"), 
       child: ElevatedButton(
         onPressed: () {
           sendPressedKeyToRotors(label);
@@ -102,6 +103,7 @@ class SquareButton extends StatelessWidget {
       ),
     );
   }
+  
 
 // This can be used for manual debugging kind of; shows an alertDialog whenever a button is pressed; shows error or correct functionality
   /*@override
@@ -109,13 +111,14 @@ class SquareButton extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
+      key: ValueKey("Tastatur-Button-$label"), 
       child: ElevatedButton(
         onPressed: () {
           showDialog<String>(
             context: context,
             builder: (BuildContext context) {
               return FutureBuilder<String>(
-                future: event(label),
+                future: sendPressedKeyToRotors(label),
                 builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                   if (snapshot.hasError) {
                     return AlertDialog(
@@ -131,6 +134,7 @@ class SquareButton extends StatelessWidget {
                   } else {
                     return AlertDialog(
                       title: const Text('Result'),
+                      key: const ValueKey('ResultKey'),
                       content: Text(snapshot.data ?? 'No response'),
                       actions: <Widget>[
                         TextButton(

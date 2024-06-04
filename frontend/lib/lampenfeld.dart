@@ -150,19 +150,31 @@ class CircularTextBox extends StatefulWidget {
 
 class CircularTextBoxState extends State<CircularTextBox> {
   late Color colorBox;
+  late String text;
+  int highlighted = 0; //acts as a boolean value; used in testing to find whether button lights up
 
   @override
   void initState() {
     super.initState();
-    colorBox = widget.defaultColorBox;
+    text = widget.text;
+    //colorBox == widget.defaultColorBox;
+    if(text == "I") {
+      colorBox = widget.highlightedColor;
+      highlighted = 1;
+    }
+    else {
+      colorBox = widget.defaultColorBox;
+    }
   }
 
   void changeColor(bool color) {
     setState(() {
       if (color) {
         colorBox = widget.highlightedColor;
+        highlighted = 1;
       } else {
         colorBox = widget.defaultColorBox;
+        highlighted = 0;
       }
     });
   }
@@ -172,6 +184,7 @@ class CircularTextBoxState extends State<CircularTextBox> {
     return Container(
       width: widget.diameter,
       height: widget.diameter,
+      key: ValueKey("Lamppanel-Key-$text-$highlighted"),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: colorBox,

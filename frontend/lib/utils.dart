@@ -31,15 +31,18 @@ final String apiUrl = "http://localhost:8001/key_press"; // Windows
 
 Future<String> sendPressedKeyToRotors(String pressedKey) async {
   // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
-  // replace API call in future by new implementation
+  // This can also be implemented in tastatur.dart and lampenfeld.dart separately
 
+
+  // replace API call in future by new implementation
 
   var token = await Cookie.read('token');
   var machineID = await Cookie.read('machine_id'); //Implement machine_id in cookies? Or how else can the global variable be accessed?
   var uri = Uri.parse(apiUrl).replace(queryParameters: {
     'token': token,
     'key': pressedKey,
-    'machine': machineID
+    //'machine': machineID
+    'machine': "0"
   });
 
   var response = await http.post(
@@ -54,6 +57,7 @@ Future<String> sendPressedKeyToRotors(String pressedKey) async {
   }
 
   var jsonReponse = jsonDecode(response.body);
+  print(jsonReponse);
 
   return jsonReponse['key'];
 }
