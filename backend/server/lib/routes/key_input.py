@@ -5,6 +5,20 @@ from .authentication import check_auth
 
 router = APIRouter()
 
+def encrypt(machine_id: int, char: chr):
+    # rotors, plugboard, return_rotor = get_machine(machine_id)
+    notch = True
+#    char = plugboard.switch_letter(char)
+
+    for i in rotors:
+        notch, char = i.rotate_offset_scramble(char, notch, False)
+
+ #   value = return_rotor.switch_letter(value)
+
+    for i in rotors:
+        notch, char = i.rotate_offset_scramble(char, notch, True)
+
+    return char # plugboard.switch_letter(char)
 
 @router.get("/key_press")
 async def encrypt_key(
