@@ -2,13 +2,9 @@ from typing import Dict
 
 
 class Plugboard:
-    def __init__(self, plugs: Dict[str, str]):
+    def __init__(self, plugs: Dict[chr, chr]):
         self.plugs = plugs
 
-    def switch_letter(self, letter: str) -> str:
+    def switch_letter(self, letter: chr) -> chr:
         """Switches the letter with its connected plug if available."""
-        return self.plugs.get(letter, letter)
-
-    def key_press(self, key: str) -> str:
-        """Routes the key press through the plugboard."""
-        return self.switch_letter(key.lower()).upper()
+        return self.plugs.get(letter.lower(), letter.lower())
