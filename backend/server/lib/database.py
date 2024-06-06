@@ -290,6 +290,12 @@ class Database:
         boards = await self.get_plugboards(username, machine)
         return len(boards)
 
+    async def get_machine(self, username: str, machine_id: int):
+        pass
+
+    async def update_rotors(self, rotors: list) -> None:
+        pass
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
