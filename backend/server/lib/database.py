@@ -17,6 +17,7 @@ from .models import LoginForm
 
 class Database:
     """Database interface"""
+
     char_max = 140
     instance: "Database" = None
 
@@ -49,7 +50,7 @@ class Database:
                 )
 
             except ConnectionRefusedError:
-                logging.info('Retrying to connect...')
+                logging.info("Retrying to connect...")
                 await asyncio.sleep(5)
 
             else:
@@ -103,7 +104,7 @@ class Database:
                     ON CONFLICT (username) DO UPDATE
                     SET password = EXCLUDED.password;
                     """,
-                    content
+                    content,
                 )
 
         logging.info("Successfully loaded users from file")
@@ -129,25 +130,32 @@ class Database:
                     FROM  users
                     WHERE username = $1;
                     """,
-                    form.username, form.password
+                    form.username,
+                    form.password,
                 )
 
                 return result
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    async def save_keyboard_pair(self, username: str, machine: int, clear: str, encrypted: str) -> None:
+    async def save_keyboard_pair(
+        self, username: str, machine: int, clear: str, encrypted: str
+    ) -> None:
         """saves a key pair into the database history"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
 
-                if any(e.lower() not in string.ascii_lowercase for e in [clear, encrypted]):
+                if any(
+                    e.lower() not in string.ascii_lowercase for e in [clear, encrypted]
+                ):
                     raise Exception("One of the symbols cannot be inserted as history!")
                 if any(len(e) != 1 for e in [clear, encrypted]):
                     raise Exception("One of the symbols is not a single character!")
 
-                pointer = await self._get_history_pointer_position(conn, username, machine)
+                pointer = await self._get_history_pointer_position(
+                    conn, username, machine
+                )
                 pointer = (pointer + 1) % Database.char_max
 
                 # update the pointer and add character-pair in O(1) time
@@ -158,7 +166,10 @@ class Database:
                         character_pointer = $3
                     WHERE username = $1 AND id = $2
                     """,
-                    username, machine, pointer, json.dumps([clear, encrypted])
+                    username,
+                    machine,
+                    pointer,
+                    json.dumps([clear, encrypted]),
                 )
 
                 logging.info(f"Saved key-pair to database with index {pointer}")
@@ -184,24 +195,32 @@ class Database:
                     FROM
                       indexed_history
                     """,
-                    username, machine
+                    username,
+                    machine,
                 )
 
-                logging.info(f"Fetched key-pairs for {username}.{machine}: {str(result)[:80]}")
+                logging.info(
+                    f"Fetched key-pairs for {username}.{machine}: {str(result)[:80]}"
+                )
                 return [json.loads(pair) for pair in result or []]
 
     @staticmethod
-    async def _get_history_pointer_position(conn: asyncpg.Connection, username: str, machine: int) -> int:
+    async def _get_history_pointer_position(
+        conn: asyncpg.Connection, username: str, machine: int
+    ) -> int:
         """Returns the point position of the current history. The value is between 0-139 or -1 if not set"""
         try:
-            return int(await conn.fetchval(
-                """
+            return int(
+                await conn.fetchval(
+                    """
                 SELECT character_pointer
                 FROM machines
                 WHERE username = $1 AND id = $2
                 """,
-                username, machine
-            ))
+                    username,
+                    machine,
+                )
+            )
 
         except TypeError:
             logging.error(f"Machine {username}.{machine} does not exist!")
@@ -209,7 +228,9 @@ class Database:
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    async def save_plugboard(self, username: str, machine: int, key_1: str, key_2: str) -> None:
+    async def save_plugboard(
+        self, username: str, machine: int, key_1: str, key_2: str
+    ) -> None:
         """saves a plugboard configuration to a machine"""
         try:
             async with self.pool.acquire() as conn:
@@ -222,9 +243,13 @@ class Database:
                     flatten_plugs = set(itertools.chain.from_iterable(current_plugs))
 
                     if any(e in flatten_plugs for e in plugboard):
-                        raise Exception("Invalid configuration: At least one with that configuration already exist!")
+                        raise Exception(
+                            "Invalid configuration: At least one with that configuration already exist!"
+                        )
                     if any(e.lower() not in string.ascii_lowercase for e in plugboard):
-                        raise Exception("One of the symbols cannot be inserted to the plugboard!")
+                        raise Exception(
+                            "One of the symbols cannot be inserted to the plugboard!"
+                        )
                     if any(len(e) != 1 for e in plugboard):
                         raise Exception("One of the symbols is not a single character!")
 
@@ -235,16 +260,22 @@ class Database:
                         SET plugboard_config = plugboard_config || $3::json
                         WHERE username = $1 AND id = $2
                         """,
-                        username, machine, json.dumps(plugboard)
+                        username,
+                        machine,
+                        json.dumps(plugboard),
                     )
 
-                    logging.info(f"Saved plugboard [{plugboard}] to database for {username}.{machine}")
+                    logging.info(
+                        f"Saved plugboard [{plugboard}] to database for {username}.{machine}"
+                    )
 
         except asyncpg.CheckViolationError:
             logging.error("There are already 10 Plugboards saved!")
             raise
 
-    async def remove_plugboard(self, username: str, machine: int, key_1: str, key_2: str) -> None:
+    async def remove_plugboard(
+        self, username: str, machine: int, key_1: str, key_2: str
+    ) -> None:
         """removed a plugboard configuration if exists"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -257,7 +288,9 @@ class Database:
                 # boards = [json.dumps(b) for b in boards if set(b) != set(plugboard)]
 
                 if count == len(boards):
-                    raise Exception(f"Trying to remove non-existent plugboard {plugboard} for {username}.{machine}")
+                    raise Exception(
+                        f"Trying to remove non-existent plugboard {plugboard} for {username}.{machine}"
+                    )
 
                 await conn.execute(
                     """
@@ -265,7 +298,9 @@ class Database:
                     SET plugboard_config = $3
                     WHERE username = $1 AND id = $2
                     """,
-                    username, machine, boards
+                    username,
+                    machine,
+                    boards,
                 )
 
     async def get_plugboards(self, username: str, machine: int) -> list:
@@ -279,7 +314,8 @@ class Database:
                 FROM machines
                 WHERE username = $1 AND id = $2
                 """,
-                username, machine,
+                username,
+                machine,
             )
 
             logging.info(f"Fetched plugboard for {username}.{machine}: {str(result)}")
@@ -290,8 +326,49 @@ class Database:
         boards = await self.get_plugboards(username, machine)
         return len(boards)
 
+    async def get_return_rotor(self, username: str, machine: int) -> list:
+        """returns return rotor configurations for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                SELECT return_rotor
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username,
+                machine,
+            )
+
+            logging.info(
+                f"Fetched return_rotor for {username}.{machine}: {str(result)}"
+            )
+            return [json.loads(pair) for pair in result or []]
+
+    async def get_rotors(self, username: str, machine: int) -> list:
+        """returns all rotors configurations for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                SELECT rotor_type, letter_shift, rotor_position
+                FROM rotors
+                WHERE username = $1 AND id = $2
+                """,
+                username,
+                machine,
+            )
+
+            logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
+            return [json.loads(pair) for pair in result or []]
+
     async def get_machine(self, username: str, machine_id: int):
-        pass
+        plugboard = self.get_plugboards(username, machine_id)
+        return_rotor = self.get_return_rotor(username, machine_id)
+        rotors = self.get_rotors(username, machine_id)
+        return plugboard, return_rotor, rotors
 
     async def update_rotors(self, rotors: list) -> None:
         pass
