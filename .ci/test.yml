@@ -77,7 +77,7 @@ e2e-test-driver:
   rules:
     - exists:
       - frontend/test_driver/*
-  retry: 3
+  retry: 2
   needs:
     - job: build-frontend
       optional: true
