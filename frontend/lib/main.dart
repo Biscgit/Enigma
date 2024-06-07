@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:enigma/home.dart';
 import 'package:enigma/login.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: "flutter.env");
   runApp(const MyApp());
 }
 
