@@ -68,11 +68,12 @@ e2e-test-driver:
     - cd frontend
     - rm flutter.env
     - env | grep "IP_FASTAPI" > flutter.env
-    - cat flutter.env
-    - curl http://backend:8001/login
+    # - cat flutter.env
+    # - curl http://backend:8001/login
     - flutter create --platforms web .
     - flutter pub get
   script:
+    - sleep 10
     - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release  --web-browser-flag="--disable-gpu --headless"'
   rules:
     - exists:
