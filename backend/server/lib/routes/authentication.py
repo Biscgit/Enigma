@@ -1,5 +1,6 @@
 __all__ = ["router", "check_auth"]
 
+import logging
 from uuid import uuid4
 from hashlib import sha3_256
 
@@ -31,6 +32,7 @@ async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_databas
         current_auth = {k: v for k, v in current_auth.items() if not v == login_form.username}
         current_auth |= {auth_token: login_form.username}
 
+        logging.info(f"User {login_form.username} has logged in.")
         return {"token": auth_token}
 
     else:
@@ -38,7 +40,9 @@ async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_databas
 
 
 @router.delete("/logout")
-async def logout(token: str, _: str = Depends(check_auth)) -> dict:
+async def logout(token: str, username: str = Depends(check_auth)) -> dict:
     """Endpoint for logging out of the application"""
+    logging.info(f"User {username} has logged out.")
     current_auth.pop(token)
+
     return {"message": "OK"}
