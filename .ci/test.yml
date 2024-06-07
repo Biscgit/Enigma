@@ -68,6 +68,8 @@ e2e-test-driver:
     - cd frontend
     - rm flutter.env
     - env | grep "IP_FASTAPI" > flutter.env
+    - cat flutter.env
+    - curl http://backend:8001/login
     - flutter create --platforms web .
     - flutter pub get
   script:
