@@ -14,6 +14,8 @@ RUN flutter build web --release
 # serve site with nginx
 FROM nginx:alpine
 
+RUN apk update
+
 # copy files
 WORKDIR /home/webserver
 COPY --from=builder /home/builder/frontend/build/web /home/webserver/enigma
