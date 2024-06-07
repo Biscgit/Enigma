@@ -110,6 +110,15 @@ class Database:
 
         logging.info("Successfully loaded users from file")
 
+    async def _load_rotors(self) -> None:
+        logging.info("Loading rotors from file...")
+        with open("./server/rotors.json") as file:
+            content = json.loads(file)
+        username = "user1"
+        for rotor in content:
+            rotor["username"] = username
+            self.set_rotor(rotor)
+
     async def disconnect(self) -> None:
         if self.pool is None:
             raise Exception("There is no connection to close!")
@@ -347,6 +356,8 @@ class Database:
             )
             return [json.loads(pair) for pair in result or []]
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     async def get_rotors(self, username: str, machine: int) -> list:
         """returns all rotors configurations for a machine"""
         async with self.pool.acquire() as conn:
@@ -383,31 +394,41 @@ class Database:
             logging.info(f"Fetched rotor for {username}.{rotor}: {str(result)}")
             return [json.loads(pair) for pair in result or []]
 
-    async def get_machine(self, username: str, machine_id: int):
-        plugboard = self.get_plugboards(username, machine_id)
-        return_rotor = self.get_return_rotor(username, machine_id)
-        rotors = self.get_rotors(username, machine_id)
-        return plugboard, return_rotor, rotors
-
     async def update_rotors(self, rotors: list) -> None:
-        pass
+        map(self.update_rotor, rotors)
 
-    async def set_rotor(self, username, rotor, start, notch, scramble_alphabet) -> None:
+    async def update_rotor(self, data: dict) -> None:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
                 await conn.execute(
                     """
                     UPDATE rotors
-                    SET rotor_position = $3, letter_shift = $4, scramble_alphabet = $5
-                    WHERE username = $1 AND id = $2
+                    SET rotor_position = %(start)s, letter_shift = %(notch)s, scramble_alphabet = %(scramble_alphabet)
+                    WHERE username = %(username)s AND id = %(rotor)s
                     """,
-                    username,
-                    rotor,
-                    start,
-                    notch,
-                    scramble_alphabet,
+                    data,
                 )
+
+    async def set_rotor(
+        self,
+        data: dict,
+    ) -> None:
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    """
+                    INSERT INTO rotors(username, machine_id, scramble_alphabet, rotor_type, letter_shift, rotor_position)
+                    VALUES (%(username)s, %(machine_id)s, %(scramble_alphabet)s, %(rotor_type)s, %(letter_shift)s, %(rotor_position)s);
+                    """,
+                    data,
+                )
+
+    async def get_machine(self, username: str, machine_id: int):
+        plugboard = self.get_plugboards(username, machine_id)
+        return_rotor = self.get_return_rotor(username, machine_id)
+        rotors = self.get_rotors(username, machine_id)
+        return plugboard, return_rotor, rotors
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
