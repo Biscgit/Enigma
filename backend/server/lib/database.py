@@ -13,6 +13,7 @@ import fastapi
 import rustlib
 
 from .models import LoginForm
+from .rotor import Rotor
 
 
 class Database:
@@ -353,15 +354,33 @@ class Database:
 
             result = await conn.fetchval(
                 """
-                SELECT rotor_type, letter_shift, rotor_position
+                SELECT rotor_type, letter_shift, rotor_position, scramble_alphabet
                 FROM rotors
-                WHERE username = $1 AND id = $2
+                WHERE username = $1 AND machine_id = $2
                 """,
                 username,
                 machine,
             )
 
             logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
+            return [json.loads(pair) for pair in result or []]
+
+    async def get_rotor(self, username: str, rotor: int) -> Rotor:
+        """returns rotor configuration for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                SELECT rotor_type, letter_shift, rotor_position, scramble_alphabet
+                FROM rotors
+                WHERE username = $1 AND id = $2
+                """,
+                username,
+                rotor,
+            )
+
+            logging.info(f"Fetched rotor for {username}.{rotor}: {str(result)}")
             return [json.loads(pair) for pair in result or []]
 
     async def get_machine(self, username: str, machine_id: int):
@@ -372,6 +391,23 @@ class Database:
 
     async def update_rotors(self, rotors: list) -> None:
         pass
+
+    async def set_rotor(self, username, rotor, start, notch, scramble_alphabet) -> None:
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+                await conn.execute(
+                    """
+                    UPDATE rotors
+                    SET rotor_position = $3, letter_shift = $4, scramble_alphabet = $5
+                    WHERE username = $1 AND id = $2
+                    """,
+                    username,
+                    rotor,
+                    start,
+                    notch,
+                    scramble_alphabet,
+                )
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
