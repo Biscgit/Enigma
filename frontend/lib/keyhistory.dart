@@ -13,7 +13,7 @@ class _KeyHistoryState extends State<KeyHistoryList> {
   static const String apiUrl = 'http://172.20.0.101:8001/login';
   static const maxKeys = 140;
 
-  final List<(String, String)> _keyHistory = <(String, String)>[];
+  final List<MapEntry<String, String>> _keyHistory = <MapEntry<String, String>>[];
 
   void loadKeyHistory(String machineId, String token) async {
     /// Loads pressed keys from server
@@ -24,20 +24,18 @@ class _KeyHistoryState extends State<KeyHistoryList> {
     );
 
     if (response.statusCode == 200) {
-      final List<(String, String)> keyHistory = jsonDecode(response.body);
+      final List<Map<String, dynamic>> keyHistory = List<Map<String, dynamic>>.from(jsonDecode(response.body));
       setState(() {
         _keyHistory.clear();
-        _keyHistory.addAll(keyHistory);
+        _keyHistory.addAll(keyHistory.map((item) => MapEntry(item['clear'] as String, item['encrypted'] as String)));
       });
     }
   }
 
   void addKey(String clear, String encrypted) {
     /// Add the key to the key history
-
     setState(() {
-      _keyHistory.insert(0, (clear, encrypted));
-
+      _keyHistory.insert(0, MapEntry(clear, encrypted));
       if (_keyHistory.length > maxKeys) {
         _keyHistory.removeLast();
       }
@@ -47,12 +45,14 @@ class _KeyHistoryState extends State<KeyHistoryList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      key: const ValueKey('keyHistoryList'),
       itemCount: _keyHistory.length,
       itemBuilder: (context, index) {
         final keyPair = _keyHistory[index];
         return ListTile(
           title: Text(
-            '${keyPair.$1} -> ${keyPair.$2}',
+            '${keyPair.key} -> ${keyPair.value}',
+            key: ValueKey('keyPair_$index'),
             style: const TextStyle(color: Colors.white),
           ),
         );
