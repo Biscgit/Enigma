@@ -6,8 +6,8 @@ from typing import Dict
 router = APIRouter()
 
 
-@router.post("/set-rotor")
-async def set_rotor(
+@router.post("/update-rotor")
+async def update_rotor(
     rotor: int,
     start: str,
     notch: str,
@@ -15,8 +15,8 @@ async def set_rotor(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str]:
-    #  message = await db_conn.set_rotor(username, rotor, start, notch, scramble_alphabet)
-    return {"s": "s"}  # message
+    await db_conn.update_rotor(username, rotor, start, notch, scramble_alphabet)
+    return {"Status": "OK"}
 
 
 @router.get("/get-rotor")
@@ -27,4 +27,4 @@ async def get_rotor(
 ) -> Dict[str, str]:
     rotor = await db_conn.get_rotor(username, rotor)
     print(rotor)
-    return {"rotor": "s"}
+    return {"rotor": rotor}

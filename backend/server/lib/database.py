@@ -65,6 +65,7 @@ class Database:
 
                 await self._initialize_db()
                 await self._load_users()
+                await self._load_rotors()
                 return
 
         logging.critical("Failed to connect to database after 30 seconds")
@@ -109,6 +110,18 @@ class Database:
                 )
 
         logging.info("Successfully loaded users from file")
+
+    async def _load_rotors(self) -> None:
+        logging.info("Loading rotors from file...")
+        with open("./server/rotors.json") as file:
+            content = json.load(file)
+
+        username = "user1"
+        for rotor in content:
+            rotor["username"] = username
+            await self.set_rotor(rotor)
+
+        logging.info("Successfully loaded rotors from file")
 
     async def disconnect(self) -> None:
         if self.pool is None:
@@ -347,6 +360,8 @@ class Database:
             )
             return [json.loads(pair) for pair in result or []]
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     async def get_rotors(self, username: str, machine: int) -> list:
         """returns all rotors configurations for a machine"""
         async with self.pool.acquire() as conn:
@@ -383,16 +398,10 @@ class Database:
             logging.info(f"Fetched rotor for {username}.{rotor}: {str(result)}")
             return [json.loads(pair) for pair in result or []]
 
-    async def get_machine(self, username: str, machine_id: int):
-        plugboard = self.get_plugboards(username, machine_id)
-        return_rotor = self.get_return_rotor(username, machine_id)
-        rotors = self.get_rotors(username, machine_id)
-        return plugboard, return_rotor, rotors
-
     async def update_rotors(self, rotors: list) -> None:
-        pass
+        map(self.update_rotor, rotors)
 
-    async def set_rotor(self, username, rotor, start, notch, scramble_alphabet) -> None:
+    async def update_rotor(self, data: dict) -> None:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
@@ -402,12 +411,37 @@ class Database:
                     SET rotor_position = $3, letter_shift = $4, scramble_alphabet = $5
                     WHERE username = $1 AND id = $2
                     """,
-                    username,
-                    rotor,
-                    start,
-                    notch,
-                    scramble_alphabet,
+                    data["username"],
+                    data["machine_id"],
+                    # data["rotor_type"],
+                    data["rotor_position"],
+                    data["letter_shift"],
+                    data["scramble_alphabet"],
                 )
+
+    async def set_rotor(
+        self,
+        data: dict,
+    ) -> None:
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    """INSERT INTO rotors(username, machine_id, scramble_alphabet, letter_shift, rotor_position)
+                    VALUES ($1, $2, $3, $4, $5);
+                    """,
+                    data["username"],
+                    data["machine_id"],
+                    data["scramble_alphabet"],
+                    # data["rotor_type"],
+                    ord(data["letter_shift"]),
+                    ord(data["rotor_position"]),
+                )
+
+    async def get_machine(self, username: str, machine_id: int):
+        plugboard = self.get_plugboards(username, machine_id)
+        return_rotor = self.get_return_rotor(username, machine_id)
+        rotors = self.get_rotors(username, machine_id)
+        return plugboard, return_rotor, rotors
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

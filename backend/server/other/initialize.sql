@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS rotors (
     machine_id SERIAL,
     scramble_alphabet TEXT,
     rotor_type INTEGER,
-    letter_shift INTEGER,
-    rotor_position INTEGER,
+    letter_shift TEXT,
+    rotor_position TEXT,
 
     PRIMARY KEY (id),
     FOREIGN KEY (machine_id, username) REFERENCES machines(id, username)
