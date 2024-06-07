@@ -1,0 +1,20 @@
+[
+	{
+		"scramble_alphabet": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
+		"rotor_position": "A",
+		"letter_shift": "Y",
+        "machine_id": 1
+	},
+	{
+		"scramble_alphabet": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
+		"rotor_position": "A",
+		"letter_shift": "M",
+        "machine_id": 1
+	},
+	{
+		"scramble_alphabet": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
+		"rotor_position": "A",
+		"letter_shift": "D",
+        "machine_id": 1
+	}
+]

@@ -27,4 +27,4 @@ async def get_rotor(
 ) -> Dict[str, str]:
     rotor = await db_conn.get_rotor(username, rotor)
     print(rotor)
-    return {"rotor": "s"}
+    return {"rotor": rotor}

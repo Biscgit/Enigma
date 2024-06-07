@@ -65,6 +65,7 @@ class Database:
 
                 await self._initialize_db()
                 await self._load_users()
+                await self._load_rotors()
                 return
 
         logging.critical("Failed to connect to database after 30 seconds")
@@ -113,11 +114,14 @@ class Database:
     async def _load_rotors(self) -> None:
         logging.info("Loading rotors from file...")
         with open("./server/rotors.json") as file:
-            content = json.loads(file)
+            content = json.load(file)
+
         username = "user1"
         for rotor in content:
             rotor["username"] = username
-            self.set_rotor(rotor)
+            await self.set_rotor(rotor)
+
+        logging.info("Successfully loaded rotors from file")
 
     async def disconnect(self) -> None:
         if self.pool is None:
@@ -404,10 +408,15 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE rotors
-                    SET rotor_position = %(start)s, letter_shift = %(notch)s, scramble_alphabet = %(scramble_alphabet)
-                    WHERE username = %(username)s AND id = %(rotor)s
+                    SET rotor_position = $3, letter_shift = $4, scramble_alphabet = $5
+                    WHERE username = $1 AND id = $2
                     """,
-                    data,
+                    data["username"],
+                    data["machine_id"],
+                    # data["rotor_type"],
+                    data["rotor_position"],
+                    data["letter_shift"],
+                    data["scramble_alphabet"],
                 )
 
     async def set_rotor(
@@ -417,11 +426,15 @@ class Database:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    """
-                    INSERT INTO rotors(username, machine_id, scramble_alphabet, rotor_type, letter_shift, rotor_position)
-                    VALUES (%(username)s, %(machine_id)s, %(scramble_alphabet)s, %(rotor_type)s, %(letter_shift)s, %(rotor_position)s);
+                    """INSERT INTO rotors(username, machine_id, scramble_alphabet, letter_shift, rotor_position)
+                    VALUES ($1, $2, $3, $4, $5);
                     """,
-                    data,
+                    data["username"],
+                    data["machine_id"],
+                    data["scramble_alphabet"],
+                    # data["rotor_type"],
+                    ord(data["letter_shift"]),
+                    ord(data["rotor_position"]),
                 )
 
     async def get_machine(self, username: str, machine_id: int):
