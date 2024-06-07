@@ -48,14 +48,33 @@ e2e-test-widget:
 e2e-test-driver:
   stage: e2e-test
   image: ${CI_REGISTRY_IMAGE}/flutter-driver:dev-e2e-final
+  variables:
+    FF_NETWORK_PER_BUILD: 1
+    IP_POSTGRES: postgres
+    POSTGRES_USER: app
+    POSTGRES_PASSWORD: admin1234!
+    POSTGRES_NAME: enigma
+    POSTGRES_DB: enigma
+    IP_FASTAPI: backend
+    DB_USER: app
+    DB_PASSWORD: admin1234!
+    DB_NAME: enigma
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+    - name: registry.mygit.th-deg.de/ts19084/enigma/backend:testing
+      alias: backend
   before_script:
     - cd frontend
+    - rm flutter.env
+    - env | grep "IP_FASTAPI" > flutter.env
+    - cat flutter.env
     - flutter pub get
   script:
     - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release  --web-browser-flag="--disable-gpu --headless"'
   rules:
     - exists:
-      - frontend/test/*
+      - frontend/test_driver/*
   needs:
     - job: build-frontend
       optional: true
