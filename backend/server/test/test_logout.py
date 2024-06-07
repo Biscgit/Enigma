@@ -15,7 +15,7 @@ async def test_logout_valid_token():
 
     # test
     async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
-        response = await ac.delete(f"/logout", params={"token": token})
+        response = await ac.delete(f"/logout", headers={"Authorization": f"Token {token}"})
 
     # check
     assert response.status_code == 200
@@ -32,7 +32,7 @@ async def test_logout_invalid_token():
 
     # test
     async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as ac:
-        response = await ac.delete(f"/logout", params={"token": invalid_token})
+        response = await ac.delete(f"/logout", headers={"Authorization": f"Token {invalid_token}"})
 
     # check
     assert response.status_code == 401

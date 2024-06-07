@@ -4,11 +4,13 @@ unit-integration-test:
   before_script:
     - cd backend
   script:
-    - python3 -m pytest --cov=./ --cov-report=xml --junitxml=report.xml
-  after_script:
-      - xmllint --format backend/report.xml
+    - python3 -m pytest --cov --junitxml=report.xml --cov-report term --cov-report xml:coverage.xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
+    when: always
+    paths:
+      - backend/report.xml
+      - backend/coverage.xml
     reports:
       junit: backend/report.xml
       coverage_report:
