@@ -71,8 +71,8 @@ build-flutter-driver:
   variables:
     DOCKERPATH: ".docker-builds/fdriver"
     NAME: "/flutter-builder"
-#   rules:
-#     - if: "$NIGHTLY_BUILD"
+  rules:
+    - if: "$NIGHTLY_BUILD"
   needs:
     - job: build-flutter-builder
       optional: true
