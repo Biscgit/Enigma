@@ -1,5 +1,5 @@
 import fastapi
-import pytest
+import pytest 
 from testcontainers.postgres import PostgresContainer
 
 from .lib import create_db_with_users
@@ -9,7 +9,6 @@ from server.lib.routes import authentication as routes
 logger.configure_logger(no_stdout=True)
 pytest_plugins = ('pytest_asyncio',)
 
-
 def test_check_auth_exits():
     # setup
     token = "HELLO"
@@ -17,22 +16,24 @@ def test_check_auth_exits():
     routes.current_auth = {token: user}
 
     # test
-    returned_user = routes.check_auth(token)
+    returned_user = routes.check_auth(f"Token {token}")
 
     # check
     assert user == returned_user
-
 
 def test_check_auth_not_exists():
     # setup
     token = "HELLO"
     user = "USER"
     routes.current_auth = {}
+    message = ""
 
     # test
-    with pytest.raises(fastapi.HTTPException):
-        _ = routes.check_auth(token)
+    with pytest.raises(fastapi.HTTPException) as message:
+        _ = routes.check_auth(f"Token {token}")
 
+    # check
+    assert message.value.detail == "Invalid token!"
 
 def test_check_auth_incorrect():
     # setup
@@ -41,11 +42,36 @@ def test_check_auth_incorrect():
     routes.current_auth = {token: "OTHER_USER"}
 
     # test
-    returned_user = routes.check_auth(token)
+    returned_user = routes.check_auth(f"Token {token}")
 
     # check
     assert user != returned_user
 
+def test_check_auth_auth_header_missing():
+    # setup
+    token = "HELLO"
+    user = "USER"
+    routes.current_auth = {token: user}
+
+    # test
+    with pytest.raises(fastapi.HTTPException) as message:
+        _ = routes.check_auth(None)
+
+    # check
+    assert message.value.detail == "Authorization header missing"
+
+def test_check_auth_invalid_token_check():
+    # setup
+    token = "HELLO"
+    user = "USER"
+    routes.current_auth = {token: user}
+
+    # test
+    with pytest.raises(fastapi.HTTPException) as message:
+        _ = routes.check_auth(f"NotToken {token}")
+
+    # check
+    assert message.value.detail == "Invalid token format"
 
 @pytest.mark.asyncio
 async def test_postgres_credentials(monkeypatch):
