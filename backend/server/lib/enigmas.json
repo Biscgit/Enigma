@@ -1,0 +1,17 @@
+[
+	{
+		"mapped_alphabet": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
+		"start": "A",
+		"notch": "Y"
+	},
+	{
+		"mapped_alphabet": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
+		"start": "A",
+		"notch": "M"
+	},
+	{
+		"mapped_alphabet": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
+		"start": "A",
+		"notch": "D"
+	}
+]
