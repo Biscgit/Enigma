@@ -13,7 +13,6 @@ RUN flutter build web --release
 
 # serve site with nginx
 FROM nginx:stable-alpine-slim
-RUN apk del busybox
 
 # copy files
 WORKDIR /home/webserver
