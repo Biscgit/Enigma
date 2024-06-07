@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -13,12 +14,10 @@ class Cookie {
   
   static Future<void> save(String key, String value) async {
     await _storage.write(key: key, value: value);
-    print('Data saved: $value');
   }
 
   static Future<void> delete(String key) async {
     await _storage.delete(key: key);
-    print('Data deleted for key: $key');
   }
 
   static Future<bool> isUserLoggedIn() {
@@ -26,17 +25,15 @@ class Cookie {
   }
 }
 
-//final String apiUrl = "http://localhost:8001/key_press"; // Windows
 final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
 
-Future<String> sendPressedKeyToRotors(String pressedKey) async {
+/*Future<String> sendPressedKeyToRotors(String pressedKey) async {
   // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
   // This can also be implemented in tastatur.dart and lampenfeld.dart separately
 
 
   // replace API call in future by new implementation
 
-  var token = await Cookie.read('token');
   //var machineID = await Cookie.read('machine_id'); //Implement machine_id in cookies? Or how else can the global variable be accessed?
   var uri = Uri.parse(apiUrl).replace(queryParameters: {
     'token': token,
@@ -60,17 +57,55 @@ Future<String> sendPressedKeyToRotors(String pressedKey) async {
   print(jsonReponse);
 
   return jsonReponse['key'];
-}
-
-/*Future<String> post(String key) async {
-  var response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(<String, String>{
-        'username': username,
-        'password': password,
-      }),
-    );
 }*/
+
+class APICaller {
+  static final _api = 'http://${dotenv.env['IP_FASTAPI']}:8001/';
+  static Future<Map<String, String>> getHeader() async {
+    var token = await Cookie.read("token");
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ${token}',
+    };
+  }
+  static Future<http.Response> post(String site, [Map<String, dynamic> body = const {}]) async {
+    try {
+      return await http.post(
+        Uri.parse("${_api}${site}"),
+        headers: await APICaller.getHeader(),
+        body: jsonEncode(body)
+      );
+    } catch (e) {
+      // Handle error
+      print('Error in POST request: $e');
+      rethrow;
+    }
+  }
+
+  static Future<http.Response> get(String site) async {
+    try {
+      return await http.get(
+        Uri.parse("${_api}${site}"),
+        headers: await APICaller.getHeader()
+      );
+    } catch (e) {
+      // Handle error
+      print('Error in GET request: $e');
+      rethrow;
+    }
+  }
+
+  static Future<http.Response> delete(String site, [Map<String, dynamic> body = const {}]) async {
+    try {
+      return await http.delete(
+        Uri.parse("${_api}${site}"),
+        headers: await APICaller.getHeader(),
+        body: jsonEncode(body)
+      );
+    } catch (e) {
+      // Handle error
+      print('Error in DELETE request: $e');
+      rethrow;
+    }
+  }
+}
