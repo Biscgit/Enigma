@@ -70,7 +70,7 @@ build-flutter-driver:
   extends: .build-docker
   variables:
     DOCKERPATH: ".docker-builds/fdriver"
-    NAME: "/flutter-builder"
+    NAME: "/flutter-driver"
   rules:
     - if: "$NIGHTLY_BUILD"
   needs:
