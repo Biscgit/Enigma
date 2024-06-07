@@ -61,3 +61,5 @@ e2e-test-driver:
       optional: true
     - job: build-backend
       optional: true
+    - job: build-flutter-driver
+      optional: true

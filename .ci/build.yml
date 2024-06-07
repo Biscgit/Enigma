@@ -66,7 +66,7 @@ build-frontend:
       optional: true
 
 build-flutter-driver:
-  stage: build
+  stage: prebuild
   extends: .build-docker
   variables:
     DOCKERPATH: ".docker-builds/fdriver"
