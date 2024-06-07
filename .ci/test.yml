@@ -25,7 +25,7 @@ unit-integration-test:
     - job: build-python-tester-linter
       optional: true
 
-e2e-test:
+e2e-test-widget:
   stage: e2e-test
   image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
   before_script:
@@ -36,6 +36,23 @@ e2e-test:
   artifacts:
     paths: 
       - frontend/result.json
+  rules:
+    - exists:
+      - frontend/test/*
+  needs:
+    - job: build-frontend
+      optional: true
+    - job: build-backend
+      optional: true
+
+e2e-test-driver:
+  stage: e2e-test
+  image: ${CI_REGISTRY_IMAGE}/flutter-driver:dev-e2e-final
+  before_script:
+    - cd frontend
+    - flutter pub get
+  script:
+    - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release  --web-browser-flag="--disable-gpu --headless"'
   rules:
     - exists:
       - frontend/test/*
