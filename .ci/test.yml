@@ -73,6 +73,7 @@ e2e-test-driver:
     - flutter create --platforms web .
     - flutter pub get
   script:
+    - docker logs backend
     - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release  --web-browser-flag="--disable-gpu --headless"'
   rules:
     - exists:
