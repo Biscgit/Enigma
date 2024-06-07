@@ -65,7 +65,7 @@ class Database:
                 await self._load_users()
                 return
 
-        logging.critical("Failed to connect to database after 60 seconds")
+        logging.critical("Failed to connect to database after 30 seconds")
         exit(1)
 
     async def _initialize_db(self) -> None:

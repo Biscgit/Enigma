@@ -1,18 +1,27 @@
 __all__ = ["router", "check_auth"]
 
+import logging
 from uuid import uuid4
 from hashlib import sha3_256
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from server.lib.models import LoginForm
 from server.lib.database import get_database, Database
+from typing import Optional
 
 router = APIRouter()
 current_auth: dict[str, str] = {}
 
-
-def check_auth(token: str) -> str:
+def check_auth(authorization: Optional[str] = Header(None)) -> str:
     """checks auth for provided token and returns the username"""
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="Authorization header missing")
+
+    token_prefix = "Token "
+    if not authorization.startswith(token_prefix):
+        raise HTTPException(status_code=401, detail="Invalid token format")
+
+    token = authorization[len(token_prefix):]
     if token in current_auth:
         return current_auth[token]
 
@@ -31,6 +40,7 @@ async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_databas
         current_auth = {k: v for k, v in current_auth.items() if not v == login_form.username}
         current_auth |= {auth_token: login_form.username}
 
+        logging.info(f"User {login_form.username} has logged in.")
         return {"token": auth_token}
 
     else:
@@ -38,7 +48,9 @@ async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_databas
 
 
 @router.delete("/logout")
-async def logout(token: str, _: str = Depends(check_auth)) -> dict:
+async def logout(username: str = Depends(check_auth)) -> dict:
     """Endpoint for logging out of the application"""
-    current_auth.pop(token)
+    global current_auth
+    logging.info(f"User {username} has logged out.")
+    current_auth = {key:val for key, val in current_auth.items() if val != username}
     return {"message": "OK"}

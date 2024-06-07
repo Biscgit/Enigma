@@ -5,16 +5,6 @@ class SideBar extends StatelessWidget {
 
   const SideBar({super.key, required this.onItemSelected});
 
-  ListTile genMachineWithCon(String name, String backendID, context) {
-    return ListTile(
-        title: Text(name),
-        onTap: () {
-          onItemSelected(name);
-          // Backendcall with backendID
-          Navigator.pop(context);
-        });
-  }
-
   final DrawerHeader header = const DrawerHeader(
     decoration: BoxDecoration(
       color: Colors.blue,
@@ -31,19 +21,37 @@ class SideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ListTile genMachine(String name, String backendID) =>
-        genMachineWithCon(name, backendID, context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
           header,
-          genMachine('Enigma I', ""),
-          genMachine('Norway Enigma', ""),
-          genMachine('Enigma M3', ""),
+          Machine(name: 'Enigma I', id: "", onItemSelected: this.onItemSelected),
+          Machine(name: 'Norway Enigma', id: "", onItemSelected: this.onItemSelected),
+          Machine(name: 'Enigma M3', id: "", onItemSelected: this.onItemSelected),
           addMachine(context)
         ],
       ),
+    );
+  }
+}
+
+class Machine extends StatelessWidget{
+  final name;
+  final id;
+  final Function(String) onItemSelected;
+
+  const Machine({super.key, required this.name, required this.id, required this.onItemSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(name),
+      onTap: () {
+        this.onItemSelected(this.name);
+        // Backendcall with backendID
+        Navigator.pop(context);
+      }
     );
   }
 }
