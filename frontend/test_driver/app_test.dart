@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
@@ -15,8 +14,8 @@ void main() {
 
     // Connect to the Flutter app before running the tests.
     setUpAll(() async => {
-          await Directory('screenshots').create(),
-        });
+      await Directory('screenshots').create(),
+    });
 
     setUp(() async {
       driver = await FlutterDriver.connect();
@@ -34,6 +33,7 @@ void main() {
       assert(health?.status == HealthStatus.ok);
     });
 
+    // Login e2e test
     test('Login correct credentials', () async {
       // Find the button by its label.
       final usernameField = find.byValueKey('username');
@@ -134,7 +134,8 @@ void main() {
     });
   });
 
-  group('Login Logout Tests', () {
+  // Logout e2e test
+  group('Logout e2e test', () {
     FlutterDriver? driver;
 
     // Connect to the Flutter app before running the tests.
@@ -182,6 +183,49 @@ void main() {
         find.byValueKey('logoutDialog'),
         timeout: const Duration(seconds: 5),
       );
+    });
+  });
+
+  group('KeyHistory e2e tests', () {
+    FlutterDriver? driver;
+
+    setUp(() async {
+      driver = await FlutterDriver.connect();
+    });
+
+    tearDown(() async {
+      if (driver != null) {
+        driver?.close();
+      }
+    });
+
+    test('KeyHistory e2e test', () async {
+
+      // Find button fields
+      final inputFieldFinder = find.byValueKey('keyInput');
+      final addButtonFinder = find.byValueKey('addButton');
+
+      // Add keys to the history
+      List<String> clearTexts = ['A', 'B', 'C'];
+      List<String> encryptedTexts = ['EncryptedA', 'EncryptedB', 'EncryptedC'];
+
+      for (int i = 0; i < clearTexts.length; i++) {
+        await driver?.tap(inputFieldFinder);
+        await driver?.enterText(clearTexts[i]);
+        await driver?.tap(addButtonFinder);
+        // Find history
+        await driver?.waitFor(find.text('${clearTexts[i]} -> ${encryptedTexts[i]}'));
+      }
+
+      // Add up to 140 keys to the history
+      for (int i = 0; i <= 140; i++) {
+        String clearText = 'Key$i';
+        String encryptedText = 'EncryptedKey$i';
+        await driver?.tap(inputFieldFinder);
+        await driver?.enterText(clearText);
+        await driver?.tap(addButtonFinder);
+        await driver?.waitFor(find.text('$clearText -> $encryptedText'));
+      }
     });
   });
 }
