@@ -290,6 +290,46 @@ class Database:
         boards = await self.get_plugboards(username, machine)
         return len(boards)
 
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    async def create_machine(self, username: str, machine_id: int, machine_type: int) -> None:
+        """creates a new machine for a user if it does not exist"""
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                count = await conn.fetchval(
+                    """
+                    SELECT COUNT(*)
+                    FROM machines
+                    WHERE username = $1 AND id = $2
+                    """,
+                    username, machine_id
+                )
+                if count > 0:
+                    logging.error(f"Machine {username}.{machine_id} already exists!")
+                    raise Exception(f"Machine {username}.{machine_id} already exists!")
+
+                await conn.execute(
+                    """
+                    INSERT INTO machines
+                    VALUES (
+                        id = $1, 
+                        username = $2, 
+                        machine_type = $3,
+                        
+                        character_pointer = -1,
+                        character_history = ARRAY[]::JSON[],
+                        plugboard_enabled = FALSE,
+                        plugboard_config = ARRAY[]::JSON[]
+                    )
+                    """,
+                    machine_id, username, machine_type
+                )
+
+                logging.info(f"Created machine {username}.{machine_id} of type {machine_type}")
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
