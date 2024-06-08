@@ -16,8 +16,8 @@ go to `/frontend` directory
 - **Run** Linter: `flutter analyze`
 - **Run** Flutter (with hot reload, compose needs to run in addition!): `flutter run -d chrome`
 - **Run** Flutter tests (visible): `flutter driver --target=test_driver/app.dart -d chrome --no-headless`
-- **Run** Flutter tests (
-  headless): `flutter driver --target=test_driver/app.dart -d web-server --release --web-browser-flag="--disable-gpu --headless"`
+- **Run** Flutter tests (headless): 
+- `flutter driver --target=test_driver/app.dart -d web-server --release --web-browser-flag="--disable-gpu --headless"`
 - **Start** Chrome driver (before tests): `chromedriver --port=4444`
 
 ### Backend commands
