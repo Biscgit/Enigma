@@ -12,6 +12,12 @@ class Plugboard:
         return self.plugs.get(letter.lower(), letter.lower())
 
 
+def reflect_letter(letter: str, switchers: dict[str, str]) -> str:
+    """Reflects the letter based on the provided letters configuration."""
+
+    return switchers.get(letter.lower(), letter.lower())
+
+
 async def switch_letter(username: str, machine: int, letter: str, conn: Database) -> str:
     """Switches the letter with its connected plug if available."""
 
@@ -23,4 +29,4 @@ async def switch_letter(username: str, machine: int, letter: str, conn: Database
         plugboard[plug[0]] = plug[1]
         plugboard[plug[1]] = plug[0]
 
-    return plugboard.get(letter.lower(), letter.lower())
+    return reflect_letter(letter, plugboard)
