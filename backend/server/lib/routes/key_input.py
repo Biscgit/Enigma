@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from server.lib.database import get_database, Database
 from server.lib.plugboard import switch_letter
 from .authentication import check_auth
@@ -25,6 +25,7 @@ async def encrypt_key(
     # Save to history and return the switched key
     await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)
     return {"key": encrypted_key}
+
 
 @router.get("/load_key_history")
 async def load_key_history(
