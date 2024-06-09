@@ -1,20 +1,31 @@
+import copy
+
 import pytest
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
 from server.lib.routes.plugboard import router
 from server.lib.database import Database, get_database
 from server.lib.routes.authentication import check_auth
+from server.lib.plugboard import switch_letter
 from pydantic import BaseModel
 
 # Create a TestApp to include the router
 app = FastAPI()
 app.include_router(router)
 
+pytest_plugins = ('pytest_asyncio',)
+
 
 # Mock Database dependency
 class MockDatabase:
     def __init__(self):
         self.plugboards = {('test_user', 1): [['a', 'b']]}
+
+    @staticmethod
+    def empty():
+        cls = MockDatabase()
+        cls.plugboards = {('test_user', 1): []}
+        return cls
 
     async def get_plugboards(self, username, machine):
         return self.plugboards.get((username, machine), [])
@@ -87,5 +98,43 @@ def test_reset_plugboard(client):
     assert data["message"] == "Plugboard reset successfully"
 
 
-if __name__ == "__main__":
-    pytest.main()
+@pytest.mark.asyncio
+async def test_plugboard_switch():
+    """test the switching of letters in both directions"""
+    db = MockDatabase.empty()
+
+    new_app = copy.copy(app)
+    new_app.dependency_overrides[get_database] = lambda: db
+    new_app.dependency_overrides[check_auth] = override_check_auth
+    client = TestClient(new_app)
+
+    letters = ["a", "l", "d", "g", "a", "i", "p", "h", "e", "i", "m"]
+    expected = ["a", "l", "d", "g", "a", "i", "p", "h", "e", "i", "m"]
+    for l, e in zip(letters, expected):
+        new = await switch_letter("test_user", 1, l, db)
+        assert new == e
+
+    r = client.post("/plugboard/save?machine=1", json={"plug_a": "c", "plug_b": "d"})
+    assert r.status_code == 200
+    r = client.post("/plugboard/save?machine=1", json={"plug_a": "g", "plug_b": "h"})
+    assert r.status_code == 200
+    r = client.post("/plugboard/save?machine=1", json={"plug_a": "p", "plug_b": "w"})
+    assert r.status_code == 200
+    assert db.plugboards == {('test_user', 1): [['c', 'd'], ['g', 'h'], ['p', 'w']]}
+
+    letters = ["a", "l", "d", "g", "a", "i", "w", "h", "e", "c", "m"]
+    expected = ["a", "l", "c", "h", "a", "i", "p", "g", "e", "d", "m"]
+    for l, e in zip(letters, expected):
+        new = await switch_letter("test_user", 1, l, db)
+        assert new == e
+
+    r = client.delete("/plugboard/remove", params={"machine": 1, "plug_a": "p", "plug_b": "w"})
+    assert r.status_code == 200
+    r = client.delete("/plugboard/remove", params={"machine": 1, "plug_a": "d", "plug_b": "c"})
+    assert r.status_code == 200
+
+    letters = ["a", "l", "d", "g", "a", "i", "w", "h", "e", "c", "m"]
+    expected = ["a", "l", "d", "h", "a", "i", "w", "g", "e", "c", "m"]
+    for l, e in zip(letters, expected):
+        new = await switch_letter("test_user", 1, l, db)
+        assert new == e
