@@ -200,6 +200,18 @@ void main() {
     });
 
     test('KeyHistory e2e test', () async {
+      // login
+      final usernameField = find.byValueKey('username');
+      final passwordField = find.byValueKey('password');
+      final button = find.text('Login');
+
+      await driver?.tap(usernameField);
+      await driver?.enterText("user1");
+
+      await driver?.tap(passwordField);
+      await driver?.enterText("pass1");
+
+      await driver?.tap(button);
 
       // Find button fields
       final inputFieldFinder = find.byValueKey('keyInput');
