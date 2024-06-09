@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS machines (
     id SERIAL,
     username TEXT,
+    name TEXT,
     machine_type INTEGER,
-    rotors INTEGER[],
-    return_rotor JSON ARRAY[26],
+    reflector JSON,
 
     character_pointer INTEGER,
     character_history JSON ARRAY[140],
@@ -31,9 +31,10 @@ CREATE TABLE IF NOT EXISTS machines (
 CREATE TABLE IF NOT EXISTS rotors (
     id SERIAL,
     username TEXT,
+    name TEXT,
     machine_id SERIAL,
     scramble_alphabet TEXT,
-    rotor_type INTEGER,
+    machine_type INTEGER,
     letter_shift TEXT,
     rotor_position TEXT,
 

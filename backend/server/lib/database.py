@@ -65,6 +65,7 @@ class Database:
 
                 await self._initialize_db()
                 await self._load_users()
+                await self._load_machines()
                 await self._load_rotors()
                 return
 
@@ -111,15 +112,50 @@ class Database:
 
         logging.info("Successfully loaded users from file")
 
+    async def _get_users(self) -> list[list[str]]:
+        """Returns a list of usernames"""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                result = await conn.fetch(
+                    """
+                    SELECT username
+                    FROM  users
+                    """
+                )
+                return [row["username"] for row in result]
+
+    async def _load_machines(self) -> None:
+        logging.info("Loading machines from file...")
+        with open("./server/machines.json") as file:
+            content = json.load(file)
+
+        alphabet = string.ascii_lowercase
+        for username in await self._get_users():
+            for machine in content:
+                reflector = {}
+                for i, j in zip(machine["reflector"], alphabet):
+                    reflector[i] = j
+                    reflector[j] = i
+
+                await self.create_machine(
+                    machine["machine_type"],
+                    username,
+                    machine["machine_type"],
+                    machine["name"],
+                    machine["reflector"],
+                )
+
+        logging.info("Successfully loaded machines from file")
+
     async def _load_rotors(self) -> None:
         logging.info("Loading rotors from file...")
         with open("./server/rotors.json") as file:
             content = json.load(file)
 
-        username = "user1"
-        for rotor in content:
-            rotor["username"] = username
-            await self.set_rotor(rotor)
+        for username in await self._get_users():
+            for rotor in content:
+                rotor["username"] = username
+                await self.set_rotor(rotor)
 
         logging.info("Successfully loaded rotors from file")
 
@@ -151,6 +187,34 @@ class Database:
                 return result
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    async def create_machine(
+        self,
+        machine_id: int,
+        username: str,
+        machine_type: int,
+        name: str,
+        reflector: dict,
+    ) -> None:
+        """creates a new machine for a user if it does not exist"""
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    """
+                        INSERT INTO machines(id, username, name, machine_type, reflector, character_pointer, character_history, plugboard_enabled, plugboard_config)
+                        VALUES ($1, $2, $3, $4, $5::JSON, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
+                    """,
+                    machine_id,
+                    username,
+                    name,
+                    machine_type,
+                    json.dumps(reflector),
+                )
+
+                logging.info(
+                    f"Created machine {username}.{machine_id} of type {machine_type}"
+                )
 
     async def save_keyboard_pair(
         self, username: str, machine: int, clear: str, encrypted: str
@@ -340,14 +404,14 @@ class Database:
         boards = await self.get_plugboards(username, machine)
         return len(boards)
 
-    async def get_return_rotor(self, username: str, machine: int) -> list:
+    async def get_reflector(self, username: str, machine: int) -> list:
         """returns return rotor configurations for a machine"""
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
 
             result = await conn.fetchval(
                 """
-                SELECT return_rotor
+                SELECT reflector
                 FROM machines
                 WHERE username = $1 AND id = $2
                 """,
@@ -355,21 +419,19 @@ class Database:
                 machine,
             )
 
-            logging.info(
-                f"Fetched return_rotor for {username}.{machine}: {str(result)}"
-            )
+            logging.info(f"Fetched reflector for {username}.{machine}: {str(result)}")
             return [json.loads(pair) for pair in result or []]
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    async def get_rotors(self, username: str, machine: int) -> list:
+    async def get_rotors(self, username: str, machine: int) -> list[dict]:
         """returns all rotors configurations for a machine"""
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
 
-            result = await conn.fetchval(
+            results = await conn.fetch(
                 """
-                SELECT rotor_type, letter_shift, rotor_position, scramble_alphabet
+                SELECT id, machine_type, letter_shift, rotor_position, scramble_alphabet
                 FROM rotors
                 WHERE username = $1 AND machine_id = $2
                 """,
@@ -377,26 +439,26 @@ class Database:
                 machine,
             )
 
-            logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
-            return [json.loads(pair) for pair in result or []]
+            logging.info(f"Fetched rotors for {username}.{machine}: {str(results)}")
+            return [dict(record) for record in results if record is not None]
 
-    async def get_rotor(self, username: str, rotor: int) -> Rotor:
+    async def get_rotor(self, username: str, rotor: int) -> dict:
         """returns rotor configuration for a machine"""
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
 
-            result = await conn.fetchval(
+            result = await conn.fetchrow(
                 """
-                SELECT rotor_type, letter_shift, rotor_position, scramble_alphabet
+                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet
                 FROM rotors
-                WHERE username = $1 AND id = $2
+                WHERE id = $1
                 """,
-                username,
                 rotor,
             )
+            print(result)
 
-            logging.info(f"Fetched rotor for {username}.{rotor}: {str(result)}")
-            return [json.loads(pair) for pair in result or []]
+            logging.info(f"Fetched rotor for {rotor}: {str(result)}")
+            return dict(result) if result else None
 
     async def update_rotors(self, rotors: list) -> None:
         map(self.update_rotor, rotors)
@@ -408,15 +470,15 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE rotors
-                    SET rotor_position = $3, letter_shift = $4, scramble_alphabet = $5
+                    SET rotor_position = $3, letter_shift = $4, scramble_alphabet = $5, machine_id = $6
                     WHERE username = $1 AND id = $2
                     """,
                     data["username"],
-                    data["machine_id"],
-                    # data["rotor_type"],
+                    data["id"],
                     data["rotor_position"],
                     data["letter_shift"],
                     data["scramble_alphabet"],
+                    data["machine_id"],
                 )
 
     async def set_rotor(
@@ -426,22 +488,29 @@ class Database:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    """INSERT INTO rotors(username, machine_id, scramble_alphabet, letter_shift, rotor_position)
-                    VALUES ($1, $2, $3, $4, $5);
+                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position)
+                    VALUES ($1, $2, $3, $4, $5, $6);
                     """,
                     data["username"],
-                    data["machine_id"],
+                    # data["name"],
                     data["scramble_alphabet"],
-                    # data["rotor_type"],
-                    ord(data["letter_shift"]),
-                    ord(data["rotor_position"]),
+                    data["machine_id"],
+                    data["machine_id"],
+                    data["letter_shift"],
+                    data["rotor_position"],
                 )
 
     async def get_machine(self, username: str, machine_id: int):
         plugboard = self.get_plugboards(username, machine_id)
-        return_rotor = self.get_return_rotor(username, machine_id)
-        rotors = self.get_rotors(username, machine_id)
-        return plugboard, return_rotor, rotors
+        reflector = self.get_reflector(username, machine_id)
+        rotors = []
+        for rotor in self.get_rotors(username, machine_id):
+            rotors += Rotor(
+                rotor["scramble_alphabet"],
+                rotor["rotor_position"],
+                rotor["letter_shift"],
+            )
+        return plugboard, reflector, rotors
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -8,7 +8,7 @@ from .lib import create_db_with_users
 from server.lib import database, logger
 
 logger.configure_logger(no_stdout=True)
-pytest_plugins = ('pytest_asyncio',)
+pytest_plugins = ("pytest_asyncio",)
 
 
 @pytest.mark.asyncio
@@ -26,10 +26,7 @@ async def test_postgres_keypair_storage(monkeypatch):
 
         test_client = await create_db_with_users(pg, users, monkeypatch)
         await test_client.set_type_codec(
-            'json',
-            encoder=json.dumps,
-            decoder=json.loads,
-            schema='pg_catalog'
+            "json", encoder=json.dumps, decoder=json.loads, schema="pg_catalog"
         )
 
         async with test_client.transaction():
@@ -39,10 +36,16 @@ async def test_postgres_keypair_storage(monkeypatch):
                 CREATE TABLE machines (
                     id SERIAL,
                     username TEXT,
-                
+                    name TEXT,
+                    machine_type INTEGER,
+                    reflector JSON,
+
+                    plugboard_enabled BOOLEAN,
+                    plugboard_config JSON ARRAY[10],
+
                     character_pointer INTEGER,
                     character_history JSON ARRAY[140],
-                    
+
                     PRIMARY KEY (id, username),
                     CHECK (array_length(character_history, 1) <= 140)
                 )
@@ -61,7 +64,9 @@ async def test_postgres_keypair_storage(monkeypatch):
                             ARRAY[]::JSON[]
                         )
                         """,
-                        machine, u["username"], -1
+                        machine,
+                        u["username"],
+                        -1,
                     )
 
         # launch connection
@@ -72,7 +77,7 @@ async def test_postgres_keypair_storage(monkeypatch):
         pointer = await db._get_history_pointer_position(test_client, user, machine)
         assert pointer == -1
 
-        test_pairs = [['a', 'b'], ['w', 'a'], ['g', 'f'], ['b', 'q']]
+        test_pairs = [["a", "b"], ["w", "a"], ["g", "f"], ["b", "q"]]
         await db.save_keyboard_pair(user, machine, *test_pairs[0])
         pointer = await db._get_history_pointer_position(test_client, user, machine)
         assert pointer == 0
@@ -81,39 +86,45 @@ async def test_postgres_keypair_storage(monkeypatch):
         async with test_client.transaction():
             for pair in test_pairs[1:]:
                 await db.save_keyboard_pair(
-                    user, machine, *pair,
+                    user,
+                    machine,
+                    *pair,
                 )
 
-            await db.save_keyboard_pair(
-                users[1]["username"], machines[3], 'a', 'c'
-            )
+            await db.save_keyboard_pair(users[1]["username"], machines[3], "a", "c")
 
         pointer = await db._get_history_pointer_position(test_client, user, machine)
         assert pointer == 3
 
         # other state checks
-        other_machine_ptr = await db._get_history_pointer_position(test_client, user, machines[3])
+        other_machine_ptr = await db._get_history_pointer_position(
+            test_client, user, machines[3]
+        )
         assert other_machine_ptr == -1
 
-        other_user_ptr = await db._get_history_pointer_position(test_client, users[1]["username"], machines[3])
+        other_user_ptr = await db._get_history_pointer_position(
+            test_client, users[1]["username"], machines[3]
+        )
         assert other_user_ptr == 0
 
         # test cycle of pointer
         async with test_client.transaction():
             for i in range(140):
-                await db.save_keyboard_pair(user, machines[3], 'x', 'y')
+                await db.save_keyboard_pair(user, machines[3], "x", "y")
 
-                pointer = await db._get_history_pointer_position(test_client, user, machines[3])
+                pointer = await db._get_history_pointer_position(
+                    test_client, user, machines[3]
+                )
                 assert pointer == i
 
         # pointer overflow occurs here
-        await db.save_keyboard_pair(user, machines[3], 'x', 'y')
+        await db.save_keyboard_pair(user, machines[3], "x", "y")
         pointer = await db._get_history_pointer_position(test_client, user, machines[3])
         assert pointer == 0
 
         # test getting characters
         chars = await db.get_key_pairs(user, machines[3])
-        assert chars == [['x', 'y'] for _ in range(140)]
+        assert chars == [["x", "y"] for _ in range(140)]
 
         chars = await db.get_key_pairs(user, machine)
         test_pairs.reverse()
@@ -124,23 +135,29 @@ async def test_postgres_keypair_storage(monkeypatch):
         assert chars == []
 
         # test getting lastly inserted characters with pointer overflow
-        expected_arr = [['l', 'h'], ['r', 's'], ['v', 't']] + [['r', 's'] for _ in range(136)] + [['o', 'p']]
+        expected_arr = (
+            [["l", "h"], ["r", "s"], ["v", "t"]]
+            + [["r", "s"] for _ in range(136)]
+            + [["o", "p"]]
+        )
 
         async with test_client.transaction():
             for i in range(70):
-                await db.save_keyboard_pair(users[1]["username"], machines[1], 'r', 's')
+                await db.save_keyboard_pair(users[1]["username"], machines[1], "r", "s")
             await db.save_keyboard_pair(users[1]["username"], machines[1], "u", "i")
 
             # should be the 140th element on pointer 70:
             await db.save_keyboard_pair(users[1]["username"], machines[1], "o", "p")
             for i in range(136):
-                await db.save_keyboard_pair(users[1]["username"], machines[1], 'r', 's')
+                await db.save_keyboard_pair(users[1]["username"], machines[1], "r", "s")
 
             await db.save_keyboard_pair(users[1]["username"], machines[1], "v", "t")
             await db.save_keyboard_pair(users[1]["username"], machines[1], "r", "s")
             await db.save_keyboard_pair(users[1]["username"], machines[1], "l", "h")
 
-        pointer = await db._get_history_pointer_position(test_client, users[1]["username"], machines[1])
+        pointer = await db._get_history_pointer_position(
+            test_client, users[1]["username"], machines[1]
+        )
         assert pointer == 70
 
         chars = await db.get_key_pairs(users[1]["username"], machines[1])
@@ -148,16 +165,18 @@ async def test_postgres_keypair_storage(monkeypatch):
 
         # test with adding invalid inputs
         with pytest.raises(Exception):
-            await db.save_keyboard_pair(user, machine, *['o', '+'])
+            await db.save_keyboard_pair(user, machine, *["o", "+"])
 
         with pytest.raises(Exception):
-            await db.save_keyboard_pair(user, machine, *['', 'i'])
+            await db.save_keyboard_pair(user, machine, *["", "i"])
 
         with pytest.raises(Exception):
-            await db.save_keyboard_pair(user, machine, *['p', 'long'])
+            await db.save_keyboard_pair(user, machine, *["p", "long"])
 
         # nothing should change after invalid inputs
-        pointer = await db._get_history_pointer_position(test_client, users[1]["username"], machines[1])
+        pointer = await db._get_history_pointer_position(
+            test_client, users[1]["username"], machines[1]
+        )
         assert pointer == 70
 
         chars = await db.get_key_pairs(users[1]["username"], machines[1])
@@ -183,10 +202,7 @@ async def test_postgres_plugboard_configuration(monkeypatch):
 
         test_client = await create_db_with_users(pg, users, monkeypatch)
         await test_client.set_type_codec(
-            'json',
-            encoder=json.dumps,
-            decoder=json.loads,
-            schema='pg_catalog'
+            "json", encoder=json.dumps, decoder=json.loads, schema="pg_catalog"
         )
 
         async with test_client.transaction():
@@ -196,8 +212,15 @@ async def test_postgres_plugboard_configuration(monkeypatch):
                 CREATE TABLE machines (
                     id SERIAL,
                     username TEXT,
+                    name TEXT,
+                    machine_type INTEGER,
+                    reflector JSON,
 
+                    plugboard_enabled BOOLEAN,
                     plugboard_config JSON ARRAY[10],
+
+                    character_pointer INTEGER,
+                    character_history JSON ARRAY[140],
 
                     PRIMARY KEY (id, username),
                     CHECK (array_length(plugboard_config, 1) <= 10)
@@ -216,14 +239,15 @@ async def test_postgres_plugboard_configuration(monkeypatch):
                             ARRAY[]::JSON[]
                         )
                         """,
-                        machine, u["username"],
+                        machine,
+                        u["username"],
                     )
 
         db = database.get_database()
         await db.connect()
 
         # insert pairs and read
-        test_pairs = [['a', 'b'], ['w', 'g'], ['l', 'h']]
+        test_pairs = [["a", "b"], ["w", "g"], ["l", "h"]]
         for pair in test_pairs:
             await db.save_plugboard(user, machine, *pair)
 
@@ -241,19 +265,19 @@ async def test_postgres_plugboard_configuration(monkeypatch):
 
         # insert with one letter exists
         with pytest.raises(Exception):
-            await db.save_plugboard(user, machine, *['k', 'w'])
+            await db.save_plugboard(user, machine, *["k", "w"])
 
         # insert no latter
         with pytest.raises(Exception):
-            await db.save_plugboard(user, machine, *['o', '+'])
+            await db.save_plugboard(user, machine, *["o", "+"])
 
         # insert nothing
         with pytest.raises(Exception):
-            await db.save_plugboard(user, machine, *['', 'i'])
+            await db.save_plugboard(user, machine, *["", "i"])
 
         # insert too many
         with pytest.raises(Exception):
-            await db.save_plugboard(user, machine, *['p', 'long'])
+            await db.save_plugboard(user, machine, *["p", "long"])
 
         # ensure that nothing got inserted
         result = await db.get_plugboards(user, machine)
@@ -264,14 +288,22 @@ async def test_postgres_plugboard_configuration(monkeypatch):
         assert len(test_pairs) == pair_number
 
         # raise exception on too many valid connections
-        for pair in [['x', 'y'], ['q', 'z'], ['j', 'p'], ['c', 'f'], ['v', 'n'], ['e', 's'], ['r', 'u']]:
+        for pair in [
+            ["x", "y"],
+            ["q", "z"],
+            ["j", "p"],
+            ["c", "f"],
+            ["v", "n"],
+            ["e", "s"],
+            ["r", "u"],
+        ]:
             await db.save_plugboard(user, machine, *pair)
 
         pair_number = await db._get_plugboard_count(user, machine)
         assert pair_number == 10
 
         with pytest.raises(asyncpg.CheckViolationError):
-            await db.save_plugboard(user, machine, *['m', 'i'])
+            await db.save_plugboard(user, machine, *["m", "i"])
 
         # remove valid configurations
         for pair in test_pairs:
