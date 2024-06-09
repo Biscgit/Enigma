@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 //Steckerbrett für die Enigma M3-ABC-Layout
 
