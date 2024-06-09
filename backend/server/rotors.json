@@ -1,20 +1,110 @@
 [
+    {
+        "scramble_alphabet": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
+        "rotor_position": "A",
+        "machine_id": 1,
+        "letter_shift": "Y"
+    },
+    {
+        "scramble_alphabet": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
+        "rotor_position": "A",
+        "machine_id": 1,
+        "letter_shift": "M"
+    },
+    {
+        "scramble_alphabet": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
+        "rotor_position": "A",
+        "machine_id": 1,
+        "letter_shift": "D"
+    },
+    {
+        "scramble_alphabet": "ESOVPZJAYQUIRHXLNFTGKDCMWB",
+        "rotor_position": "A",
+        "machine_id": 1,
+        "letter_shift": "R"
+    },
+    {
+        "scramble_alphabet": "VZBRGITYUPSDNHLXAWMJQOFECK",
+        "rotor_position": "A",
+        "machine_id": 1,
+        "letter_shift": "H"
+    },
+    {
+        "scramble_alphabet": "WTOKASUYVRBXJHQCPZEFMDINLG",
+        "rotor_position": "A",
+        "machine_id": 2,
+        "letter_shift": "Y"
+    },
+    {
+        "scramble_alphabet": "GJLPUBSWEMCTQVHXAOFZDRKYNI",
+        "rotor_position": "A",
+        "machine_id": 2,
+        "letter_shift": "M"
+    },
+    {
+        "scramble_alphabet": "JWFMHNBPUSDYTIXVZGRQLAOEKC",
+        "rotor_position": "A",
+        "machine_id": 2,
+        "letter_shift": "D"
+    },
 	{
-		"scramble_alphabet": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
-		"rotor_position": "A",
-		"letter_shift": "Y",
-        "machine_id": 1
-	},
+        "scramble_alphabet": "FGZJMVXEPBWSHQTLIUDYKCNRAO",
+        "rotor_position": "A",
+        "machine_id": 2,
+        "letter_shift": "R"
+    },
 	{
-		"scramble_alphabet": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
-		"rotor_position": "A",
-		"letter_shift": "M",
-        "machine_id": 1
-	},
-	{
-		"scramble_alphabet": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
-		"rotor_position": "A",
-		"letter_shift": "D",
-        "machine_id": 1
-	}
+        "scramble_alphabet": "HEJXQOTZBVFDASCILWPGYNMURK",
+        "rotor_position": "A",
+        "machine_id": 2,
+        "letter_shift": "H"
+    },
+    {
+        "scramble_alphabet": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "Y"
+    },
+    {
+        "scramble_alphabet": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "M"
+    },
+    {
+        "scramble_alphabet": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "D"
+    },
+    {
+        "scramble_alphabet": "ESOVPZJAYQUIRHXLNFTGKDCMWB",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "R"
+    },
+    {
+        "scramble_alphabet": "VZBRGITYUPSDNHLXAWMJQOFECK",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "H"
+    },
+    {
+        "scramble_alphabet": "JPGVOUMFYQBENHZRDKASXLICTW",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "HU"
+    },
+    {
+        "scramble_alphabet": "NZJHGRCXMYSWBOUFAIVLPEKQDT",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "HU"
+    },
+    {
+        "scramble_alphabet": "FKQHTLXOCBJSPDZRAMEWNIUYGV",
+        "rotor_position": "A",
+        "machine_id": 3,
+        "letter_shift": "HU"
+    }
 ]
