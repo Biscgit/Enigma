@@ -27,3 +27,13 @@ logging.info("Loading routes...")
 app.include_router(authentication.router)
 app.include_router(key_input.router)
 app.include_router(rotor.router)
+
+
+@app.get("/openapi.json", include_in_schema=False)
+async def get_open_api_endpoint():
+    return app.openapi()
+
+
+@app.get("/docs", include_in_schema=False)
+async def get_swagger_ui_html():
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="API Docs")
