@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from server.lib.database import get_database, Database
+from server.lib.plugboard import switch_letter
 from .authentication import check_auth
 
 router = APIRouter()
@@ -13,29 +14,17 @@ async def encrypt_key(
 ) -> dict:
     """Endpoint for logging key presses. Takes token, key and machine id. Returns the switched key"""
 
-    # Attempt to get plugboard configurations to check if machine exists
-    try:
-        plugs = await db_conn.get_plugboards(username, machine)
-    except Exception:
-        raise HTTPException(status_code=404, detail="Machine not found")
+    # ToDo: implement encryption here and store it to `encrypted_key`
+    # ToDo: implement check if machine exists
+    # ToDo: add unit + integration tests when completed
+    encrypted_key: str = "o"
 
-    # Get the switched letter from the plugboard
-    switched_letter = get_switched_letter(plugs, key)
+    # apply plugboard
+    encrypted_key = await switch_letter(username, machine, encrypted_key, db_conn)
 
     # Save to history and return the switched key
-    await db_conn.save_keyboard_pair(username, machine, key, switched_letter)
-    return {"key": switched_letter}
-
-
-def get_switched_letter(plugs: list, key: str) -> str:
-    # Find the plugboard connection for the key
-    for plug in plugs:
-        if key in plug:
-            return plug[1] if key == plug[0] else plug[0]
-
-    # If the key is not found in the plugboard, return the key itself
-    return key
-
+    await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)
+    return {"key": encrypted_key}
 
 @router.get("/load_key_history")
 async def load_key_history(
