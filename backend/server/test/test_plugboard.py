@@ -12,7 +12,7 @@ app.include_router(router)
 
 
 # Mock Database dependency
-class MockDatabase(Database):
+class MockDatabase:
     def __init__(self):
         self.plugboards = {('test_user', 1): [['a', 'b']]}
 
@@ -80,7 +80,7 @@ def test_edit_plugboard(client):
 
 
 def test_reset_plugboard(client):
-    response = client.delete("/plugboard/reset", params={"machine": 1, "key_1": "a", "key_2": "b"})
+    response = client.delete("/plugboard/remove", params={"machine": 1, "plug_a": "a", "plug_b": "b"})
     assert response.status_code == 200
     data = response.json()
     assert "message" in data
