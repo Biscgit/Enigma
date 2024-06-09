@@ -95,16 +95,16 @@ async def edit_plugboard(
     return {"plugboard": plugs}
 
 
-@router.delete("/reset", response_model=ResetPlugboardResponse)  # Change response model here
-async def reset_plugboard(
+@router.delete("/remove", response_model=ResetPlugboardResponse)  # Change response model here
+async def delete_plugboard_pair(
         machine: int,
-        key_1: str,
-        key_2: str,
+        plug_a: str,
+        plug_b: str,
         username: str = Depends(check_auth),
         db: Database = Depends(get_database)
 ):
     try:
-        await db.remove_plugboard(username, machine, key_1, key_2)
+        await db.remove_plugboard(username, machine, plug_a, plug_b)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
