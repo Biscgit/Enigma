@@ -123,40 +123,6 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     });
   }
 
-  //void _onKeyPressed(String value, int index) {
-    //if (_selectedCount < 20) {
-      //setState(() {
-        //_inputText += value;
-        //_isButtonSelected[index] = !_isButtonSelected[index];
-        //_selectedCount++;
-
-        //if (!_letterColors.containsKey(value)) {
-          // Zufällige Farbe auswählen und Buchstabe speichern
-          //final randomColor = _availableColors[_selectedCount ~/ 2 % _availableColors.length];
-          //_letterColors[value] = randomColor;
-
-          // Farbe für den vorherigen Buchstaben festlegen
-          //if (_inputText.length > 1) {
-            //final prevChar = _inputText[_inputText.length - 2];
-            //_letterColors[prevChar] = randomColor;
-          //}
-        //}
-      //});
-    //}
-  //}
-
-  //void _onDeletePressed() {
-    //setState(() {
-      //if (_inputText.isNotEmpty) {
-        //final lastChar = _inputText.substring(_inputText.length - 1);
-        //final charIndex = lastChar.codeUnitAt(0) - 65;
-        //_inputText = _inputText.substring(0, _inputText.length - 1);
-        //_isButtonSelected[charIndex] = false;
-        //_selectedCount--;
-      //}
-    //});
-  //}
-
   void _resetKeyboard() {
     setState(() {
       // Lösche die aktuellen Farben
@@ -191,14 +157,6 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
           _onKeyPressed(value);
         }
       },
-
-        // Fehler-Meldungen
-        //if (_selectedCount == 20) {
-          //_showSnackbar('Maximale Anzahl an wählbaren Verbindungen erreicht!', Colors.red);
-        //} else if (_selectedCount == 1) {
-          //_showSnackbar('Wähle mindestens zwei Buchstaben!', Colors.red);
-        //}
-      //},
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(60, 60),
         shape: const CircleBorder(),
