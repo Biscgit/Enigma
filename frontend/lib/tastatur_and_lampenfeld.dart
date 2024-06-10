@@ -26,7 +26,7 @@ class MainScreen extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: MediaQuery.of(context).size.height / 2,
-            child: Lampfield(),
+            child: Lampfield(key: Lampfield.lampFieldKey),
           ),
           Positioned(
             top: MediaQuery.of(context).size.height / 2,

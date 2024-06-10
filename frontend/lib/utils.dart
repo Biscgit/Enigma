@@ -26,9 +26,9 @@ class Cookie {
   }
 }
 
-final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
+final String apiUrl = "http://localhost:8001/key_press"; // Linux
 
-/*Future<String> sendPressedKeyToRotors(String pressedKey) async {
+Future<String> sendPressedKeyToRotors(String pressedKey) async {
   // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
   // This can also be implemented in tastatur.dart and lampenfeld.dart separately
 
@@ -36,6 +36,8 @@ final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
   // replace API call in future by new implementation
 
   //var machineID = await Cookie.read('machine_id'); //Implement machine_id in cookies? Or how else can the global variable be accessed?
+  var token = await Cookie.read('token');
+  var header = await APICaller.getHeader();
   var uri = Uri.parse(apiUrl).replace(queryParameters: {
     'token': token,
     'key': pressedKey,
@@ -45,9 +47,7 @@ final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
 
   var response = await http.post(
     uri,
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-    },
+    headers: header,
   );
 
   if(response.statusCode != 200) {
@@ -56,17 +56,19 @@ final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
 
   var jsonReponse = jsonDecode(response.body);
   print(jsonReponse);
+  String encKey = jsonReponse['key'];
 
+  Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
   return jsonReponse['key'];
-}*/
+}
 
-Future<String> sendPressedKeyToRotors(String s) async {
+/*Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   String token = await Cookie.read('token');
   String machineID = await Cookie.read('machineID');
   Map<String, dynamic> body = {
     'token': token,
     'key': s,
-    'machine': machineID
+    'machine': "1"
   };
   http.Response response = await APICaller.post("key_press", body);
 
@@ -80,7 +82,7 @@ Future<String> sendPressedKeyToRotors(String s) async {
   Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
 
   return encKey;
-}
+}*/
 
 class APICaller {
   static final _api = 'http://${dotenv.env['IP_FASTAPI']}:8001/';
@@ -93,9 +95,10 @@ class APICaller {
   }
   static Future<http.Response> post(String site, [Map<String, dynamic> body = const {}]) async {
     try {
+      var header = await APICaller.getHeader();
       return await http.post(
         Uri.parse("${_api}${site}"),
-        headers: await APICaller.getHeader(),
+        headers: header,
         body: jsonEncode(body)
       );
     } catch (e) {
@@ -105,10 +108,10 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> get(String site) async {
+  static Future<http.Response> get(String site, Map<String, dynamic> body) async {
     try {
       return await http.get(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("${_api}${site}").replace(queryParameters: body),
         headers: await APICaller.getHeader()
       );
     } catch (e) {
