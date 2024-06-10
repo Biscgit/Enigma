@@ -12,25 +12,25 @@ import 'dart:math';
 // Aufhebung der gewählten Buchstaben durch Backspace-Taste (noch optional)
 // Reset-Button für Werkseinstellungen
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Enigma I Steckerbrett',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Enigma I: QWERTZU-Steckerbrett'),
-          centerTitle: true, // Titel zentrieren
-        ),
-        body: CustomKeyboard(),
-      ),
-    );
-  }
-}
+// void main() {
+//   runApp(MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Enigma I Steckerbrett',
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: const Text('Enigma I: QWERTZU-Steckerbrett'),
+//           centerTitle: true, // Titel zentrieren
+//         ),
+//         body: CustomKeyboard(),
+//       ),
+//     );
+//   }
+// }
 
 class CustomKeyboard extends StatefulWidget {
   @override
