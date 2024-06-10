@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:enigma/rotors.dart';  
+import 'package:enigma/rotors.dart';
 import 'package:enigma/lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
@@ -73,7 +73,7 @@ class HomePageState extends State<HomePage> {
           const Lampfield(),
           Align(
             alignment: Alignment.bottomCenter,
-            child: EnigmaWidget(),
+            child: RotorPage(number_rotors: 3),
           ),
         ],
       ),
