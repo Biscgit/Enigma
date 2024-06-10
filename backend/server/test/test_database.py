@@ -1,3 +1,4 @@
+import copy
 import json
 
 import asyncpg
@@ -9,6 +10,13 @@ from server.lib import database, logger
 
 logger.configure_logger(no_stdout=True)
 pytest_plugins = ('pytest_asyncio',)
+
+
+async def _no_create_machines(*_args) -> None:
+    pass
+
+
+database.Database._create_default_machines = _no_create_machines
 
 
 @pytest.mark.asyncio

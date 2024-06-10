@@ -90,7 +90,7 @@ class APICaller {
     var token = await Cookie.read("token");
     return {
         'Content-Type': 'application/json',
-        'Authorization': 'Token ${token}',
+        'Authorization': 'Token $token',
     };
   }
   static Future<http.Response> post(String site, {Map<String, dynamic> body = const {}, Map<String, dynamic> query = const {}}) async {

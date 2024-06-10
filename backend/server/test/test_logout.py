@@ -1,14 +1,21 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
+from fastapi import FastAPI
 
-from server.app import app
 from server.lib.routes import authentication as routes
 
 pytest_plugins = ('pytest_asyncio',)
 
 
+@pytest.fixture
+def app():
+    app = FastAPI()
+    app.include_router(routes.router)
+    return app
+
+
 @pytest.mark.asyncio
-async def test_logout_valid_token():
+async def test_logout_valid_token(app):
     # setup
     token = "token-12345-xxx"
     routes.current_auth = {token: "testuser"}
@@ -24,7 +31,7 @@ async def test_logout_valid_token():
 
 
 @pytest.mark.asyncio
-async def test_logout_invalid_token():
+async def test_logout_invalid_token(app):
     # setup
     token = "token-12345-xxx"
     invalid_token = "token-invalid!"

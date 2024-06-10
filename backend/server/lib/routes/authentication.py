@@ -12,6 +12,7 @@ from typing import Optional
 router = APIRouter()
 current_auth: dict[str, str] = {}
 
+
 def check_auth(authorization: Optional[str] = Header(None)) -> str:
     """checks auth for provided token and returns the username"""
     if authorization is None:
