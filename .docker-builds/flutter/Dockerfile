@@ -3,10 +3,11 @@ FROM debian:stable-slim
 
 # install dependencies
 RUN apt update
-RUN apt install -y curl file git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev
+RUN apt install -y curl file git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev sudo
 
-# permissions & security
+# permissions
 RUN useradd -ms /bin/bash builder
+RUN echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER builder
 WORKDIR /home/builder
 
