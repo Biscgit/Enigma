@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:enigma/lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
+import 'package:enigma/steckerbrett_enigma1.dart' as enigma1_stk_brt;
+import 'package:enigma/steckerbrett_enigmaM3.dart' as enigma3_stk_brt;
 import 'package:enigma/keyhistory.dart';
 
 class HomePage extends StatefulWidget {
@@ -77,8 +79,17 @@ class HomePageState extends State<HomePage> {
       ),
       body: Stack(
         children: [
-          Lampfield(
-            keyHistory: keyHistory,
+          Column(
+            children: <Widget>[
+              const Expanded(
+                child: Lampfield(
+                  keyHistory: keyHistory,
+                ),
+              ),
+              _selectedItem == 'Enigma M3'
+                  ? enigma3_stk_brt.CustomKeyboard()
+                  : enigma1_stk_brt.CustomKeyboard(),
+            ],
           ),
           Positioned(
             top: 0,

@@ -1,5 +1,5 @@
 import fastapi
-import pytest 
+import pytest
 from testcontainers.postgres import PostgresContainer
 
 from .lib import create_db_with_users
@@ -8,6 +8,7 @@ from server.lib.routes import authentication as routes
 
 logger.configure_logger(no_stdout=True)
 pytest_plugins = ('pytest_asyncio',)
+
 
 def test_check_auth_exits():
     # setup
@@ -20,6 +21,7 @@ def test_check_auth_exits():
 
     # check
     assert user == returned_user
+
 
 def test_check_auth_not_exists():
     # setup
@@ -35,6 +37,7 @@ def test_check_auth_not_exists():
     # check
     assert message.value.detail == "Invalid token!"
 
+
 def test_check_auth_incorrect():
     # setup
     token = "HELLO"
@@ -46,6 +49,7 @@ def test_check_auth_incorrect():
 
     # check
     assert user != returned_user
+
 
 def test_check_auth_auth_header_missing():
     # setup
@@ -60,6 +64,7 @@ def test_check_auth_auth_header_missing():
     # check
     assert message.value.detail == "Authorization header missing"
 
+
 def test_check_auth_invalid_token_check():
     # setup
     token = "HELLO"
@@ -72,6 +77,7 @@ def test_check_auth_invalid_token_check():
 
     # check
     assert message.value.detail == "Invalid token format"
+
 
 @pytest.mark.asyncio
 async def test_postgres_credentials(monkeypatch):
@@ -128,4 +134,3 @@ async def test_postgres_credentials(monkeypatch):
             await db.disconnect()
 
         await test_client.close()
-
