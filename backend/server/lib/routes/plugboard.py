@@ -4,6 +4,8 @@ from typing import List
 from server.lib.database import get_database, Database
 from .authentication import check_auth
 
+import logging
+
 router = APIRouter(prefix="/plugboard")
 
 MAX_PLUGS = 10
@@ -33,7 +35,8 @@ class ResetPlugboardResponse(BaseModel):
 
 @router.post("/save", response_model=PlugboardResponse)
 async def configure_plugboard(
-        plug: PlugConfig,
+        plug_a: str,
+        plug_b: str,
         machine: int,
         username: str = Depends(check_auth),
         db: Database = Depends(get_database)
@@ -42,8 +45,8 @@ async def configure_plugboard(
     if len(plugs) >= MAX_PLUGS:
         raise HTTPException(status_code=400, detail="Too many plugboard configurations")
 
-    plug_a = plug.plug_a.lower()
-    plug_b = plug.plug_b.lower()
+    plug_a = plug_a.lower()
+    plug_b = plug_b.lower()
 
     for existing_plug in plugs:
         if plug_a in existing_plug or plug_b in existing_plug:
@@ -106,6 +109,7 @@ async def delete_plugboard_pair(
     try:
         await db.remove_plugboard(username, machine, plug_a, plug_b)
     except Exception as e:
+        logging.error(f"Error removing plugboard pair: {type(e)} -> {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"message": "Plugboard reset successfully"}  # Return a ResetPlugboardResponse instance
