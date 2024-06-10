@@ -9,7 +9,7 @@ import 'dart:math';
 // 2 Buchstaben haben jeweils eine Farbe
 // Begrenzung auf 20 Paare + inklusive Fehler-Meldung
 // Fehler-Meldung, dass eine Verknüfung gewählt werden muss
-// Aufhebung der gewählten Buchstaben durch Backspace-Taste
+// Aufhebung der gewählten Buchstaben durch Backspace-Taste (noch optional)
 // Reset-Button für Werkseinstellungen
 
 void main() {
@@ -90,7 +90,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       });
     } else {
       _showSnackbar(
-          'Maximale Anzahl an wählbaren Verbindungen erreicht!', Colors.red);
+          'Maximum number of selectable connections reached!', Colors.red);
     }
   }
 
