@@ -321,16 +321,18 @@ class Database:
 
                 await conn.execute(
                     """
-                    INSERT INTO machines
+                    INSERT INTO machines (
+                        id, username, machine_type, 
+                        character_pointer, character_history, 
+                        plugboard_enabled, plugboard_config)
                     VALUES (
-                        id = $1, 
-                        username = $2, 
-                        machine_type = $3,
-                        
-                        character_pointer = -1,
-                        character_history = ARRAY[]::JSON[],
-                        plugboard_enabled = FALSE,
-                        plugboard_config = ARRAY[]::JSON[]
+                        $1, 
+                        $2, 
+                        $3,
+                        -1,
+                        ARRAY[]::JSON[],
+                        FALSE,
+                        ARRAY[]::JSON[]
                     )
                     """,
                     machine_id, username, machine_type
