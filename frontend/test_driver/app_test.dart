@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_driver/flutter_driver.dart';
+
+// import 'package:flutter_test/flutter_test.dart' as tester;
 import 'package:test/test.dart';
 
 takeScreenshot(FlutterDriver driver, String path) async {
@@ -15,8 +17,8 @@ void main() {
 
     // Connect to the Flutter app before running the tests.
     setUpAll(() async => {
-      await Directory('screenshots').create(),
-    });
+          await Directory('screenshots').create(),
+        });
 
     setUp(() async {
       driver = await FlutterDriver.connect();
@@ -221,7 +223,7 @@ void main() {
 
       // Add keys to the history
       List<String> clearTexts = ['A', 'B', 'C'];
-      List<String> encryptedTexts = ['EncryptedA', 'EncryptedB', 'EncryptedC'];
+      // List<String> encryptedTexts = ['EncryptedA', 'EncryptedB', 'EncryptedC'];
 
       await driver?.tap(inputFieldFinder);
       for (int i = 0; i < clearTexts.length; i++) {
@@ -237,6 +239,11 @@ void main() {
         await driver?.enterText(randomLetter);
         await driver?.waitFor(find.text('$randomLetter → O'));
       }
+
+      // test length
+      // final x = find.byType("ListTile");
+      // print(x);
+      // expect(find.byType("ListTile"), tester.findsExactly(140));
     });
   });
 }
