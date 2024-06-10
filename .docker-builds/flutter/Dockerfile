@@ -3,15 +3,16 @@ FROM debian:stable-slim
 
 # install dependencies
 RUN apt update
-RUN apt install -y curl file git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev
+RUN apt install -y curl file git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev sudo
 
-# permissions & security
+# permissions
 RUN useradd -ms /bin/bash builder
+RUN echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER builder
 WORKDIR /home/builder
 
 # install flutter
-RUN curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.6-stable.tar.xz &&  \
+RUN curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.22.2-stable.tar.xz &&  \
     tar xf flutter_linux_*-stable.tar.xz --directory=/home/builder/ && \
     rm flutter_linux_*-stable.tar.xz
 ENV PATH="${PATH}:/home/builder/flutter/bin"

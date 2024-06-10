@@ -12,7 +12,7 @@ COPY . .
 RUN flutter build web --release
 
 # serve site with nginx
-FROM nginx:1.25-alpine
+FROM nginx:stable-alpine-slim
 
 # copy files
 WORKDIR /home/webserver
