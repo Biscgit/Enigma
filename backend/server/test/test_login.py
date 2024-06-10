@@ -1,11 +1,19 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
+from fastapi import FastAPI
 
-from server.app import app
 from server.lib import database, models
 from server.lib.routes import authentication
 
 pytest_plugins = ('pytest_asyncio',)
+
+
+@pytest.fixture
+def app():
+    app = FastAPI()
+    app.include_router(authentication.router)
+    app.dependency_overrides[database.get_database] = override_get_database
+    return app
 
 
 @pytest.fixture
@@ -41,11 +49,8 @@ def override_get_database():
     return MockDatabase
 
 
-app.dependency_overrides[database.get_database] = override_get_database
-
-
 @pytest.mark.asyncio
-async def test_login_valid_user(mocked_uuid):
+async def test_login_valid_user(mocked_uuid, app):
     # setup
     user = models.LoginForm.model_construct(username="user1", password="password1")
     authentication.current_auth = {}
@@ -61,7 +66,7 @@ async def test_login_valid_user(mocked_uuid):
 
 
 @pytest.mark.asyncio
-async def test_login_unknown_user(mocked_uuid):
+async def test_login_unknown_user(mocked_uuid, app):
     # setup
     user = models.LoginForm.model_construct(username="user12345", password="no-pass")
     authentication.current_auth = {}
@@ -77,7 +82,7 @@ async def test_login_unknown_user(mocked_uuid):
 
 
 @pytest.mark.asyncio
-async def test_login_invalid_password(mocked_uuid):
+async def test_login_invalid_password(mocked_uuid, app):
     # setup
     user = models.LoginForm.model_construct(username="user1", password="wrong-password")
     authentication.current_auth = {"dummy-token": "dummy-user"}
@@ -93,7 +98,7 @@ async def test_login_invalid_password(mocked_uuid):
 
 
 @pytest.mark.asyncio
-async def test_login_other_password(mocked_uuid):
+async def test_login_other_password(mocked_uuid, app):
     # setup
     user = models.LoginForm.model_construct(username="user2", password="password1")
     authentication.current_auth = {}
@@ -109,7 +114,7 @@ async def test_login_other_password(mocked_uuid):
 
 
 @pytest.mark.asyncio
-async def test_login_already_auth(mocked_uuid):
+async def test_login_already_auth(mocked_uuid, app):
     # setup
     user = models.LoginForm.model_construct(username="user2", password="password2")
     authentication.current_auth = {"demo-token": "user2"}
@@ -126,7 +131,7 @@ async def test_login_already_auth(mocked_uuid):
 
 
 @pytest.mark.asyncio
-async def test_different_logins(mocked_uuid):
+async def test_different_logins(mocked_uuid, app):
     # setup
     user1 = models.LoginForm.model_construct(username="user1", password="password1")
     user2 = models.LoginForm.model_construct(username="user2", password="password2")
