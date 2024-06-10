@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:enigma/lampenfeld.dart';
 import 'dart:convert';
 
 class Cookie {
@@ -58,6 +59,28 @@ final String apiUrl = "http://172.20.0.101:8001/key_press"; // Linux
 
   return jsonReponse['key'];
 }*/
+
+Future<String> sendPressedKeyToRotors(String s) async {
+  String token = await Cookie.read('token');
+  String machineID = await Cookie.read('machineID');
+  Map<String, dynamic> body = {
+    'token': token,
+    'key': s,
+    'machine': machineID
+  };
+  http.Response response = await APICaller.post("key_press", body);
+
+  if(response.statusCode != 200) {
+    return "?";
+  }
+
+  Map<String, dynamic> respBody = jsonDecode(response.body);
+  String encKey = respBody['key'];
+
+  Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
+
+  return encKey;
+}
 
 class APICaller {
   static final _api = 'http://${dotenv.env['IP_FASTAPI']}:8001/';
