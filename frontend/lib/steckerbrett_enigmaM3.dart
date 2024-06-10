@@ -4,7 +4,7 @@ import 'dart:math';
 
 //Steckerbrett für die Enigma M3-ABC-Layout
 
-//Beinhaltet:
+// Beinhaltet:
 // ABC-Layout für die Enigma M3
 // 2 Buchstaben haben jeweils eine Farbe
 // Begrenzung auf 20 Paare + inklusive Fehler-Meldung
@@ -12,28 +12,9 @@ import 'dart:math';
 // Aufhebung der gewählten Buchstaben durch Backspace-Taste (noch optional)
 // Reset-Button für Werkseinstellungen
 
-// void main() {
-//   runApp(MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Enigma M3 Steckerbrett',
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: const Text('Enigma M3: ABC-Steckerbrett'),
-//         ),
-//         body: Center(
-//           child: CustomKeyboard(),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class CustomKeyboard extends StatefulWidget {
+  const CustomKeyboard({super.key});
+
   @override
   _CustomKeyboardState createState() => _CustomKeyboardState();
 }
@@ -80,7 +61,12 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
             // api call to save in backend
             APICaller.post(
-              "plugboard/save?machine=1&plug_a=$value&plug_b=${_inputText[_inputText.length - 2]}",
+              "plugboard/save",
+              query: {
+                "machine": "1",
+                "plug_a": value,
+                "plug_b": _inputText[_inputText.length - 2],
+              },
             );
           } else {
             _showSnackbar("A selection error has occurred!", Colors.red);
@@ -116,11 +102,13 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
             .where((key) => _letterColors[key] == _letterColors[value])
             .toList();
 
-        // api call to save in backend
+        // api call to delete in backend
         if (keys.length % 2 == 0) {
-          APICaller.delete(
-            "plugboard/remove?machine=1&plug_a=${keys[0]}&plug_b=${keys[1]}",
-          );
+          APICaller.delete("plugboard/remove", query: {
+            "machine": "1",
+            "plug_a": keys[0],
+            "plug_b": keys[1],
+          });
         }
 
         for (String key in keys) {
@@ -180,7 +168,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       ),
       child: Text(
         value,
-        style: TextStyle(color: Colors.white, fontSize: 18),
+        style: const TextStyle(color: Colors.white, fontSize: 18),
       ),
     );
   }
@@ -193,9 +181,9 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       children: [
         Text(
           _inputText,
-          style: TextStyle(fontSize: 20.0),
+          style: const TextStyle(fontSize: 20.0),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -227,7 +215,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
             //),
             ElevatedButton(
               onPressed: _resetKeyboard,
-              child: Text('Reset'),
+              child: const Text('Reset'),
             ),
           ],
         ),
