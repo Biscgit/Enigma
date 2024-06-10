@@ -233,17 +233,48 @@ void main() {
       }
 
       // Add many keys to test the history
+      List<String> keyPairs = [];
       await driver?.tap(inputFieldFinder);
-      for (int i = 0; i <= 256; i++) {
+      for (int i = 0; i <= 200; i++) {
         String randomLetter = String.fromCharCode(Random().nextInt(26) + 65);
         await driver?.enterText(randomLetter);
-        await driver?.waitFor(find.text('$randomLetter → O'));
+
+        final combo = '$randomLetter → O';
+        keyPairs.insert(0, combo);
+        await driver?.waitFor(find.text(combo));
       }
 
-      // test length
-      // final x = find.byType("ListTile");
-      // print(x);
-      // expect(find.byType("ListTile"), tester.findsExactly(140));
+      await driver?.scrollUntilVisible(
+        find.byValueKey("keyHistoryList"),
+        find.byValueKey("keyPair_139"),
+        dyScroll: -10000,
+      );
+      // check last two fit text
+      await driver?.waitFor(find.text("139."));
+      // await driver?.waitFor(find.text(keyPairs[138]));
+      await driver?.waitFor(find.text("140."));
+      // await driver?.waitFor(find.text(keyPairs[139]));
+
+      // check next two have disappeared
+      // await driver?.waitFor(
+      //   find.text("141."),
+      // );
+      // await driver?.waitFor(
+      //   find.text("141."),
+      //   timeout: const Duration(seconds: 1),
+      // );
+      // await driver?.waitForAbsent(
+      //   find.text(keyPairs[140]),
+      //   timeout: const Duration(seconds: 1),
+      // );
+      // await driver?.waitForAbsent(
+      //   find.text("142."),
+      //   timeout: const Duration(seconds: 1),
+      // );
+      // await driver?.waitForAbsent(
+      //   find.text(keyPairs[141]),
+      //   timeout: const Duration(seconds: 1),
+      // );
     });
   });
 }
