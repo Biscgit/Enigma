@@ -27,22 +27,50 @@ class RotorWidget extends StatefulWidget {
 class _RotorWidgetState extends State<RotorWidget> {
   int selectedRotor = 1;
   int ringSetting = 0;
-  int position = 0;
+  int notch = 0;
   int number_rotors = 5;
-  List<Map<String, int>> rotor_ids = [{"": 0}];
+  int machine_id = 1;
+  List<dynamic> rotor_ids = [{"": 0}];
 
-  void _changeRotorSetting(int? value) {
-    setState(() async {
-      this.rotor_ids = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": await Cookie.read("current_machine")})).body);
-      this.selectedRotor = value!;
-      var rotor = json.decode((await APICaller.get("get-rotor", {"rotor": this.get_id()})).body);
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+    Cookie.setReactor("machine_id", this._initialize);
+  }
+
+  Future<void> _initialize([String _ = ""]) async {
+    this.machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 47;
+
+    this.rotor_ids = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": this.machine_id})).body);
+    APICaller.post("switch-rotor", body: {"id": this.get_id(), "machine_id": this.machine_id, "place": widget.rotorNumber});
+    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor": this.get_id()})).body);
+
+    setState(() {
       this.ringSetting = rotor["rotor_position"].codeUnitAt(0) - 97;
-      this.position = rotor["letter_shift"].codeUnitAt(0) - 97;
+      this.notch = rotor["letter_shift"].codeUnitAt(0) - 97;
+    });
+  }
+
+  void _changeRotorSetting(int? value) async {
+    setState(() {
+      this.selectedRotor = value!;
+    });
+    Map<String, int> rotor = {}; 
+    rotor["id"] = this.get_id() ?? 0;
+    rotor["place"] = widget.rotorNumber;
+    rotor["machine_id"] = this.machine_id;
+    rotor = json.decode((await APICaller.post("switch-rotor", body: rotor)).body);
+
+    setState(() {
+      this.notch = (rotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
+      this.ringSetting = (rotor["rotor_notch"] as String? ?? "a").codeUnitAt(0) - 97;
     });
   }
 
   int? get_id() {
-        return this.rotor_ids[this.selectedRotor]["id"];
+        return this.rotor_ids[this.selectedRotor-1]["id"];
     }
 
   void _changeRingSetting(int change) async {
@@ -50,19 +78,19 @@ class _RotorWidgetState extends State<RotorWidget> {
       ringSetting = (ringSetting + change + 26) % 26;
     });
     var rotor = json.decode((await APICaller.get("get-rotor", {"rotor": this.get_id()})).body);
-    rotor["rotor_position"] = String.fromCharCode(97 + this.ringSetting);
+    rotor["rotor_notch"] = String.fromCharCode(97 + this.ringSetting);
     rotor["id"] = this.get_id();
-    APICaller.post("update-rotor", rotor);
+    APICaller.post("update-rotor", body: rotor);
   }
 
-  void _changePosition(int change) async {
+  void _changeNotch(int change) async {
     setState(() {
-      position = (position + change + 26) % 26;
+      notch = (notch + change + 26) % 26;
     });
     var rotor = json.decode((await APICaller.get("get-rotor", {"rotor": this.get_id()})).body);
-    rotor["letter_shift"] = String.fromCharCode(97 + position);
+    rotor["letter_shift"] = String.fromCharCode(97 + notch);
     rotor["id"] = this.get_id();
-    APICaller.post("update-rotor", rotor);
+    APICaller.post("update-rotor", body: rotor);
   }
 
   @override
@@ -95,8 +123,7 @@ class _RotorWidgetState extends State<RotorWidget> {
                 icon: Icon(Icons.remove),
                 onPressed: () => _changeRingSetting(-1),
               ),
-              Text('${String.fromCharCode(65 + ringSetting)}',
-                  style: TextStyle(fontSize: 16)),
+              Text('${String.fromCharCode(65 + this.ringSetting)}', style: TextStyle(fontSize: 16)),
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () => _changeRingSetting(1),
@@ -110,13 +137,12 @@ class _RotorWidgetState extends State<RotorWidget> {
             children: [
               IconButton(
                 icon: Icon(Icons.remove),
-                onPressed: () => _changePosition(-1),
+                onPressed: () => _changeNotch(-1),
               ),
-              Text('${String.fromCharCode(65 + position)}',
-                  style: TextStyle(fontSize: 16)),
+              Text('${String.fromCharCode(65 + this.notch)}', style: TextStyle(fontSize: 16)),
               IconButton(
                 icon: Icon(Icons.add),
-                onPressed: () => _changePosition(1),
+                onPressed: () => _changeNotch(1),
               ),
             ],
           ),

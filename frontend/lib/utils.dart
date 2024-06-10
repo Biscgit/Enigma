@@ -6,6 +6,7 @@ import 'dart:convert';
 
 class Cookie {
   static const _storage = FlutterSecureStorage();
+  static Map<String, List<Function(String)>> reactors = {};
 
   static Future<String> read(String key) async {
     String value = await _storage.read(key: key) ?? "";
@@ -14,6 +15,7 @@ class Cookie {
   
   static Future<void> save(String key, String value) async {
     await _storage.write(key: key, value: value);
+    reactors[key]?.forEach((reactor) async => await reactor(value));
   }
 
   static Future<void> delete(String key) async {
@@ -22,6 +24,10 @@ class Cookie {
 
   static Future<bool> isUserLoggedIn() {
     return Cookie.read('token').then((token) => token != "");
+  }
+
+  static void setReactor(String trigger, Function(String) reactor) {
+    (reactors[trigger] ??= []).add(reactor);
   }
 }
 
@@ -34,10 +40,11 @@ class APICaller {
         'Authorization': 'Token ${token}',
     };
   }
-  static Future<http.Response> post(String site, [Map<String, dynamic> body = const {}]) async {
+
+  static Future<http.Response> post(String site, {Map<String, dynamic> query = const {}, Map<String, dynamic> body = const {}}) async {
     try {
       return await http.post(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("${_api}${site}").replace(queryParameters: query),
         headers: await APICaller.getHeader(),
         body: jsonEncode(body)
       );
@@ -48,18 +55,10 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> get(String site, [Map<String, dynamic> body = const {}]) async {
-    List<String> queryStringParts = [];
-
-    body.forEach((key, value) {
-      queryStringParts.add('$key=$value');
-    });
-
-    var query = '?' + queryStringParts.join('&');
-
+  static Future<http.Response> get(String site, [Map<String, dynamic> query = const {}]) async {
     try {
       return await http.get(
-        Uri.parse("${_api}${site}${query}"),
+        Uri.parse("${_api}${site}").replace(queryParameters: query),
         headers: await APICaller.getHeader()
       );
     } catch (e) {
@@ -69,10 +68,10 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> delete(String site, [Map<String, dynamic> body = const {}]) async {
+  static Future<http.Response> delete(String site, {Map<String, dynamic> query = const {}, Map<String, dynamic> body = const {}}) async {
     try {
       return await http.delete(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("${_api}${site}").replace(queryParameters: query),
         headers: await APICaller.getHeader(),
         body: jsonEncode(body)
       );

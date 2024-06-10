@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS rotors (
     machine_type INTEGER,
     letter_shift TEXT,
     rotor_position TEXT,
+    place INTEGER,
 
     PRIMARY KEY (id),
     FOREIGN KEY (machine_id, username) REFERENCES machines(id, username)

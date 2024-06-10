@@ -155,6 +155,8 @@ class Database:
         for username in await self._get_users():
             for rotor in content:
                 rotor["username"] = username
+                rotor["machine_id"] = 0
+                rotor["place"] = 0
                 await self.set_rotor(rotor)
 
         logging.info("Successfully loaded rotors from file")
@@ -433,7 +435,8 @@ class Database:
                 """
                 SELECT id
                 FROM rotors
-                WHERE username = $1 AND machine_type = $2
+                WHERE username = $1 AND machine_type = $2 AND machine_id = 0
+                ORDER by id
                 """,
                 username,
                 machine,
@@ -452,6 +455,7 @@ class Database:
                 SELECT id, machine_type, letter_shift, rotor_position, scramble_alphabet
                 FROM rotors
                 WHERE username = $1 AND machine_id = $2
+                ORDER BY place
                 """,
                 username,
                 machine,
@@ -467,13 +471,12 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet
+                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place
                 FROM rotors
                 WHERE id = $1
                 """,
                 rotor,
             )
-            print(result)
 
             logging.info(f"Fetched rotor for {rotor}: {str(result)}")
             return dict(result) if result else None
@@ -488,41 +491,76 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE rotors
-                    SET rotor_position = $3, letter_shift = $4, scramble_alphabet = $5, machine_id = $6
-                    WHERE username = $1 AND id = $2
+                    SET rotor_position = $4, letter_shift = $5, scramble_alphabet = $6, machine_id = $7
+                    WHERE username = $1 AND id = $2 AND place = $3
                     """,
                     data["username"],
                     data["id"],
+                    data["place"],
                     data["rotor_position"].lower(),
                     data["letter_shift"].lower(),
                     data["scramble_alphabet"].lower(),
                     data["machine_id"],
                 )
 
-    async def set_rotor(
-        self,
-        data: dict,
-    ) -> None:
+    async def set_rotor(self, data: dict) -> int:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position)
-                    VALUES ($1, $2, $3, $4, $5, $6);
+                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position, place)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7);
                     """,
                     data["username"],
-                    # data["name"],
                     data["scramble_alphabet"].lower(),
-                    data["machine_id"],
+                    data["machine_type"],
                     data["machine_id"],
                     data["letter_shift"].lower(),
                     data["rotor_position"].lower(),
+                    data["place"],
                 )
+                result =  await conn.fetchval(
+                        """
+                    SELECT id
+                    FROM rotors
+                    WHERE username = $1 AND place = $2 AND machine_id = $3
+                    """,
+                        data["username"],
+                        data["place"],
+                        data["machine_id"],
+                    ),
+            logging.info(f"Created rotor for {data["username"]}: {str(result)}")
+            return result
+
+    async def switch_rotor(
+        self, username: str, machine_id: int, place: int, id: int
+    ) -> int:
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                count = await conn.fetchval(
+                    """
+                    SELECT COUNT(*)
+                    FROM rotors
+                    WHERE username = $1 AND machine_id = $2 AND place = $3
+                    """,
+                    username,
+                    machine_id,
+                    place,
+                )
+                print(1, count)
+                rotor = await self.get_rotor(username, id)
+                rotor["username"] = username
+                print(2, rotor)
+                rotor["place"] = place
+                if count > 0:
+                    await self.update_rotor(rotor)
+                    return id
+                return await self.set_rotor(rotor)
 
     async def get_machine(self, username: str, machine_id: int):
-        plugboard = self.get_plugboards(username, machine_id)
-        reflector = self.get_reflector(username, machine_id)
+        plugboard = await self.get_plugboards(username, machine_id)
+        reflector = await self.get_reflector(username, machine_id)
         rotors = []
-        for rotor in self.get_rotors(username, machine_id):
+        for rotor in await self.get_rotors(username, machine_id):
             rotors += Rotor(
                 rotor["scramble_alphabet"],
                 rotor["rotor_position"],

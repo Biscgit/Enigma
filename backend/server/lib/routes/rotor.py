@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from .authentication import check_auth
 from server.lib.database import get_database, Database
 from typing import Dict
-from server.lib.models import Rotor
+from server.lib.models import Rotor, MinRotor
 
 router = APIRouter()
 
@@ -13,16 +13,21 @@ async def update_rotor(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str]:
-    await db_conn.update_rotor(
-        {
-            "username": username,
-            "id": rotor.id,
-            "rotor_position": rotor.rotor_position,
-            "letter_shift": rotor.letter_shift,
-            "scramble_alphabet": rotor.scramble_alphabet,
-            "machine_id": rotor.machine_id,
-        }
-    )
+    try:
+        await db_conn.update_rotor(
+            {
+                "username": username,
+                "id": rotor.id,
+                "rotor_position": rotor.rotor_position,
+                "letter_shift": rotor.letter_shift,
+                "scramble_alphabet": rotor.scramble_alphabet,
+                "machine_id": rotor.machine_id,
+                "place": rotor.place,
+            }
+        )
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't update Rotor")
     return {"Status": "OK"}
 
 
@@ -61,3 +66,20 @@ async def get_rotor_ids(
 ) -> list[Dict[str, int]]:
     rotor_ids = await db_conn.get_rotor_ids(username, machine_id)
     return rotor_ids
+
+
+@router.post("/switch-rotor")
+async def add_rotor(
+    rotor: MinRotor,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> Dict[str, int]:
+    try:
+        id = await db_conn.switch_rotor(
+            username, rotor.machine_id, rotor.id, rotor.place
+        )
+        print(id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't switch Rotor")
+    return {"id": id[0]}

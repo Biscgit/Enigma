@@ -1,5 +1,10 @@
 [
     {
+        "name": "Not for use",
+        "machine_type": 0,
+        "reflector": ""
+    },
+    {
         "name": "Enigma 1",
         "machine_type": 1,
         "reflector": "EJMZALYXVBWFCRQUONTSPIKHGD"
