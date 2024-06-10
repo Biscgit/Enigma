@@ -7,21 +7,11 @@ void main() {
 }
 
 class Lampfield extends StatefulWidget {
+  static final GlobalKey<LampfieldState> lampFieldKey = GlobalKey<LampfieldState>();
   const Lampfield({super.key});
 
   @override
   State<Lampfield> createState() => LampfieldState();
-}
-
-void sendPressedKeyToRotors(String s) async {
-  String token = await Cookie.read('token');
-  String machineID = await Cookie.read('machineID');
-  Map<String, dynamic> body = {
-    'token': token,
-    'key': s,
-    'machine': machineID
-  };
-  APICaller.post("key_press", body);
 }
 
 class LampfieldState extends State<Lampfield> {
@@ -169,7 +159,7 @@ class CircularTextBoxState extends State<CircularTextBox> {
     super.initState();
     text = widget.text;
     //colorBox == widget.defaultColorBox;
-    if(text == "I") {
+    if(text == "I") { //For testing; remove once backend communicates to frontend
       colorBox = widget.highlightedColor;
       highlighted = 1;
     }

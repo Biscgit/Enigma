@@ -12,17 +12,6 @@ class Tastatur extends StatefulWidget {
   State<Tastatur> createState() => TastaturState();
 }
 
-void sendPressedKeyToRotors(String s) async {
-  String token = await Cookie.read('token');
-  String machineID = await Cookie.read('machineID');
-  Map<String, dynamic> body = {
-    'token': token,
-    'key': s,
-    'machine': machineID
-  };
-  APICaller.post("key_press", body);
-}
-
 class TastaturState extends State<Tastatur> {
   final double seizedBoxHeight = 10;
 

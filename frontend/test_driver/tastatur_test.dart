@@ -99,17 +99,17 @@ void main() async {
       // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)
       // Change the expectedResults once backend runs correctly!
 
-      await checkForKeyInput(driver, "H", "I"); //This is correct
-      await checkForKeyInput(driver, "E", "I"); //Change result to: L
-      await checkForKeyInput(driver, "L", "I"); //Change result to: B
-      await checkForKeyInput(driver, "L", "I"); //Change result to: D
-      await checkForKeyInput(driver, "O", "I"); //Change result to: A
+      await checkForKeyInput(driver, "H", "O"); //This is correct
+      await checkForKeyInput(driver, "E", "O"); //Change result to: L
+      await checkForKeyInput(driver, "L", "O"); //Change result to: B
+      await checkForKeyInput(driver, "L", "O"); //Change result to: D
+      await checkForKeyInput(driver, "O", "O"); //Change result to: A
 
-      await checkForKeyInput(driver, "W", "I"); //Change result to: A
-      await checkForKeyInput(driver, "O", "I"); //Change result to: M
-      await checkForKeyInput(driver, "R", "I"); //Change result to: T
-      await checkForKeyInput(driver, "L", "I"); //Change result to: A
-      await checkForKeyInput(driver, "D", "I"); //Change result to: Z
+      await checkForKeyInput(driver, "W", "O"); //Change result to: A
+      await checkForKeyInput(driver, "O", "O"); //Change result to: M
+      await checkForKeyInput(driver, "R", "O"); //Change result to: T
+      await checkForKeyInput(driver, "L", "O"); //Change result to: A
+      await checkForKeyInput(driver, "D", "O"); //Change result to: Z
       print("Done!");
     });
 }
