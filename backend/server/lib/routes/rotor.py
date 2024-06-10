@@ -73,13 +73,13 @@ async def add_rotor(
     rotor: MinRotor,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> Dict[str, int]:
+) -> Dict[str, int | str]:
     try:
-        id = await db_conn.switch_rotor(
+        rotor = await db_conn.switch_rotor(
             username, rotor.machine_id, rotor.id, rotor.place
         )
-        print(id)
+        print(rotor)
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't switch Rotor")
-    return {"id": id[0]}
+    return rotor

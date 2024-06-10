@@ -533,12 +533,12 @@ class Database:
 
     async def switch_rotor(
         self, username: str, machine_id: int, place: int, id: int
-    ) -> int:
+    ) -> dict:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 count = await conn.fetchval(
                     """
-                    SELECT COUNT(*)
+                    SELECT id
                     FROM rotors
                     WHERE username = $1 AND machine_id = $2 AND place = $3
                     """,
@@ -546,15 +546,23 @@ class Database:
                     machine_id,
                     place,
                 )
+                print()
+                print()
+                print()
                 print(1, count)
                 rotor = await self.get_rotor(username, id)
                 rotor["username"] = username
-                print(2, rotor)
+                rotor["machine_id"] = machine_id
                 rotor["place"] = place
-                if count > 0:
+                print(2, rotor)
+                print()
+                print()
+                print()
+                if count is not None:
+                    rotor["id"] = count
                     await self.update_rotor(rotor)
-                    return id
-                return await self.set_rotor(rotor)
+                    return await self.get_rotor(username, count)
+                return await self.get_rotor(username, (await self.set_rotor(rotor))[0])
 
     async def get_machine(self, username: str, machine_id: int):
         plugboard = await self.get_plugboards(username, machine_id)
