@@ -64,3 +64,15 @@ build-frontend:
       optional: true
     - job: build-flutter-builder
       optional: true
+
+build-flutter-driver:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/fdriver"
+    NAME: "/flutter-driver"
+  rules:
+    - if: "$NIGHTLY_BUILD"
+  needs:
+    - job: build-flutter-builder
+      optional: true
