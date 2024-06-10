@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:enigma/rotors.dart';
-import 'package:enigma/lampenfeld.dart';
 import 'package:enigma/tastatur_and_lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
@@ -91,7 +90,7 @@ class HomePageState extends State<HomePage> {
               _selectedItem == 'Enigma M3'
                   ? const enigma3_stk_brt.CustomKeyboard()
                   : const enigma1_stk_brt.CustomKeyboard(),
-              RotorPage(number_rotors),
+              RotorPage(number_rotors: 3),
             ],
           ),
           Positioned(

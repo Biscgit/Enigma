@@ -7,8 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from server.lib.database import get_database
 from server.lib.logger import configure_logger
 from server.lib.routes import authentication, key_input, rotor, plugboard
-from server.lib import *
-from server.lib.routes import authentication, key_input, plugboard
 
 # init fastapi and db
 configure_logger()
