@@ -84,6 +84,14 @@ class Database:
                         if qry.strip():
                             await conn.execute(qry)
 
+                    # create default machines
+                    for index in range(3):
+                        for i, u in enumerate(["user1", "user2"]):
+                            try:
+                                await self.create_machine(u, i + 1, index + 1)
+                            except Exception:
+                                continue
+
         logging.info("Successfully initialized database")
 
     async def _load_users(self) -> None:
