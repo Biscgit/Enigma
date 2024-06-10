@@ -26,9 +26,9 @@ class SideBar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           header,
-          Machine(name: 'Enigma I', id: "", onItemSelected: this.onItemSelected),
-          Machine(name: 'Norway Enigma', id: "", onItemSelected: this.onItemSelected),
-          Machine(name: 'Enigma M3', id: "", onItemSelected: this.onItemSelected),
+          Machine(name: 'Enigma I', id: "", onItemSelected: onItemSelected),
+          Machine(name: 'Norway Enigma', id: "", onItemSelected: onItemSelected),
+          Machine(name: 'Enigma M3', id: "", onItemSelected: onItemSelected),
           addMachine(context)
         ],
       ),
