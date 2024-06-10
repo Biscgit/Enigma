@@ -81,7 +81,7 @@ class HomePageState extends State<HomePage> {
         children: [
           Column(
             children: <Widget>[
-              const Expanded(
+              Expanded(
                 child: Lampfield(
                   keyHistory: keyHistory,
                 ),
