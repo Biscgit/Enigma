@@ -1,11 +1,11 @@
-import 'dart:convert';
-
 import 'package:enigma/keyhistory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:enigma/utils.dart';
 
 class Lampfield extends StatefulWidget {
+  static final GlobalKey<LampfieldState> lampFieldKey = GlobalKey<LampfieldState>();
+  // const Lampfield({super.key});
   final KeyHistoryList keyHistory;
 
   const Lampfield({super.key, required this.keyHistory});
@@ -114,19 +114,8 @@ class LampfieldState extends State<Lampfield> {
                 onChanged: (String value) async {
                   if (value.isNotEmpty) {
                     final letter = value.substring(value.length - 1);
-
-                    final result =
-                        await APICaller.get("key_press?key=$letter&machine=1");
-                    assert(result.statusCode == 200);
-
-                    final encryptedLetter = jsonDecode(result.body)["key"];
+                    final encryptedLetter = await sendPressedKeyToRotors(value.substring(value.length - 1));
                     widget.sendToHistory(letter, encryptedLetter);
-
-                    // make light up letter the encrypted letter!
-                    lightUpLetter(letter);
-                  } else {
-                    //Special characters dont light up anything; as it should be.
-                    lightUpLetter(".");
                   }
                 },
                 inputFormatters: [
@@ -160,7 +149,7 @@ class CircularTextBox extends StatefulWidget {
     this.defaultColorBox = Colors.black12,
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
-    this.diameter = 50,
+    this.diameter = 48,
   });
 
   @override
@@ -169,19 +158,32 @@ class CircularTextBox extends StatefulWidget {
 
 class CircularTextBoxState extends State<CircularTextBox> {
   late Color colorBox;
+  late String text;
+  int highlighted = 0; //acts as a boolean value; used in testing to find whether button lights up
 
   @override
   void initState() {
     super.initState();
-    colorBox = widget.defaultColorBox;
+    text = widget.text;
+    //colorBox == widget.defaultColorBox;
+    if(text == "O") { //For testing; remove once backend communicates to frontend
+      colorBox = widget.highlightedColor;
+      highlighted = 1;
+    }
+    else {
+      colorBox = widget.defaultColorBox;
+    }
+
   }
 
   void changeColor(bool color) {
     setState(() {
       if (color) {
         colorBox = widget.highlightedColor;
+        highlighted = 1;
       } else {
         colorBox = widget.defaultColorBox;
+        highlighted = 0;
       }
     });
   }
@@ -191,6 +193,7 @@ class CircularTextBoxState extends State<CircularTextBox> {
     return Container(
       width: widget.diameter,
       height: widget.diameter,
+      key: ValueKey("Lamppanel-Key-$text-$highlighted"),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: colorBox,

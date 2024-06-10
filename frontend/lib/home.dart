@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:enigma/rotors.dart';
 import 'package:enigma/lampenfeld.dart';
+import 'package:enigma/tastatur_and_lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
 import 'package:enigma/steckerbrett_enigma1.dart' as enigma1_stk_brt;
@@ -83,14 +84,14 @@ class HomePageState extends State<HomePage> {
           Column(
             children: <Widget>[
               Expanded(
-                child: Lampfield(
+                child: MainScreen(
                   keyHistory: keyHistory,
                 ),
               ),
               _selectedItem == 'Enigma M3'
-                  ? enigma3_stk_brt.CustomKeyboard()
-                  : enigma1_stk_brt.CustomKeyboard(),
-              RotorPage(number_rotors:
+                  ? const enigma3_stk_brt.CustomKeyboard()
+                  : const enigma1_stk_brt.CustomKeyboard(),
+              RotorPage(number_rotors),
             ],
           ),
           Positioned(
