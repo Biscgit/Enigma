@@ -1,12 +1,16 @@
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:enigma/keyhistory.dart';
+import 'package:flutter/services.dart';
 
-void main() {
-  runApp(const Tastatur());
-}
+// void main() {
+//   runApp(const Tastatur());
+// }
 
 class Tastatur extends StatefulWidget {
-  const Tastatur({super.key});
+  final KeyHistoryList keyHistory;
+
+  const Tastatur({super.key, required this.keyHistory});
 
   @override
   State<Tastatur> createState() => TastaturState();
@@ -17,54 +21,56 @@ class TastaturState extends State<Tastatur> {
 
   @override
   Widget build(BuildContext context) {
+    final history = widget.keyHistory;
+
     return MaterialApp(
       home: Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
 
-                SquareButton(label: 'Q'),
-                SquareButton(label: 'W'),
-                SquareButton(label: 'E'),
-                SquareButton(label: 'R'),
-                SquareButton(label: 'T'),
-                SquareButton(label: 'Z'),
-                SquareButton(label: 'U'),
-                SquareButton(label: 'I'),
-                SquareButton(label: 'O'),
-                SquareButton(label: 'P'),
+                SquareButton(label: 'Q', keyHistory: history),
+                SquareButton(label: 'W', keyHistory: history),
+                SquareButton(label: 'E', keyHistory: history),
+                SquareButton(label: 'R', keyHistory: history),
+                SquareButton(label: 'T', keyHistory: history),
+                SquareButton(label: 'Z', keyHistory: history),
+                SquareButton(label: 'U', keyHistory: history),
+                SquareButton(label: 'I', keyHistory: history),
+                SquareButton(label: 'O', keyHistory: history),
+                SquareButton(label: 'P', keyHistory: history),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'A'),
-                SquareButton(label: 'S'),
-                SquareButton(label: 'D'),
-                SquareButton(label: 'F'),
-                SquareButton(label: 'G'),
-                SquareButton(label: 'H'),
-                SquareButton(label: 'J'),
-                SquareButton(label: 'K'),
-                SquareButton(label: 'L'),
+                SquareButton(label: 'A', keyHistory: history),
+                SquareButton(label: 'S', keyHistory: history),
+                SquareButton(label: 'D', keyHistory: history),
+                SquareButton(label: 'F', keyHistory: history),
+                SquareButton(label: 'G', keyHistory: history),
+                SquareButton(label: 'H', keyHistory: history),
+                SquareButton(label: 'J', keyHistory: history),
+                SquareButton(label: 'K', keyHistory: history),
+                SquareButton(label: 'L', keyHistory: history),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'Y'),
-                SquareButton(label: 'X'),
-                SquareButton(label: 'C'),
-                SquareButton(label: 'V'),
-                SquareButton(label: 'B'),
-                SquareButton(label: 'N'),
-                SquareButton(label: 'M')
+                SquareButton(label: 'Y', keyHistory: history),
+                SquareButton(label: 'X', keyHistory: history),
+                SquareButton(label: 'C', keyHistory: history),
+                SquareButton(label: 'V', keyHistory: history),
+                SquareButton(label: 'B', keyHistory: history),
+                SquareButton(label: 'N', keyHistory: history),
+                SquareButton(label: 'M', keyHistory: history)
               ],
             ),
           ],
@@ -78,20 +84,24 @@ class SquareButton extends StatelessWidget {
   final double size = 60;
   final Color color = Colors.black;
   final String label;
+  final KeyHistoryList keyHistory;
 
-  const SquareButton({
+  SquareButton({
     required this.label,
+    required this.keyHistory,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: size,
       height: size,
-      key: ValueKey("Tastatur-Button-$label"), 
+      key: ValueKey("Tastatur-Button-$label"),
       child: ElevatedButton(
-        onPressed: () {
-          sendPressedKeyToRotors(label);
+        onPressed: () async {
+          final letter = label;
+          final encryptedLetter = await sendPressedKeyToRotors(letter);
+          keyHistory.addKey(letter, encryptedLetter);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: color, // background color lol
@@ -103,15 +113,14 @@ class SquareButton extends StatelessWidget {
       ),
     );
   }
-  
 
 // This can be used for manual debugging kind of; shows an alertDialog whenever a button is pressed; shows error or correct functionality
-  /*@override
+/*@override
   Widget build(BuildContext context) {
     return SizedBox(
       width: size,
       height: size,
-      key: ValueKey("Tastatur-Button-$label"), 
+      key: ValueKey("Tastatur-Button-$label"),
       child: ElevatedButton(
         onPressed: () {
           showDialog<String>(
@@ -159,6 +168,4 @@ class SquareButton extends StatelessWidget {
       ),
     );
   }*/
-
-
 }

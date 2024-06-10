@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:enigma/keyhistory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +5,7 @@ import 'package:enigma/utils.dart';
 
 class Lampfield extends StatefulWidget {
   static final GlobalKey<LampfieldState> lampFieldKey = GlobalKey<LampfieldState>();
-  const Lampfield({super.key});
+  // const Lampfield({super.key});
   final KeyHistoryList keyHistory;
 
   const Lampfield({super.key, required this.keyHistory});

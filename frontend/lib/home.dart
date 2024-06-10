@@ -82,7 +82,7 @@ class HomePageState extends State<HomePage> {
           Column(
             children: <Widget>[
               Expanded(
-                child: Lampfield(
+                child: MainScreen(
                   keyHistory: keyHistory,
                 ),
               ),
