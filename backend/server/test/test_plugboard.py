@@ -63,8 +63,7 @@ def client():
 
 
 def test_configure_plugboard(client):
-    response = client.post("/plugboard/save?machine=1",
-                           json={"plug_a": "c", "plug_b": "d"})
+    response = client.post("/plugboard/save?machine=1&plug_a=c&plug_b=d")
     assert response.status_code == 200
     data = response.json()
     assert "plugboard" in data
@@ -114,11 +113,11 @@ async def test_plugboard_switch():
         new = await switch_letter("test_user", 1, l, db)
         assert new == e
 
-    r = client.post("/plugboard/save?machine=1", json={"plug_a": "c", "plug_b": "d"})
+    r = client.post("/plugboard/save?machine=1&plug_a=c&plug_b=d")
     assert r.status_code == 200
-    r = client.post("/plugboard/save?machine=1", json={"plug_a": "g", "plug_b": "h"})
+    r = client.post("/plugboard/save?machine=1&plug_a=g&plug_b=h")
     assert r.status_code == 200
-    r = client.post("/plugboard/save?machine=1", json={"plug_a": "p", "plug_b": "w"})
+    r = client.post("/plugboard/save?machine=1&plug_a=p&plug_b=w")
     assert r.status_code == 200
     assert db.plugboards == {('test_user', 1): [['c', 'd'], ['g', 'h'], ['p', 'w']]}
 
