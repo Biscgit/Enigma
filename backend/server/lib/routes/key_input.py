@@ -32,3 +32,8 @@ async def load_key_history(
 ) -> list[list[str]]:
     """Endpoint for loading key history. Takes token and machine id. Returns history of keys pressed"""
     return await db_conn.get_key_pairs(username, machine)
+
+
+@router.get("/ping")
+async def ping():
+    return "OK"
