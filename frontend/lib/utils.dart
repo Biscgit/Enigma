@@ -124,8 +124,8 @@ class APICaller {
   static Future<http.Response> delete(String site, {Map<String, dynamic> body = const {}, Map<String, dynamic> query = const {}}) async {
     try {
       return await http.delete(
-        Uri.parse("${_api}${site}"),
-        headers: await APICaller.getHeader().replace(queryParameters: query),
+        Uri.parse("${_api}${site}").replace(queryParameters: query),
+        headers: await APICaller.getHeader(),
         body: jsonEncode(body)
       );
     } catch (e) {

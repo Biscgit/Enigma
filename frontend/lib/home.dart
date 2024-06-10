@@ -22,7 +22,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void _logout(BuildContext context) async {
-    var _ = await APICaller.delete("logout", {});
+    var _ = await APICaller.delete("logout", query:{});
     await Cookie.delete('token');
     Navigator.pushReplacementNamed(context, '/login');
   }
