@@ -1,6 +1,6 @@
 unit-integration-test:
   stage: test
-  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:cl-19
+  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:latest
   before_script:
     - cd backend
   script:
@@ -25,7 +25,7 @@ unit-integration-test:
     - job: build-python-tester-linter
       optional: true
 
-e2e-test:
+e2e-test-widget:
   stage: e2e-test
   image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
   before_script:
@@ -43,4 +43,43 @@ e2e-test:
     - job: build-frontend
       optional: true
     - job: build-backend
+      optional: true
+
+e2e-test-driver:
+  stage: e2e-test
+  image: ${CI_REGISTRY_IMAGE}/flutter-driver:latest
+  variables:
+    FF_NETWORK_PER_BUILD: 1
+    IP_POSTGRES: postgres
+    POSTGRES_USER: app
+    POSTGRES_PASSWORD: admin1234!
+    POSTGRES_NAME: enigma
+    POSTGRES_DB: enigma
+    IP_FASTAPI: backend
+    DB_USER: app
+    DB_PASSWORD: admin1234!
+    DB_NAME: enigma
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+    - name: registry.mygit.th-deg.de/ts19084/enigma/backend:latest
+      alias: backend
+  before_script:
+    - cd frontend
+    - rm flutter.env
+    - env | grep "IP_FASTAPI" > flutter.env
+    - flutter create --platforms web .
+    - flutter pub get
+  script:
+    - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release  --web-browser-flag="--disable-gpu --headless"'
+  rules:
+    - exists:
+      - frontend/test_driver/*
+  retry: 2
+  needs:
+    - job: build-frontend
+      optional: true
+    - job: build-backend
+      optional: true
+    - job: build-flutter-driver
       optional: true
