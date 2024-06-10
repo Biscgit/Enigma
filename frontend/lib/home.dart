@@ -13,6 +13,8 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   String _selectedItem = 'Enigma I';
+  final GlobalKey<KeyHistoryState> _keyHistoryKey =
+      GlobalKey<KeyHistoryState>();
 
   String get selectedItem => _selectedItem;
 
@@ -30,6 +32,11 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final keyHistory = KeyHistoryList(
+      key: _keyHistoryKey,
+      keyHistoryKey: _keyHistoryKey,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(selectedItem),
@@ -70,7 +77,9 @@ class HomePageState extends State<HomePage> {
       ),
       body: Stack(
         children: [
-          const Lampfield(),
+          Lampfield(
+            keyHistory: keyHistory,
+          ),
           Positioned(
             top: 0,
             bottom: 10,
@@ -82,7 +91,7 @@ class HomePageState extends State<HomePage> {
                 color: Colors.black12,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const KeyHistoryList(),
+              child: keyHistory,
             ),
           ),
         ],

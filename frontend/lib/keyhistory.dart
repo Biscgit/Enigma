@@ -1,33 +1,40 @@
+import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class KeyHistoryList extends StatefulWidget {
-  const KeyHistoryList({super.key});
+  final GlobalKey<KeyHistoryState> keyHistoryKey;
+
+  const KeyHistoryList({super.key, required this.keyHistoryKey});
 
   @override
-  State<KeyHistoryList> createState() => _KeyHistoryState();
+  State<KeyHistoryList> createState() => KeyHistoryState();
+
+  void addKey(String clear, String encrypted) {
+    print("Sending to history: $clear -> $encrypted");
+    keyHistoryKey.currentState!.addKey(clear, encrypted);
+
+    // (state as _KeyHistoryState).addKey(clear, encrypted);
+  }
 }
 
-class _KeyHistoryState extends State<KeyHistoryList> {
-  static const String apiUrl = 'http://172.20.0.101:8001/login';
+class KeyHistoryState extends State<KeyHistoryList> {
   static const maxKeys = 140;
 
-  final List<MapEntry<String, String>> _keyHistory = <MapEntry<String, String>>[];
+  final List<MapEntry<String, String>> _keyHistory =
+      <MapEntry<String, String>>[];
 
   void loadKeyHistory(String machineId, String token) async {
     /// Loads pressed keys from server
-    var response = await http.get(
-      Uri.parse(
-        '$apiUrl/keyhistory/load?token=$token&machine=$machineId',
-      ),
-    );
+    final response = await APICaller.get("keyhistory/load?machine=$machineId");
 
     if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> keyHistory = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+      final List<Map<String, dynamic>> keyHistory =
+          List<Map<String, dynamic>>.from(jsonDecode(response.body));
       setState(() {
         _keyHistory.clear();
-        _keyHistory.addAll(keyHistory.map((item) => MapEntry(item['clear'] as String, item['encrypted'] as String)));
+        _keyHistory.addAll(keyHistory.map((item) =>
+            MapEntry(item['clear'] as String, item['encrypted'] as String)));
       });
     }
   }

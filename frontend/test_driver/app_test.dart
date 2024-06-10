@@ -215,7 +215,7 @@ void main() {
 
       // Find button fields
       final inputFieldFinder = find.byValueKey('keyInput');
-      final addButtonFinder = find.byValueKey('addButton');
+      // final addButtonFinder = find.byValueKey('addButton');
 
       // Add keys to the history
       List<String> clearTexts = ['A', 'B', 'C'];
@@ -224,7 +224,7 @@ void main() {
       for (int i = 0; i < clearTexts.length; i++) {
         await driver?.tap(inputFieldFinder);
         await driver?.enterText(clearTexts[i]);
-        await driver?.tap(addButtonFinder);
+        // await driver?.tap(addButtonFinder);
         // Find history
         await driver?.waitFor(find.text('${clearTexts[i]} -> ${encryptedTexts[i]}'));
       }
@@ -235,7 +235,7 @@ void main() {
         String encryptedText = 'EncryptedKey$i';
         await driver?.tap(inputFieldFinder);
         await driver?.enterText(clearText);
-        await driver?.tap(addButtonFinder);
+        // await driver?.tap(addButtonFinder);
         await driver?.waitFor(find.text('$clearText -> $encryptedText'));
       }
     });
