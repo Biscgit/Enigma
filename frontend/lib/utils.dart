@@ -93,11 +93,11 @@ class APICaller {
         'Authorization': 'Token ${token}',
     };
   }
-  static Future<http.Response> post(String site, [Map<String, dynamic> body = const {}]) async {
+  static Future<http.Response> post(String site, {Map<String, dynamic> body = const {}, Map<String, dynamic> query = const {}}) async {
     try {
       var header = await APICaller.getHeader();
       return await http.post(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("${_api}${site}").replace(queryParameters: query),
         headers: header,
         body: jsonEncode(body)
       );
@@ -108,10 +108,10 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> get(String site, Map<String, dynamic> body) async {
+  static Future<http.Response> get(String site, [Map<String, dynamic> query = const {}]) async {
     try {
       return await http.get(
-        Uri.parse("${_api}${site}").replace(queryParameters: body),
+        Uri.parse("${_api}${site}").replace(queryParameters: query),
         headers: await APICaller.getHeader()
       );
     } catch (e) {
@@ -121,11 +121,11 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> delete(String site, [Map<String, dynamic> body = const {}]) async {
+  static Future<http.Response> delete(String site, {Map<String, dynamic> body = const {}, Map<String, dynamic> query = const {}}) async {
     try {
       return await http.delete(
         Uri.parse("${_api}${site}"),
-        headers: await APICaller.getHeader(),
+        headers: await APICaller.getHeader().replace(queryParameters: query),
         body: jsonEncode(body)
       );
     } catch (e) {
