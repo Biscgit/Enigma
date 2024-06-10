@@ -28,7 +28,7 @@ class Cookie {
 
 final String apiUrl = "http://localhost:8001/key_press"; // Linux
 
-Future<String> sendPressedKeyToRotors(String pressedKey) async {
+/*Future<String> sendPressedKeyToRotors(String pressedKey) async {
   // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
   // This can also be implemented in tastatur.dart and lampenfeld.dart separately
 
@@ -60,9 +60,9 @@ Future<String> sendPressedKeyToRotors(String pressedKey) async {
 
   Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
   return jsonReponse['key'];
-}
+}*/
 
-/*Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
+Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   String token = await Cookie.read('token');
   String machineID = await Cookie.read('machineID');
   Map<String, dynamic> body = {
@@ -70,7 +70,7 @@ Future<String> sendPressedKeyToRotors(String pressedKey) async {
     'key': s,
     'machine': "1"
   };
-  http.Response response = await APICaller.post("key_press", body);
+  http.Response response = await APICaller.get("key_press", body);
 
   if(response.statusCode != 200) {
     return "?";
@@ -82,7 +82,7 @@ Future<String> sendPressedKeyToRotors(String pressedKey) async {
   Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
 
   return encKey;
-}*/
+}
 
 class APICaller {
   static final _api = 'http://${dotenv.env['IP_FASTAPI']}:8001/';

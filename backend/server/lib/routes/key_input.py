@@ -20,7 +20,10 @@ async def encrypt_key(
     encrypted_key: str = "o"
 
     # save to history and return key
-    await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)
+    try:
+        await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)
+    except:
+        pass
     return {"key": encrypted_key}
 
 
