@@ -1,15 +1,21 @@
+import 'dart:convert';
+
+import 'package:enigma/keyhistory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-void main() {
-  runApp(const Lampfield());
-}
+import 'package:enigma/utils.dart';
 
 class Lampfield extends StatefulWidget {
-  const Lampfield({super.key});
+  final KeyHistoryList keyHistory;
+
+  const Lampfield({super.key, required this.keyHistory});
 
   @override
   State<Lampfield> createState() => LampfieldState();
+
+  void sendToHistory(String clear, String encrypted) {
+    keyHistory.addKey(clear, encrypted);
+  }
 }
 
 class LampfieldState extends State<Lampfield> {
@@ -103,17 +109,28 @@ class LampfieldState extends State<Lampfield> {
               //ONLY FOR MANUAL TEXT INPUTS!!!!! TO BE REMOVED LATER!!
               width: 300,
               child: TextField(
+                key: const ValueKey('keyInput'),
                 controller: _controller,
-                onChanged: (String value) {
+                onChanged: (String value) async {
                   if (value.isNotEmpty) {
-                    lightUpLetter(value.substring(value.length - 1));
+                    final letter = value.substring(value.length - 1);
+
+                    final result =
+                        await APICaller.get("key_press?key=$letter&machine=1");
+                    assert(result.statusCode == 200);
+
+                    final encryptedLetter = jsonDecode(result.body)["key"];
+                    widget.sendToHistory(letter, encryptedLetter);
+
+                    // make light up letter the encrypted letter!
+                    lightUpLetter(letter);
                   } else {
-                    lightUpLetter(
-                        "."); //Special characters dont light up anything; as it should be.
+                    //Special characters dont light up anything; as it should be.
+                    lightUpLetter(".");
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zr]')),
                   // Allow only letters and space
                   UpperCaseTextInputFormatter(),
                   // Convert all letters to uppercase

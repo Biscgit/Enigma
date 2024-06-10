@@ -6,7 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from server.lib.database import get_database
 from server.lib.logger import configure_logger
-from server.lib.routes import authentication, key_input, rotor
+from server.lib.routes import authentication, key_input, rotor, plugboard
+from server.lib import *
+from server.lib.routes import authentication, key_input, plugboard
 
 # init fastapi and db
 configure_logger()
@@ -23,9 +25,10 @@ app.add_middleware(
 )
 
 # load routes
-logging.info("Loading routes...")
+logging.info('Loading routes...')
 app.include_router(authentication.router)
 app.include_router(key_input.router)
+app.include_router(plugboard.router)
 app.include_router(rotor.router)
 
 

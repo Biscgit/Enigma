@@ -31,21 +31,15 @@ def check_auth(authorization: str = Security(api_key_header)) -> str:
 
 
 @router.post("/login")
-async def login(
-    login_form: LoginForm, db_conn: "Database" = Depends(get_database)
-) -> dict[str, str]:
+async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_database)) -> dict[str, str]:
     """Endpoint for login. Returns an 256-bit token"""
     if await db_conn.check_login(login_form):
-        auth_token: str = sha3_256(
-            f"X{uuid4()}X{login_form.username}X".encode()
-        ).hexdigest()
+        auth_token: str = sha3_256(f"X{uuid4()}X{login_form.username}X".encode()).hexdigest()
 
         global current_auth
 
         # ensure only one token is handed out for each user
-        current_auth = {
-            k: v for k, v in current_auth.items() if not v == login_form.username
-        }
+        current_auth = {k: v for k, v in current_auth.items() if not v == login_form.username}
         current_auth |= {auth_token: login_form.username}
 
         logging.info(f"User {login_form.username} has logged in.")

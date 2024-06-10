@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS machines (
 CREATE TABLE IF NOT EXISTS rotors (
     id SERIAL,
     username TEXT,
-    name TEXT,
     machine_id SERIAL,
     scramble_alphabet TEXT,
     machine_type INTEGER,

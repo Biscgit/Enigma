@@ -64,6 +64,7 @@ class APICaller {
     } catch (e) {
       // Handle error
       print('Error in GET request: $e');
+        headers: await APICaller.getHeader()
       rethrow;
     }
   }
