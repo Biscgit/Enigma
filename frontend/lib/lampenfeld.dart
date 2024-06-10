@@ -130,7 +130,7 @@ class LampfieldState extends State<Lampfield> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zr]')),
                   // Allow only letters and space
                   UpperCaseTextInputFormatter(),
                   // Convert all letters to uppercase
