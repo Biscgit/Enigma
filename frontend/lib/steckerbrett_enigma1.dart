@@ -1,3 +1,4 @@
+import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -75,6 +76,13 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
                 availableColors[Random().nextInt(availableColors.length)];
             _letterColorMap[value] = randomColor;
             _letterColorMap[_inputText[_inputText.length - 2]] = randomColor;
+
+            // api call to save in backend
+            APICaller.post("plugboard/save", {
+              "machine": 1,
+              "plug_a": value,
+              "plug_b": _inputText[_inputText.length - 2],
+            });
           } else {
             _showSnackbar("A selection error has occurred!", Colors.red);
           }
@@ -108,6 +116,15 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         List<String> keys = _letterColorMap.keys
             .where((key) => _letterColorMap[key] == _letterColorMap[value])
             .toList();
+
+        // api call to save in backend
+        if (keys.length % 2 == 0) {
+          APICaller.delete("plugboard/remove", {
+            "machine": 1,
+            "plug_a": keys[0],
+            "plug_b": keys[1],
+          });
+        }
 
         for (String key in keys) {
           final charIndex = key.codeUnitAt(0) - 65;

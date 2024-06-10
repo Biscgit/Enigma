@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginPage extends StatelessWidget {
   // replace 172.20.0.101 with localhost on Windows
-  static String apiUrl = 'http://${dotenv.env['IP_FASTAPI']}:8001/login';
+  // static String apiUrl = 'http://${dotenv.env['IP_FASTAPI']}:8001/login';
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
