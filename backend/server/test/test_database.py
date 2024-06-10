@@ -1,3 +1,4 @@
+import copy
 import json
 
 import asyncpg
@@ -9,6 +10,9 @@ from server.lib import database, logger
 
 logger.configure_logger(no_stdout=True)
 pytest_plugins = ('pytest_asyncio',)
+
+new_func = copy.deepcopy(database.Database._initialize_db)
+database.Database._initialize_db = lambda self: new_func(self, create_machines=False)
 
 
 @pytest.mark.asyncio

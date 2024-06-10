@@ -68,7 +68,7 @@ class Database:
         logging.critical("Failed to connect to database after 30 seconds")
         exit(1)
 
-    async def _initialize_db(self) -> None:
+    async def _initialize_db(self, create_machines: bool = True) -> None:
         logging.info("Initializing database...")
 
         with open("./server/other/initialize.sql") as file:
@@ -85,12 +85,13 @@ class Database:
                             await conn.execute(qry)
 
                     # create default machines
-                    for index in range(3):
-                        for i, u in enumerate(["user1", "user2"]):
-                            try:
-                                await self.create_machine(u, i + 1, index + 1)
-                            except Exception:
-                                continue
+                    if create_machines:
+                        for index in range(3):
+                            for i, u in enumerate(["user1", "user2"]):
+                                try:
+                                    await self.create_machine(u, i + 1, index + 1)
+                                except Exception:
+                                    continue
 
         logging.info("Successfully initialized database")
 
