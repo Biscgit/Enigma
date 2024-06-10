@@ -52,9 +52,15 @@ class KeyHistoryState extends State<KeyHistoryList> {
 
   @override
   Widget build(BuildContext context) {
+    const tStyle = TextStyle(
+      color: Colors.blue,
+      fontFamily: "monospace",
+      fontSize: 22,
+      fontWeight: FontWeight.bold,
+    );
     return ListView.builder(
       key: const ValueKey('keyHistoryList'),
-      shrinkWrap: true,
+      // shrinkWrap: true,
       itemCount: _keyHistory.length,
       itemBuilder: (context, index) {
         final keyPair = _keyHistory[index];
@@ -62,15 +68,23 @@ class KeyHistoryState extends State<KeyHistoryList> {
           padding: EdgeInsets.zero,
           child: ListTile(
             contentPadding: EdgeInsets.zero,
-            title: Center(
-              child: Text(
-                '${keyPair.key} → ${keyPair.value}',
+            title: Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Row(
                 key: ValueKey('keyPair_$index'),
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                children: [
+                  SizedBox(
+                    width: 50,
+                    child: Text(
+                      '${index + 1}.',
+                      style: tStyle,
+                    ),
+                  ),
+                  Text(
+                    '${keyPair.key} → ${keyPair.value}',
+                    style: tStyle,
+                  )
+                ],
               ),
             ),
           ),
