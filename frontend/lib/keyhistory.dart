@@ -74,7 +74,7 @@ class KeyHistoryState extends State<KeyHistoryList> {
                 key: ValueKey('keyPair_$index'),
                 children: [
                   SizedBox(
-                    width: 50,
+                    width: 60,
                     child: Text(
                       '${index + 1}.',
                       style: tStyle,
@@ -83,7 +83,7 @@ class KeyHistoryState extends State<KeyHistoryList> {
                   Text(
                     '${keyPair.key} → ${keyPair.value}',
                     style: tStyle,
-                  )
+                  ),
                 ],
               ),
             ),
