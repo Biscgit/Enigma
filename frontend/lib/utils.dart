@@ -31,13 +31,13 @@ class APICaller {
     var token = await Cookie.read("token");
     return {
         'Content-Type': 'application/json',
-        'Authorization': 'Token ${token}',
+        'Authorization': 'Token $token',
     };
   }
   static Future<http.Response> post(String site, [Map<String, dynamic> body = const {}]) async {
     try {
       return await http.post(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("$_api$site"),
         headers: await APICaller.getHeader(),
         body: jsonEncode(body)
       );
@@ -51,7 +51,7 @@ class APICaller {
   static Future<http.Response> get(String site) async {
     try {
       return await http.get(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("$_api$site"),
         headers: await APICaller.getHeader()
       );
     } catch (e) {
@@ -64,7 +64,7 @@ class APICaller {
   static Future<http.Response> delete(String site, [Map<String, dynamic> body = const {}]) async {
     try {
       return await http.delete(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("$_api$site"),
         headers: await APICaller.getHeader(),
         body: jsonEncode(body)
       );

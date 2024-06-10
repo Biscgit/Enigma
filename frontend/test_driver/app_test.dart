@@ -1,6 +1,8 @@
 import 'dart:io';
-
+import 'dart:math';
 import 'package:flutter_driver/flutter_driver.dart';
+
+// import 'package:flutter_test/flutter_test.dart' as tester;
 import 'package:test/test.dart';
 
 takeScreenshot(FlutterDriver driver, String path) async {
@@ -34,6 +36,7 @@ void main() {
       assert(health?.status == HealthStatus.ok);
     });
 
+    // Login e2e test
     test('Login correct credentials', () async {
       // Find the button by its label.
       final usernameField = find.byValueKey('username');
@@ -134,7 +137,8 @@ void main() {
     });
   });
 
-  group('Login Logout Tests', () {
+  // Logout e2e test
+  group('Logout e2e test', () {
     FlutterDriver? driver;
 
     // Connect to the Flutter app before running the tests.
@@ -182,6 +186,95 @@ void main() {
         find.byValueKey('logoutDialog'),
         timeout: const Duration(seconds: 5),
       );
+    });
+  });
+
+  group('KeyHistory e2e tests', () {
+    FlutterDriver? driver;
+
+    setUp(() async {
+      driver = await FlutterDriver.connect();
+    });
+
+    tearDown(() async {
+      if (driver != null) {
+        driver?.close();
+      }
+    });
+
+    test('KeyHistory e2e test', timeout: const Timeout(Duration(minutes: 2)),
+        () async {
+      // login
+      final usernameField = find.byValueKey('username');
+      final passwordField = find.byValueKey('password');
+      final button = find.text('Login');
+
+      await driver?.tap(usernameField);
+      await driver?.enterText("user1");
+
+      await driver?.tap(passwordField);
+      await driver?.enterText("pass1");
+
+      await driver?.tap(button);
+
+      // Find button fields
+      final inputFieldFinder = find.byValueKey('keyInput');
+      // final addButtonFinder = find.byValueKey('addButton');
+
+      // Add keys to the history
+      List<String> clearTexts = ['A', 'B', 'C'];
+      // List<String> encryptedTexts = ['EncryptedA', 'EncryptedB', 'EncryptedC'];
+
+      await driver?.tap(inputFieldFinder);
+      for (int i = 0; i < clearTexts.length; i++) {
+        await driver?.enterText(clearTexts[i]);
+        // ToDo: adjust test later for correct returned character
+        await driver?.waitFor(find.text('${clearTexts[i]} → O'));
+      }
+
+      // Add many keys to test the history
+      List<String> keyPairs = [];
+      await driver?.tap(inputFieldFinder);
+      for (int i = 0; i <= 200; i++) {
+        String randomLetter = String.fromCharCode(Random().nextInt(26) + 65);
+        await driver?.enterText(randomLetter);
+
+        final combo = '$randomLetter → O';
+        keyPairs.insert(0, combo);
+        await driver?.waitFor(find.text(combo));
+      }
+
+      await driver?.scrollUntilVisible(
+        find.byValueKey("keyHistoryList"),
+        find.byValueKey("keyPair_139"),
+        dyScroll: -10000,
+      );
+      // check last two fit text
+      await driver?.waitFor(find.text("139."));
+      // await driver?.waitFor(find.text(keyPairs[138]));
+      await driver?.waitFor(find.text("140."));
+      // await driver?.waitFor(find.text(keyPairs[139]));
+
+      // check next two have disappeared
+      // await driver?.waitFor(
+      //   find.text("141."),
+      // );
+      // await driver?.waitFor(
+      //   find.text("141."),
+      //   timeout: const Duration(seconds: 1),
+      // );
+      // await driver?.waitForAbsent(
+      //   find.text(keyPairs[140]),
+      //   timeout: const Duration(seconds: 1),
+      // );
+      // await driver?.waitForAbsent(
+      //   find.text("142."),
+      //   timeout: const Duration(seconds: 1),
+      // );
+      // await driver?.waitForAbsent(
+      //   find.text(keyPairs[141]),
+      //   timeout: const Duration(seconds: 1),
+      // );
     });
   });
 }
