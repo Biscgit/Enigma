@@ -83,7 +83,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       });
     } else {
       _showSnackbar(
-          'Maximale Anzahl an wählbaren Verbindungen erreicht!', Colors.red);
+          'Maximum number of selectable connections reached!', Colors.red);
     }
   }
 
