@@ -1,7 +1,6 @@
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/keyhistory.dart';
-import 'package:flutter/services.dart';
 
 // void main() {
 //   runApp(const Tastatur());
@@ -86,7 +85,7 @@ class SquareButton extends StatelessWidget {
   final String label;
   final KeyHistoryList keyHistory;
 
-  SquareButton({
+  SquareButton({super.key, 
     required this.label,
     required this.keyHistory,
   });

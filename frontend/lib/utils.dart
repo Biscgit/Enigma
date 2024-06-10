@@ -26,7 +26,7 @@ class Cookie {
   }
 }
 
-final String apiUrl = "http://localhost:8001/key_press"; // Linux
+const String apiUrl = "http://localhost:8001/key_press"; // Linux
 
 /*Future<String> sendPressedKeyToRotors(String pressedKey) async {
   // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
@@ -64,7 +64,7 @@ final String apiUrl = "http://localhost:8001/key_press"; // Linux
 
 Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   String token = await Cookie.read('token');
-  String machineID = await Cookie.read('machineID');
+  // String machineID = await Cookie.read('machineID');
   Map<String, dynamic> body = {
     'token': token,
     'key': s,
@@ -97,7 +97,7 @@ class APICaller {
     try {
       var header = await APICaller.getHeader();
       return await http.post(
-        Uri.parse("${_api}${site}").replace(queryParameters: query),
+        Uri.parse("$_api$site").replace(queryParameters: query),
         headers: header,
         body: jsonEncode(body)
       );
@@ -111,7 +111,7 @@ class APICaller {
   static Future<http.Response> get(String site, [Map<String, dynamic> query = const {}]) async {
     try {
       return await http.get(
-        Uri.parse("${_api}${site}").replace(queryParameters: query),
+        Uri.parse("$_api$site").replace(queryParameters: query),
         headers: await APICaller.getHeader()
       );
     } catch (e) {
@@ -124,7 +124,7 @@ class APICaller {
   static Future<http.Response> delete(String site, {Map<String, dynamic> body = const {}, Map<String, dynamic> query = const {}}) async {
     try {
       return await http.delete(
-        Uri.parse("${_api}${site}").replace(queryParameters: query),
+        Uri.parse("$_api$site").replace(queryParameters: query),
         headers: await APICaller.getHeader(),
         body: jsonEncode(body)
       );

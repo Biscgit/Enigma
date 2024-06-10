@@ -87,8 +87,8 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
               _selectedItem == 'Enigma M3'
-                  ? enigma3_stk_brt.CustomKeyboard()
-                  : enigma1_stk_brt.CustomKeyboard(),
+                  ? const enigma3_stk_brt.CustomKeyboard()
+                  : const enigma1_stk_brt.CustomKeyboard(),
             ],
           ),
           Positioned(
