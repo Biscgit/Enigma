@@ -12,9 +12,10 @@ class KeyHistoryList extends StatefulWidget {
 
   void addKey(String clear, String encrypted) {
     print("Sending to history: $clear -> $encrypted");
-    keyHistoryKey.currentState!.addKey(clear, encrypted);
-
-    // (state as _KeyHistoryState).addKey(clear, encrypted);
+    keyHistoryKey.currentState!.addKey(
+      clear.toUpperCase(),
+      encrypted.toUpperCase(),
+    );
   }
 }
 
@@ -53,14 +54,25 @@ class KeyHistoryState extends State<KeyHistoryList> {
   Widget build(BuildContext context) {
     return ListView.builder(
       key: const ValueKey('keyHistoryList'),
+      shrinkWrap: true,
       itemCount: _keyHistory.length,
       itemBuilder: (context, index) {
         final keyPair = _keyHistory[index];
-        return ListTile(
-          title: Text(
-            '${keyPair.key} -> ${keyPair.value}',
-            key: ValueKey('keyPair_$index'),
-            style: const TextStyle(color: Colors.white),
+        return Padding(
+          padding: EdgeInsets.zero,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Center(
+              child: Text(
+                '${keyPair.key} → ${keyPair.value}',
+                key: ValueKey('keyPair_$index'),
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
         );
       },
