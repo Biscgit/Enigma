@@ -12,6 +12,17 @@ class Tastatur extends StatefulWidget {
   State<Tastatur> createState() => TastaturState();
 }
 
+void sendPressedKeyToRotors(String s) async {
+  String token = await Cookie.read('token');
+  String machineID = await Cookie.read('machineID');
+  Map<String, dynamic> body = {
+    'token': token,
+    'key': s,
+    'machine': machineID
+  };
+  APICaller.post("key_press", body);
+}
+
 class TastaturState extends State<Tastatur> {
   final double seizedBoxHeight = 10;
 
@@ -22,7 +33,7 @@ class TastaturState extends State<Tastatur> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
@@ -40,7 +51,7 @@ class TastaturState extends State<Tastatur> {
               ],
             ),
             SizedBox(height: seizedBoxHeight),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SquareButton(label: 'A'),
@@ -55,7 +66,7 @@ class TastaturState extends State<Tastatur> {
               ],
             ),
             SizedBox(height: seizedBoxHeight),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SquareButton(label: 'Y'),
@@ -93,13 +104,13 @@ class SquareButton extends StatelessWidget {
         onPressed: () {
           sendPressedKeyToRotors(label);
         },
-        child: Text(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: color, // background color lol
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // rounded corners
           ),
         ),
+        child: Text(label),
       ),
     );
   }

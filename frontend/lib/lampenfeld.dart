@@ -13,6 +13,17 @@ class Lampfield extends StatefulWidget {
   State<Lampfield> createState() => LampfieldState();
 }
 
+void sendPressedKeyToRotors(String s) async {
+  String token = await Cookie.read('token');
+  String machineID = await Cookie.read('machineID');
+  Map<String, dynamic> body = {
+    'token': token,
+    'key': s,
+    'machine': machineID
+  };
+  APICaller.post("key_press", body);
+}
+
 class LampfieldState extends State<Lampfield> {
   int counter = 0;
   final double seizedBoxHeight = 10;
