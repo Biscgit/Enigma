@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:enigma/rotors.dart';  
 import 'package:enigma/lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
-import 'package:enigma/rotors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -68,27 +68,16 @@ class HomePageState extends State<HomePage> {
         onItemSelected: updateSelectedItem,
         key: const Key('enigma_sidebar'),
       ),
-      body: Column(
-        children: <Widget>[
-          const Expanded(
-            child: Center(
-              child: Lampfield(),
-            ),
-          ),
-          SizedBox(height: 20), // Abstand zwischen Lampfield und Rotoren
-          Container(
+      body: Stack(
+        children: [
+          const Lampfield(),
+          Align(
             alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RotorPage(number_rotors: 3),
-              ],
-            ),
+            child: EnigmaWidget(),
           ),
-          SizedBox(height: 20), // Abstand zwischen Rotoren und Ende der Seite
         ],
       ),
     );
   }
 }
+

@@ -57,7 +57,7 @@ class _RotorWidgetState extends State<RotorWidget> {
     setState(() {
       this.selectedRotor = value!;
     });
-    Map<String, int> rotor = {}; 
+    Map<String, int> rotor = {};
     rotor["id"] = this.get_id() ?? 0;
     rotor["place"] = widget.rotorNumber;
     rotor["machine_id"] = this.machine_id;
