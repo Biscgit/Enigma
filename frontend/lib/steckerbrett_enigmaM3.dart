@@ -1,3 +1,4 @@
+import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -5,32 +6,32 @@ import 'dart:math';
 
 //Beinhaltet:
 // ABC-Layout für die Enigma M3
-// 2 Buchstaben haben jeweils eine Farbe 
+// 2 Buchstaben haben jeweils eine Farbe
 // Begrenzung auf 20 Paare + inklusive Fehler-Meldung
 // Fehler-Meldung, dass eine Verknüfung gewählt werden muss
 // Aufhebung der gewählten Buchstaben durch Backspace-Taste (noch optional)
 // Reset-Button für Werkseinstellungen
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Enigma M3 Steckerbrett',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Enigma M3: ABC-Steckerbrett'),
-        ),
-        body: Center(
-          child: CustomKeyboard(),
-        ),
-      ),
-    );
-  }
-}
+// void main() {
+//   runApp(MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Enigma M3 Steckerbrett',
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: const Text('Enigma M3: ABC-Steckerbrett'),
+//         ),
+//         body: Center(
+//           child: CustomKeyboard(),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class CustomKeyboard extends StatefulWidget {
   @override
@@ -51,13 +52,13 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     Colors.teal,
     Colors.pink,
     Colors.indigo,
-    Colors.brown,    
+    Colors.brown,
   ];
 
   // Dictionary, um Buchstabenpaare und ihre Farben zu speichern
   final Map<String, Color> _letterColors = {};
 
-    void _onKeyPressed(String value) {
+  void _onKeyPressed(String value) {
     if (_selectedCount < 20) {
       setState(() {
         _inputText += value;
@@ -76,6 +77,12 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
                 availableColors[Random().nextInt(availableColors.length)];
             _letterColors[value] = randomColor;
             _letterColors[_inputText[_inputText.length - 2]] = randomColor;
+
+            // api call to save in backend
+            APICaller.post(
+              "plugboard/save?machine=1&plug_a=$value&plug_b=${_inputText[_inputText.length - 2]}",
+              {},
+            );
           } else {
             _showSnackbar("A selection error has occurred!", Colors.red);
           }
@@ -110,6 +117,14 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
             .where((key) => _letterColors[key] == _letterColors[value])
             .toList();
 
+        // api call to save in backend
+        if (keys.length % 2 == 0) {
+          APICaller.delete(
+            "plugboard/remove?machine=1&plug_a=${keys[0]}&plug_b=${keys[1]}",
+            {},
+          );
+        }
+
         for (String key in keys) {
           final charIndex = key.codeUnitAt(0) - 65;
 
@@ -127,7 +142,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     setState(() {
       // Lösche die aktuellen Farben
       _letterColors.clear();
-      
+
       _inputText = '';
       _isButtonSelected = List.generate(26, (_) => false);
       _selectedCount = 0;
@@ -146,9 +161,9 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   Widget _buildKeyboardButton(String value, int index) {
     final isSelected = _isButtonSelected[value.codeUnitAt(0) - 65];
-        final letterColor = _letterColors[value] ??
+    final letterColor = _letterColors[value] ??
         const Color.fromARGB(255, 134, 182, 136); // Standardfarbe
-        
+
     return ElevatedButton(
       onPressed: () {
         if (isSelected) {
@@ -186,19 +201,22 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (int i = 0; i < 10; i++) _buildKeyboardButton(String.fromCharCode(65 + i), i),
+            for (int i = 0; i < 10; i++)
+              _buildKeyboardButton(String.fromCharCode(65 + i), i),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (int i = 10; i < 18; i++) _buildKeyboardButton(String.fromCharCode(65 + i), i),
+            for (int i = 10; i < 18; i++)
+              _buildKeyboardButton(String.fromCharCode(65 + i), i),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (int i = 18; i < 26; i++) _buildKeyboardButton(String.fromCharCode(65 + i), i),
+            for (int i = 18; i < 26; i++)
+              _buildKeyboardButton(String.fromCharCode(65 + i), i),
           ],
         ),
         Row(
