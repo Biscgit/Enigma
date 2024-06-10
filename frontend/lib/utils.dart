@@ -48,10 +48,18 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> get(String site) async {
+  static Future<http.Response> get(String site, [Map<String, dynamic> body = const {}]) async {
+    List<String> queryStringParts = [];
+
+    body.forEach((key, value) {
+      queryStringParts.add('$key=$value');
+    });
+
+    var query = '?' + queryStringParts.join('&');
+
     try {
       return await http.get(
-        Uri.parse("${_api}${site}"),
+        Uri.parse("${_api}${site}${query}"),
         headers: await APICaller.getHeader()
       );
     } catch (e) {

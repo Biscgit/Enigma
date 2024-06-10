@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:enigma/utils.dart';
 
 class SideBar extends StatelessWidget {
   final Function(String) onItemSelected;
@@ -26,9 +27,9 @@ class SideBar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           header,
-          Machine(name: 'Enigma I', id: "", onItemSelected: this.onItemSelected),
-          Machine(name: 'Norway Enigma', id: "", onItemSelected: this.onItemSelected),
-          Machine(name: 'Enigma M3', id: "", onItemSelected: this.onItemSelected),
+          Machine(name: 'Enigma I', id: 1, onItemSelected: this.onItemSelected),
+          Machine(name: 'Norway Enigma', id: 2, onItemSelected: this.onItemSelected),
+          Machine(name: 'Enigma M3', id: 3, onItemSelected: this.onItemSelected),
           addMachine(context)
         ],
       ),
@@ -49,7 +50,7 @@ class Machine extends StatelessWidget{
       title: Text(name),
       onTap: () {
         this.onItemSelected(this.name);
-        // Backendcall with backendID
+        Cookie.save("current_machine", "${this.id}");
         Navigator.pop(context);
       }
     );

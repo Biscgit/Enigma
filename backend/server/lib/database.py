@@ -134,15 +134,15 @@ class Database:
             for machine in content:
                 reflector = {}
                 for i, j in zip(machine["reflector"], alphabet):
-                    reflector[i] = j
-                    reflector[j] = i
+                    reflector[i.lower()] = j.lower()
+                    reflector[j.lower()] = i.lower()
 
                 await self.create_machine(
                     machine["machine_type"],
                     username,
                     machine["machine_type"],
                     machine["name"],
-                    machine["reflector"],
+                    reflector,
                 )
 
         logging.info("Successfully loaded machines from file")
@@ -424,6 +424,24 @@ class Database:
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    async def get_rotor_ids(self, username: str, machine: int) -> list[dict]:
+        """returns all rotor ids for a machine type"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetch(
+                """
+                SELECT id
+                FROM rotors
+                WHERE username = $1 AND machine_type = $2
+                """,
+                username,
+                machine,
+            )
+
+            logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
+            return [dict(pair) for pair in result or []]
+
     async def get_rotors(self, username: str, machine: int) -> list[dict]:
         """returns all rotors configurations for a machine"""
         async with self.pool.acquire() as conn:
@@ -475,9 +493,9 @@ class Database:
                     """,
                     data["username"],
                     data["id"],
-                    data["rotor_position"],
-                    data["letter_shift"],
-                    data["scramble_alphabet"],
+                    data["rotor_position"].lower(),
+                    data["letter_shift"].lower(),
+                    data["scramble_alphabet"].lower(),
                     data["machine_id"],
                 )
 
@@ -493,11 +511,11 @@ class Database:
                     """,
                     data["username"],
                     # data["name"],
-                    data["scramble_alphabet"],
+                    data["scramble_alphabet"].lower(),
                     data["machine_id"],
                     data["machine_id"],
-                    data["letter_shift"],
-                    data["rotor_position"],
+                    data["letter_shift"].lower(),
+                    data["rotor_position"].lower(),
                 )
 
     async def get_machine(self, username: str, machine_id: int):
