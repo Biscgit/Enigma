@@ -12,7 +12,7 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 ENV PATH="$PATH:/usr/bin/google-chrome-stable"
 
 # install chromedriver
-RUN wget https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.78/linux64/chromedriver-linux64.zip && \
+RUN wget https://storage.googleapis.com/chrome-for-testing-public/125.0.6422.141/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver && \
     rm chromedriver-linux64.zip
