@@ -70,11 +70,11 @@ const String apiUrl = "http://localhost:8001/key_press"; // Linux
 
 Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   String machineID = await Cookie.read('current_machine');
-  Map<String, dynamic> body = {
+  Map<String, String> query = {
     'key': s,
-    'machine': machineID
+    'machine': "$machineID"
   };
-  http.Response response = await APICaller.get("key_press", body);
+  http.Response response = await APICaller.get("key_press", query);
 
   if(response.statusCode != 200) {
     return "?";
@@ -98,7 +98,7 @@ class APICaller {
     };
   }
 
-  static Future<http.Response> post(String site, {Map<String, dynamic> query = const {}, Map<String, dynamic> body = const {}}) async {
+  static Future<http.Response> post(String site, {Map<String, String> query = const {}, Map<String, dynamic> body = const {}}) async {
     try {
       return await http.post(
         Uri.parse("$_api$site").replace(queryParameters: query),
@@ -112,7 +112,7 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> get(String site, [Map<String, dynamic> query = const {}]) async {
+  static Future<http.Response> get(String site, [Map<String, String> query = const {}]) async {
     try {
       return await http.get(
         Uri.parse("$_api$site").replace(queryParameters: query),
@@ -125,7 +125,7 @@ class APICaller {
     }
   }
 
-  static Future<http.Response> delete(String site, {Map<String, dynamic> query = const {}, Map<String, dynamic> body = const {}}) async {
+  static Future<http.Response> delete(String site, {Map<String, String> query = const {}, Map<String, dynamic> body = const {}}) async {
     try {
       return await http.delete(
         Uri.parse("$_api$site").replace(queryParameters: query),

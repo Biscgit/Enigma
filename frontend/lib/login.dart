@@ -17,7 +17,7 @@ class LoginPage extends StatelessWidget {
     String password = _passwordController.text;
     
     var response = await APICaller.post("login", body: {"username": username, "password": password, });
-    await Cookie.save("current_machine", "0");
+    await Cookie.save("current_machine", "1");
 
     if (response.statusCode == 200) {
       Navigator.pushReplacementNamed(context, '/home');

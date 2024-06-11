@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   String _selectedItem = 'Enigma I';
-  bool showRotors = true; // Toggle state
   final GlobalKey<KeyHistoryState> _keyHistoryKey =
       GlobalKey<KeyHistoryState>();
 
@@ -45,14 +44,6 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(selectedItem),
         actions: [
-          Switch(
-            value: showRotors,
-            onChanged: (value) {
-              setState(() {
-                showRotors = value;
-              });
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             tooltip: 'Logout',
@@ -87,34 +78,36 @@ class HomePageState extends State<HomePage> {
         onItemSelected: updateSelectedItem,
         key: const Key('enigma_sidebar'),
       ),
-      body: Stack(
+      body: Row(
         children: [
-          Column(
-            children: <Widget>[
-              Expanded(
-                child: MainScreen(
-                  keyHistory: keyHistory,
+          RotorPage(number_rotors: 3),
+          Expanded(
+            child: Stack(
+              children: [
+                Column(
+                  children: <Widget>[
+                  Expanded(
+                      child: MainScreen(
+                      keyHistory: keyHistory,
+                      ),
+                  ),
+                  (_selectedItem == 'Enigma M3'
+                      ? const enigma3_stk_brt.CustomKeyboard()
+                      : const enigma1_stk_brt.CustomKeyboard()),
+                  ],
                 ),
-              ),
-              showRotors ? Container() : (_selectedItem == 'Enigma M3'
-                  ? const enigma3_stk_brt.CustomKeyboard()
-                  : const enigma1_stk_brt.CustomKeyboard()),
-              showRotors ? const RotorPage(number_rotors: 3) : Container(),
-            ],
+              ],
+            )
           ),
-          Positioned(
-            top: 0,
-            bottom: 10,
-            right: 20,
-            child: Container(
-              width: 180,
-              height: 300,
-              decoration: BoxDecoration(
-                color: Colors.black12,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: keyHistory,
+          Container(
+            width: 180,
+            height: 300,
+            margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
+            decoration: BoxDecoration(
+              color: Colors.black12,
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: keyHistory,
           ),
         ],
       ),
