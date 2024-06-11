@@ -15,19 +15,19 @@ async def encrypt(username: str, machine_id: int, db_conn: Database, char: chr) 
     )
 
     notch = True
-    #    char = plugboard.switch_letter(char)
+    char = plugboard.switch_letter(char)
 
     for rotor in rotors:
         notch, char = rotor.rotate_offset_scramble(char, notch, False)
 
-    #   value = reflector.switch_letter(value)
+    char = reflector.switch_letter(char)
 
     for rotor in reversed(rotors):
         notch, char = rotor.rotate_offset_scramble(char, notch, True)
 
     machines[f"{username}:{machine_id}"] = (rotors, plugboard, reflector)
     await db_conn.update_rotors(rotors)
-    return char  # plugboard.switch_letter(char)
+    return plugboard.switch_letter(char)
 
 
 @router.get("/key_press")

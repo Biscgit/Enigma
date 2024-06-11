@@ -69,12 +69,10 @@ const String apiUrl = "http://localhost:8001/key_press"; // Linux
 }*/
 
 Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
-  String token = await Cookie.read('token');
-  // String machineID = await Cookie.read('machineID');
+  String machineID = await Cookie.read('current_machine');
   Map<String, dynamic> body = {
-    'token': token,
     'key': s,
-    'machine': "1"
+    'machine': "$machineID"
   };
   http.Response response = await APICaller.get("key_press", body);
 

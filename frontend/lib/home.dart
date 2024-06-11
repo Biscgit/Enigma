@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   String _selectedItem = 'Enigma I';
+  bool showRotors = true; // Toggle state
   final GlobalKey<KeyHistoryState> _keyHistoryKey =
       GlobalKey<KeyHistoryState>();
 
@@ -43,7 +44,15 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(selectedItem),
-        actions: <Widget>[
+        actions: [
+          Switch(
+            value: showRotors,
+            onChanged: (value) {
+              setState(() {
+                showRotors = value;
+              });
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             tooltip: 'Logout',
@@ -87,10 +96,10 @@ class HomePageState extends State<HomePage> {
                   keyHistory: keyHistory,
                 ),
               ),
-              _selectedItem == 'Enigma M3'
+              showRotors ? Container() : (_selectedItem == 'Enigma M3'
                   ? const enigma3_stk_brt.CustomKeyboard()
-                  : const enigma1_stk_brt.CustomKeyboard(),
-              RotorPage(number_rotors: 3),
+                  : const enigma1_stk_brt.CustomKeyboard()),
+              showRotors ? RotorPage(number_rotors: 3) : Container(),
             ],
           ),
           Positioned(

@@ -30,6 +30,7 @@ class _RotorWidgetState extends State<RotorWidget> {
   int notch = 0;
   int number_rotors = 5;
   int machine_id = 1;
+  int id = 1;
   List<dynamic> rotor_ids = [{"": 0}];
 
 
@@ -44,8 +45,8 @@ class _RotorWidgetState extends State<RotorWidget> {
     this.machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 47;
 
     this.rotor_ids = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": "${this.machine_id}"})).body);
-    APICaller.post("switch-rotor", body: {"id": this.get_id(), "machine_id": this.machine_id, "place": widget.rotorNumber});
-    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor":  "${this.get_id()}"})).body);
+    var rotor = json.decode((await APICaller.post("switch-rotor", body: {"id": this.get_id(), "machine_id": this.machine_id, "place": widget.rotorNumber})).body);
+    this.id = rotor["id"];
 
     setState(() {
       this.ringSetting = rotor["rotor_position"].codeUnitAt(0) - 97;
@@ -58,7 +59,7 @@ class _RotorWidgetState extends State<RotorWidget> {
       this.selectedRotor = value!;
     });
     Map<String, int> rotor = {};
-    rotor["id"] = this.get_id() ?? 0;
+    rotor["id"] = this.id;
     rotor["place"] = widget.rotorNumber;
     rotor["machine_id"] = this.machine_id;
     rotor = json.decode((await APICaller.post("switch-rotor", body: rotor)).body);
@@ -77,7 +78,7 @@ class _RotorWidgetState extends State<RotorWidget> {
     setState(() {
       ringSetting = (ringSetting + change + 26) % 26;
     });
-    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor":  "${this.get_id()}"})).body);
+    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor":  "${this.id}"})).body);
     rotor["rotor_notch"] = String.fromCharCode(97 + this.ringSetting);
     rotor["id"] = this.get_id();
     APICaller.post("update-rotor", body: rotor);
@@ -87,7 +88,7 @@ class _RotorWidgetState extends State<RotorWidget> {
     setState(() {
       notch = (notch + change + 26) % 26;
     });
-    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor":  "${this.get_id()}"})).body);
+    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor":  "${this.id}"})).body);
     rotor["letter_shift"] = String.fromCharCode(97 + notch);
     rotor["id"] = this.get_id();
     APICaller.post("update-rotor", body: rotor);
