@@ -36,7 +36,7 @@ class MainScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height / 8 * 3,
+          top: MediaQuery.of(context).size.height / 8 * 2.5,
           left: 0,
           right: 0,
           bottom: 0,

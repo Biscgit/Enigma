@@ -16,7 +16,7 @@ class Tastatur extends StatefulWidget {
 }
 
 class TastaturState extends State<Tastatur> {
-  final double seizedBoxHeight = 10;
+  final double seizedBoxHeight = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class TastaturState extends State<Tastatur> {
 }
 
 class SquareButton extends StatelessWidget {
-  final double size = 50;
+  final double size = 48;
   final Color color = Colors.black;
   final String label;
   final KeyHistoryList keyHistory;
