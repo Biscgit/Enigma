@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from server.lib.database import get_database, Database
-from server.lib.plugboard import switch_letter
+from server.lib.plugboard import reflect_letter, to_dict
 from .authentication import check_auth
+import json
 
 router = APIRouter()
 
@@ -10,24 +11,25 @@ machines = {}
 
 async def encrypt(username: str, machine_id: int, db_conn: Database, char: chr) -> chr:
     global machines
-    rotors, plugboard, reflector = machines.get(
+    plugboard, reflector, rotors = machines.get(
         f"{username}:{machine_id}", await db_conn.get_machine(username, machine_id)
     )
 
     notch = True
-    char = switch_letter(char, plugboard)
+    char = reflect_letter(char, to_dict(plugboard))
 
     for rotor in rotors:
+        print(rotor)
         notch, char = rotor.rotate_offset_scramble(char, notch, False)
 
-    char = switch_letter(char, reflector)
+    char = reflect_letter(char, json.loads(reflector))
 
     for rotor in reversed(rotors):
         notch, char = rotor.rotate_offset_scramble(char, notch, True)
 
-    machines[f"{username}:{machine_id}"] = (rotors, plugboard, reflector)
+    machines[f"{username}:{machine_id}"] = (plugboard, reflector, rotors)
     await db_conn.update_rotors(rotors)
-    return switch_letter(char, plugboard)
+    return reflect_letter(char, to_dict(plugboard))
 
 
 @router.get("/key_press")
@@ -43,9 +45,6 @@ async def encrypt_key(
     # ToDo: implement check if machine exists
     # ToDo: add unit + integration tests when completed
     encrypted_key: str = await encrypt(username, machine, db_conn, key)
-
-    # apply plugboard
-    encrypted_key = await switch_letter(username, machine, encrypted_key, db_conn)
 
     # Save to history and return the switched key
     await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)

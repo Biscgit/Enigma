@@ -201,7 +201,7 @@ class Database:
         username: str,
         machine_type: int,
         name: str,
-        reflector: dict,
+        reflector: list,
     ) -> None:
         """creates a new machine for a user if it does not exist"""
 
@@ -427,7 +427,7 @@ class Database:
             )
 
             logging.info(f"Fetched reflector for {username}.{machine}: {str(result)}")
-            return [json.loads(pair) for pair in result or []]
+            return result
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -569,11 +569,13 @@ class Database:
         reflector = await self.get_reflector(username, machine_id)
         rotors = []
         for rotor in await self.get_rotors(username, machine_id):
-            rotors += Rotor(
-                rotor["scramble_alphabet"],
-                rotor["rotor_position"],
-                rotor["letter_shift"],
-            )
+            rotors += [
+                Rotor(
+                    rotor["scramble_alphabet"],
+                    rotor["rotor_position"],
+                    rotor["letter_shift"],
+                )
+            ]
         return plugboard, reflector, rotors
 
 

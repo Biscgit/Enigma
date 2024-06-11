@@ -45,7 +45,7 @@ class _RotorWidgetState extends State<RotorWidget> {
   }
 
   Future<void> _initialize([String _ = ""]) async {
-    machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 47;
+    machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 48;
 
     rotor_ids = json.decode(
         (await APICaller.get("get-rotor-ids", {"machine_id": "$machine_id"}))
