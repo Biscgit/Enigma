@@ -21,4 +21,5 @@ class Rotor(BaseModel):
 class MinRotor(BaseModel):
     machine_id: int
     id: int
+    template_i: int
     place: int

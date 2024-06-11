@@ -53,7 +53,8 @@ class _RotorWidgetState extends State<RotorWidget> {
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
       "id": this.get_id(),
       "machine_id": this.machine_id,
-      "place": widget.rotorNumber
+      "place": widget.rotorNumber,
+      "template_id": this.get_id()
     }))
         .body);
     this.id = rotor["id"];
@@ -70,7 +71,7 @@ class _RotorWidgetState extends State<RotorWidget> {
     });
     Map<String, dynamic> rotor = {};
     rotor["id"] = this.id;
-    rotor["get_id"] = get_id();
+    rotor["template_id"] = get_id();
     rotor["place"] = widget.rotorNumber;
     rotor["machine_id"] = this.machine_id;
 

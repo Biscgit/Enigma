@@ -535,7 +535,7 @@ class Database:
             return result[0]
 
     async def switch_rotor(
-        self, username: str, machine_id: int, id: int, place: int
+        self, username: str, machine_id: int, id: int, template_id: int, place: int
     ) -> dict:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -549,18 +549,10 @@ class Database:
                     machine_id,
                     place,
                 )
-                print()
-                print()
-                print()
-                print(1, count)
-                rotor = await self.get_rotor(username, id)
+                rotor = await self.get_rotor(username, template_id)
                 rotor["username"] = username
                 rotor["machine_id"] = machine_id
                 rotor["place"] = place
-                print(2, rotor)
-                print()
-                print()
-                print()
                 if count is not None:
                     rotor["id"] = count
                     await self.update_rotor(rotor)
