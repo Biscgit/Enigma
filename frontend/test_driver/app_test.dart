@@ -176,7 +176,7 @@ void main() {
         find.byValueKey('logoutDialog'),
         timeout: const Duration(seconds: 5),
       );
-      takeScreenshot(driver!, "logged_out.png");
+      // takeScreenshot(driver!, "logged_out.png");
 
       // tap away
       await driver?.tap(find.text("OK"));
