@@ -5,14 +5,14 @@ import 'dart:convert';
 class RotorPage extends StatelessWidget {
   final int number_rotors;
 
-  RotorPage({required this.number_rotors});
+  const RotorPage({super.key, required this.number_rotors});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
-          this.number_rotors, (index) => RotorWidget(rotorNumber: index + 1)),
+          number_rotors, (index) => RotorWidget(rotorNumber: index + 1)),
     );
   }
 }
@@ -20,7 +20,7 @@ class RotorPage extends StatelessWidget {
 class RotorWidget extends StatefulWidget {
   final int rotorNumber;
 
-  RotorWidget({required this.rotorNumber});
+  const RotorWidget({super.key, required this.rotorNumber});
 
   @override
   _RotorWidgetState createState() => _RotorWidgetState();
@@ -41,39 +41,39 @@ class _RotorWidgetState extends State<RotorWidget> {
   void initState() {
     super.initState();
     _initialize();
-    Cookie.setReactor("machine_id", this._initialize);
+    Cookie.setReactor("machine_id", _initialize);
   }
 
   Future<void> _initialize([String _ = ""]) async {
-    this.machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 47;
+    machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 47;
 
-    this.rotor_ids = json.decode((await APICaller.get(
-            "get-rotor-ids", {"machine_id": "${this.machine_id}"}))
-        .body);
+    rotor_ids = json.decode(
+        (await APICaller.get("get-rotor-ids", {"machine_id": "$machine_id"}))
+            .body);
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
-      "id": this.get_id(),
-      "machine_id": this.machine_id,
-      "place": widget.rotorNumber,
-      "template_id": this.get_id()
+      "template_id": get_id()
+      "id": getId(),
+      "machine_id": machine_id,
+      "place": widget.rotorNumber
     }))
         .body);
-    this.id = rotor["id"];
+    id = rotor["id"];
 
     setState(() {
-      this.ringSetting = rotor["rotor_position"].codeUnitAt(0) - 97;
-      this.notch = rotor["letter_shift"].codeUnitAt(0) - 97;
+      ringSetting = rotor["rotor_position"].codeUnitAt(0) - 97;
+      notch = rotor["letter_shift"].codeUnitAt(0) - 97;
     });
   }
 
   void _changeRotorSetting(int? value) async {
     setState(() {
-      this.selectedRotor = value!;
+      selectedRotor = value!;
     });
     Map<String, dynamic> rotor = {};
-    rotor["id"] = this.id;
     rotor["template_id"] = get_id();
+    rotor["id"] = id;
     rotor["place"] = widget.rotorNumber;
-    rotor["machine_id"] = this.machine_id;
+    rotor["machine_id"] = machine_id;
 
     print(rotor);
 
@@ -82,24 +82,23 @@ class _RotorWidgetState extends State<RotorWidget> {
     rotor = jsonDecode(response.body);
 
     setState(() {
-      this.notch = (rotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
-      this.ringSetting =
-          (rotor["rotor_notch"] as String? ?? "a").codeUnitAt(0) - 97;
+      notch = (rotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
+      ringSetting = (rotor["rotor_notch"] as String? ?? "a").codeUnitAt(0) - 97;
     });
   }
 
-  int? get_id() {
-    return this.rotor_ids[this.selectedRotor - 1]["id"];
+  int? getId() {
+    return rotor_ids[selectedRotor - 1]["id"];
   }
 
   void _changeRingSetting(int change) async {
     setState(() {
       ringSetting = (ringSetting + change + 26) % 26;
     });
-    var rotor = json.decode(
-        (await APICaller.get("get-rotor", {"rotor": "${this.id}"})).body);
-    rotor["rotor_notch"] = String.fromCharCode(97 + this.ringSetting);
-    rotor["id"] = this.get_id();
+    var rotor =
+        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
+    rotor["rotor_notch"] = String.fromCharCode(97 + ringSetting);
+    rotor["id"] = getId();
     APICaller.post("update-rotor", body: rotor);
   }
 
@@ -107,18 +106,18 @@ class _RotorWidgetState extends State<RotorWidget> {
     setState(() {
       notch = (notch + change + 26) % 26;
     });
-    var rotor = json.decode(
-        (await APICaller.get("get-rotor", {"rotor": "${this.id}"})).body);
+    var rotor =
+        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["letter_shift"] = String.fromCharCode(97 + notch);
-    rotor["id"] = this.get_id();
+    rotor["id"] = getId();
     APICaller.post("update-rotor", body: rotor);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(15),
-      padding: EdgeInsets.all(15),
+      margin: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(5),
@@ -126,47 +125,48 @@ class _RotorWidgetState extends State<RotorWidget> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Rotor ${widget.rotorNumber}', style: TextStyle(fontSize: 16)),
+          Text('Rotor ${widget.rotorNumber}',
+              style: const TextStyle(fontSize: 16)),
           DropdownButton<int>(
             value: selectedRotor,
             items: List.generate(
-                this.number_rotors,
+                number_rotors,
                 (index) => DropdownMenuItem(
-                      child: Text('Rotor ${index + 1}'),
                       value: index + 1,
+                      child: Text('Rotor ${index + 1}'),
                     )),
             onChanged: _changeRotorSetting,
           ),
-          SizedBox(height: 10),
-          Text('Rotor drehen', style: TextStyle(fontSize: 12)),
+          const SizedBox(height: 10),
+          const Text('Rotor drehen', style: TextStyle(fontSize: 12)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.remove),
+                icon: const Icon(Icons.remove),
                 onPressed: () => _changeRingSetting(-1),
               ),
-              Text('${String.fromCharCode(65 + this.ringSetting)}',
-                  style: TextStyle(fontSize: 16)),
+              Text(String.fromCharCode(65 + ringSetting),
+                  style: const TextStyle(fontSize: 16)),
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 onPressed: () => _changeRingSetting(1),
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Text('Notch drehen', style: TextStyle(fontSize: 12)),
+          const SizedBox(height: 10),
+          const Text('Notch drehen', style: TextStyle(fontSize: 12)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.remove),
+                icon: const Icon(Icons.remove),
                 onPressed: () => _changeNotch(-1),
               ),
-              Text('${String.fromCharCode(65 + this.notch)}',
-                  style: TextStyle(fontSize: 16)),
+              Text(String.fromCharCode(65 + notch),
+                  style: const TextStyle(fontSize: 16)),
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 onPressed: () => _changeNotch(1),
               ),
             ],

@@ -136,14 +136,16 @@ class Database:
                 for i, j in zip(machine["reflector"], alphabet):
                     reflector[i.lower()] = j.lower()
                     reflector[j.lower()] = i.lower()
-
-                await self.create_machine(
-                    machine["machine_type"],
-                    username,
-                    machine["machine_type"],
-                    machine["name"],
-                    reflector,
-                )
+                try:
+                    await self.create_machine(
+                        machine["machine_type"],
+                        username,
+                        machine["machine_type"],
+                        machine["name"],
+                        reflector,
+                    )
+                except asyncpg.PostgresError:
+                    logging.warning(f"Machine `{machine}` already exists!")
 
         logging.info("Successfully loaded machines from file")
 
@@ -157,7 +159,10 @@ class Database:
                 rotor["username"] = username
                 rotor["machine_id"] = 0
                 rotor["place"] = 0
-                await self.set_rotor(rotor)
+                try:
+                    await self.set_rotor(rotor)
+                except asyncpg.PostgresError:
+                    logging.warning(f"Rotor `{rotor}` already exists!")
 
         logging.info("Successfully loaded rotors from file")
 

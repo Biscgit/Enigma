@@ -99,7 +99,7 @@ class HomePageState extends State<HomePage> {
               showRotors ? Container() : (_selectedItem == 'Enigma M3'
                   ? const enigma3_stk_brt.CustomKeyboard()
                   : const enigma1_stk_brt.CustomKeyboard()),
-              showRotors ? RotorPage(number_rotors: 3) : Container(),
+              showRotors ? const RotorPage(number_rotors: 3) : Container(),
             ],
           ),
           Positioned(
