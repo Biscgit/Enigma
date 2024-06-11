@@ -29,14 +29,14 @@ class MainScreen extends StatelessWidget {
           top: 0,
           left: 0,
           right: 0,
-          bottom: MediaQuery.of(context).size.height / 3,
+          bottom: MediaQuery.of(context).size.height / 8 * 2.5,
           child: Lampfield(
             key: Lampfield.lampFieldKey,
             keyHistory: keyHistory,
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height / 3,
+          top: MediaQuery.of(context).size.height / 8 * 3,
           left: 0,
           right: 0,
           bottom: 0,

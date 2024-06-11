@@ -80,7 +80,7 @@ class TastaturState extends State<Tastatur> {
 }
 
 class SquareButton extends StatelessWidget {
-  final double size = 60;
+  final double size = 50;
   final Color color = Colors.black;
   final String label;
   final KeyHistoryList keyHistory;

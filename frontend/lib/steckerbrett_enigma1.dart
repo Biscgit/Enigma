@@ -159,7 +159,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         }
       },
       style: ElevatedButton.styleFrom(
-        fixedSize: const Size(60, 60),
+        fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
         backgroundColor: isSelected
             ? letterColor

@@ -22,7 +22,7 @@ class Lampfield extends StatefulWidget {
 
 class LampfieldState extends State<Lampfield> {
   int counter = 0;
-  final double seizedBoxHeight = 10;
+  final double seizedBoxHeight = 5;
   final List<GlobalKey<CircularTextBoxState>> listOfGlobalKeys =
       List.generate(26, (index) => GlobalKey<CircularTextBoxState>());
 
@@ -150,7 +150,7 @@ class CircularTextBox extends StatefulWidget {
     this.defaultColorBox = Colors.black12,
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
-    this.diameter = 48,
+    this.diameter = 45,
   });
 
   @override
