@@ -126,6 +126,23 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   void _resetKeyboard() {
     setState(() {
+      // remove all from DB
+      while (_letterColorMap.isNotEmpty) {
+        final color = _letterColorMap[_letterColorMap.keys.first];
+        List<String> keys = _letterColorMap.keys
+            .where((key) => _letterColorMap[key] == color)
+            .toList();
+
+        APICaller.delete("plugboard/remove", query: {
+          "machine": "1",
+          "plug_a": keys[0],
+          "plug_b": keys[1],
+        });
+
+        _letterColorMap.remove(keys[0]);
+        _letterColorMap.remove(keys[1]);
+      }
+
       // Lösche die aktuellen Farben
       _letterColorMap.clear();
 
@@ -159,7 +176,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         }
       },
       style: ElevatedButton.styleFrom(
-        fixedSize: const Size(60, 60),
+        fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
         backgroundColor: isSelected
             ? letterColor
@@ -167,8 +184,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       ),
       child: Text(
         value,
-        style:
-            const TextStyle(color: Color.fromARGB(247, 255, 255, 255), fontSize: 18),
+        style: const TextStyle(
+            color: Color.fromARGB(247, 255, 255, 255), fontSize: 18),
       ),
     );
   }

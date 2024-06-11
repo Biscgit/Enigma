@@ -37,7 +37,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   ];
 
   // Dictionary, um Buchstabenpaare und ihre Farben zu speichern
-  final Map<String, Color> _letterColors = {};
+  final Map<String, Color> _letterColorMap = {};
 
   void _onKeyPressed(String value) {
     if (_selectedCount < 20) {
@@ -50,14 +50,14 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         if (_selectedCount % 2 == 0) {
           // Wähle eine zufällige Farbe für das Buchstabenpaar, die noch nicht verwendet wurde
           final availableColors = _availableColors
-              .where((color) => !_letterColors.containsValue(color))
+              .where((color) => !_letterColorMap.containsValue(color))
               .toList();
 
           if (availableColors.isNotEmpty) {
             final randomColor =
                 availableColors[Random().nextInt(availableColors.length)];
-            _letterColors[value] = randomColor;
-            _letterColors[_inputText[_inputText.length - 2]] = randomColor;
+            _letterColorMap[value] = randomColor;
+            _letterColorMap[_inputText[_inputText.length - 2]] = randomColor;
 
             // api call to save in backend
             APICaller.post(
@@ -85,7 +85,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       final charIndex = value.codeUnitAt(0) - 65;
       if (_isButtonSelected[charIndex] && _selectedCount % 2 == 1) {
         // if is self, then unselect
-        if (!_letterColors.containsKey(value)) {
+        if (!_letterColorMap.containsKey(value)) {
           _isButtonSelected[charIndex] = false;
           _selectedCount--;
           _inputText = _inputText.replaceAll(value, '');
@@ -98,8 +98,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
       if (_selectedCount > 0) {
         // get both keys with the same color
-        List<String> keys = _letterColors.keys
-            .where((key) => _letterColors[key] == _letterColors[value])
+        List<String> keys = _letterColorMap.keys
+            .where((key) => _letterColorMap[key] == _letterColorMap[value])
             .toList();
 
         // api call to delete in backend
@@ -115,7 +115,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
           final charIndex = key.codeUnitAt(0) - 65;
 
           _inputText = _inputText.replaceAll(key, '');
-          _letterColors.remove(key);
+          _letterColorMap.remove(key);
 
           _isButtonSelected[charIndex] = false;
           _selectedCount--;
@@ -126,8 +126,25 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   void _resetKeyboard() {
     setState(() {
+      // remove all from DB
+      while (_letterColorMap.isNotEmpty) {
+        final color = _letterColorMap[_letterColorMap.keys.first];
+        List<String> keys = _letterColorMap.keys
+            .where((key) => _letterColorMap[key] == color)
+            .toList();
+
+        APICaller.delete("plugboard/remove", query: {
+          "machine": "1",
+          "plug_a": keys[0],
+          "plug_b": keys[1],
+        });
+
+        _letterColorMap.remove(keys[0]);
+        _letterColorMap.remove(keys[1]);
+      }
+
       // Lösche die aktuellen Farben
-      _letterColors.clear();
+      _letterColorMap.clear();
 
       _inputText = '';
       _isButtonSelected = List.generate(26, (_) => false);
@@ -147,7 +164,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   Widget _buildKeyboardButton(String value, int index) {
     final isSelected = _isButtonSelected[value.codeUnitAt(0) - 65];
-    final letterColor = _letterColors[value] ??
+    final letterColor = _letterColorMap[value] ??
         const Color.fromARGB(255, 134, 182, 136); // Standardfarbe
 
     return ElevatedButton(
@@ -159,7 +176,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         }
       },
       style: ElevatedButton.styleFrom(
-        fixedSize: const Size(60, 60),
+        fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
         //backgroundColor: buttonColor,
         backgroundColor: isSelected

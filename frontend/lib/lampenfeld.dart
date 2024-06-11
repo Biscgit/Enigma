@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:enigma/utils.dart';
 
 class Lampfield extends StatefulWidget {
-  static final GlobalKey<LampfieldState> lampFieldKey = GlobalKey<LampfieldState>();
+  static final GlobalKey<LampfieldState> lampFieldKey =
+      GlobalKey<LampfieldState>();
+
   // const Lampfield({super.key});
   final KeyHistoryList keyHistory;
 
@@ -20,7 +22,7 @@ class Lampfield extends StatefulWidget {
 
 class LampfieldState extends State<Lampfield> {
   int counter = 0;
-  final double seizedBoxHeight = 10;
+  final double seizedBoxHeight = 5;
   final List<GlobalKey<CircularTextBoxState>> listOfGlobalKeys =
       List.generate(26, (index) => GlobalKey<CircularTextBoxState>());
 
@@ -56,78 +58,77 @@ class LampfieldState extends State<Lampfield> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                //Initialises 26 textboxes that look like lamps in a QWERTZ keyboard layout. Globalkey-index is spot_in_alphabet - 1.
-                CircularTextBox(key: listOfGlobalKeys[16], text: 'Q'),
-                CircularTextBox(key: listOfGlobalKeys[22], text: 'W'),
-                CircularTextBox(key: listOfGlobalKeys[4], text: 'E'),
-                CircularTextBox(key: listOfGlobalKeys[17], text: 'R'),
-                CircularTextBox(key: listOfGlobalKeys[19], text: 'T'),
-                CircularTextBox(key: listOfGlobalKeys[25], text: 'Z'),
-                CircularTextBox(key: listOfGlobalKeys[20], text: 'U'),
-                CircularTextBox(key: listOfGlobalKeys[8], text: 'I'),
-                CircularTextBox(key: listOfGlobalKeys[14], text: 'O'),
-                CircularTextBox(key: listOfGlobalKeys[15], text: 'P'),
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //Initialises 26 textboxes that look like lamps in a QWERTZ keyboard layout. Globalkey-index is spot_in_alphabet - 1.
+              CircularTextBox(key: listOfGlobalKeys[16], text: 'Q'),
+              CircularTextBox(key: listOfGlobalKeys[22], text: 'W'),
+              CircularTextBox(key: listOfGlobalKeys[4], text: 'E'),
+              CircularTextBox(key: listOfGlobalKeys[17], text: 'R'),
+              CircularTextBox(key: listOfGlobalKeys[19], text: 'T'),
+              CircularTextBox(key: listOfGlobalKeys[25], text: 'Z'),
+              CircularTextBox(key: listOfGlobalKeys[20], text: 'U'),
+              CircularTextBox(key: listOfGlobalKeys[8], text: 'I'),
+              CircularTextBox(key: listOfGlobalKeys[14], text: 'O'),
+              CircularTextBox(key: listOfGlobalKeys[15], text: 'P'),
+            ],
+          ),
+          SizedBox(height: seizedBoxHeight),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularTextBox(key: listOfGlobalKeys[0], text: 'A'),
+              CircularTextBox(key: listOfGlobalKeys[18], text: 'S'),
+              CircularTextBox(key: listOfGlobalKeys[3], text: 'D'),
+              CircularTextBox(key: listOfGlobalKeys[5], text: 'F'),
+              CircularTextBox(key: listOfGlobalKeys[6], text: 'G'),
+              CircularTextBox(key: listOfGlobalKeys[7], text: 'H'),
+              CircularTextBox(key: listOfGlobalKeys[9], text: 'J'),
+              CircularTextBox(key: listOfGlobalKeys[10], text: 'K'),
+              CircularTextBox(key: listOfGlobalKeys[11], text: 'L'),
+            ],
+          ),
+          SizedBox(height: seizedBoxHeight),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularTextBox(key: listOfGlobalKeys[24], text: 'Y'),
+              CircularTextBox(key: listOfGlobalKeys[23], text: 'X'),
+              CircularTextBox(key: listOfGlobalKeys[2], text: 'C'),
+              CircularTextBox(key: listOfGlobalKeys[21], text: 'V'),
+              CircularTextBox(key: listOfGlobalKeys[1], text: 'B'),
+              CircularTextBox(key: listOfGlobalKeys[13], text: 'N'),
+              CircularTextBox(key: listOfGlobalKeys[12], text: 'M')
+            ],
+          ),
+          SizedBox(
+            //ONLY FOR MANUAL TEXT INPUTS!!!!! TO BE REMOVED LATER!!
+            width: 300,
+            child: TextField(
+              key: const ValueKey('keyInput'),
+              controller: _controller,
+              onChanged: (String value) async {
+                if (value.isNotEmpty) {
+                  final letter = value.substring(value.length - 1);
+                  final encryptedLetter = await sendPressedKeyToRotors(
+                      value.substring(value.length - 1));
+                  widget.sendToHistory(letter, encryptedLetter);
+                }
+              },
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zr]')),
+                // Allow only letters and space
+                UpperCaseTextInputFormatter(),
+                // Convert all letters to uppercase
               ],
             ),
-            SizedBox(height: seizedBoxHeight),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularTextBox(key: listOfGlobalKeys[0], text: 'A'),
-                CircularTextBox(key: listOfGlobalKeys[18], text: 'S'),
-                CircularTextBox(key: listOfGlobalKeys[3], text: 'D'),
-                CircularTextBox(key: listOfGlobalKeys[5], text: 'F'),
-                CircularTextBox(key: listOfGlobalKeys[6], text: 'G'),
-                CircularTextBox(key: listOfGlobalKeys[7], text: 'H'),
-                CircularTextBox(key: listOfGlobalKeys[9], text: 'J'),
-                CircularTextBox(key: listOfGlobalKeys[10], text: 'K'),
-                CircularTextBox(key: listOfGlobalKeys[11], text: 'L'),
-              ],
-            ),
-            SizedBox(height: seizedBoxHeight),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularTextBox(key: listOfGlobalKeys[24], text: 'Y'),
-                CircularTextBox(key: listOfGlobalKeys[23], text: 'X'),
-                CircularTextBox(key: listOfGlobalKeys[2], text: 'C'),
-                CircularTextBox(key: listOfGlobalKeys[21], text: 'V'),
-                CircularTextBox(key: listOfGlobalKeys[1], text: 'B'),
-                CircularTextBox(key: listOfGlobalKeys[13], text: 'N'),
-                CircularTextBox(key: listOfGlobalKeys[12], text: 'M')
-              ],
-            ),
-            SizedBox(
-              //ONLY FOR MANUAL TEXT INPUTS!!!!! TO BE REMOVED LATER!!
-              width: 300,
-              child: TextField(
-                key: const ValueKey('keyInput'),
-                controller: _controller,
-                onChanged: (String value) async {
-                  if (value.isNotEmpty) {
-                    final letter = value.substring(value.length - 1);
-                    final encryptedLetter = await sendPressedKeyToRotors(value.substring(value.length - 1));
-                    widget.sendToHistory(letter, encryptedLetter);
-                  }
-                },
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zr]')),
-                  // Allow only letters and space
-                  UpperCaseTextInputFormatter(),
-                  // Convert all letters to uppercase
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -149,7 +150,7 @@ class CircularTextBox extends StatefulWidget {
     this.defaultColorBox = Colors.black12,
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
-    this.diameter = 48,
+    this.diameter = 45,
   });
 
   @override
@@ -159,21 +160,21 @@ class CircularTextBox extends StatefulWidget {
 class CircularTextBoxState extends State<CircularTextBox> {
   late Color colorBox;
   late String text;
-  int highlighted = 0; //acts as a boolean value; used in testing to find whether button lights up
+  int highlighted =
+      0; //acts as a boolean value; used in testing to find whether button lights up
 
   @override
   void initState() {
     super.initState();
     text = widget.text;
     //colorBox == widget.defaultColorBox;
-    if(text == "O") { //For testing; remove once backend communicates to frontend
+    if (text == "O") {
+      //For testing; remove once backend communicates to frontend
       colorBox = widget.highlightedColor;
       highlighted = 1;
-    }
-    else {
+    } else {
       colorBox = widget.defaultColorBox;
     }
-
   }
 
   void changeColor(bool color) {
