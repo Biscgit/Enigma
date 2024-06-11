@@ -76,7 +76,7 @@ async def add_rotor(
 ) -> Dict[str, int | str]:
     try:
         rotor = await db_conn.switch_rotor(
-            username, rotor.machine_id, rotor.id, rotor.place
+            username, rotor.machine_id, rotor.id, rotor.template_id, rotor.place
         )
         print(rotor)
     except Exception as e:

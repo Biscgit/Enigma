@@ -196,12 +196,12 @@ class Database:
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     async def create_machine(
-            self,
-            machine_id: int,
-            username: str,
-            machine_type: int,
-            name: str,
-            reflector: dict,
+        self,
+        machine_id: int,
+        username: str,
+        machine_type: int,
+        name: str,
+        reflector: dict,
     ) -> None:
         """creates a new machine for a user if it does not exist"""
 
@@ -224,7 +224,7 @@ class Database:
                 )
 
     async def save_keyboard_pair(
-            self, username: str, machine: int, clear: str, encrypted: str
+        self, username: str, machine: int, clear: str, encrypted: str
     ) -> None:
         """saves a key pair into the database history"""
         async with self.pool.acquire() as conn:
@@ -232,7 +232,7 @@ class Database:
                 conn: asyncpg.Connection
 
                 if any(
-                        e.lower() not in string.ascii_lowercase for e in [clear, encrypted]
+                    e.lower() not in string.ascii_lowercase for e in [clear, encrypted]
                 ):
                     raise Exception("One of the symbols cannot be inserted as history!")
                 if any(len(e) != 1 for e in [clear, encrypted]):
@@ -291,7 +291,7 @@ class Database:
 
     @staticmethod
     async def _get_history_pointer_position(
-            conn: asyncpg.Connection, username: str, machine: int
+        conn: asyncpg.Connection, username: str, machine: int
     ) -> int:
         """Returns the point position of the current history. The value is between 0-139 or -1 if not set"""
         try:
@@ -314,7 +314,7 @@ class Database:
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     async def save_plugboard(
-            self, username: str, machine: int, key_1: str, key_2: str
+        self, username: str, machine: int, key_1: str, key_2: str
     ) -> None:
         """saves a plugboard configuration to a machine"""
         try:
@@ -359,7 +359,7 @@ class Database:
             raise
 
     async def remove_plugboard(
-            self, username: str, machine: int, key_1: str, key_2: str
+        self, username: str, machine: int, key_1: str, key_2: str
     ) -> None:
         """removed a plugboard configuration if exists"""
         async with self.pool.acquire() as conn:
@@ -540,7 +540,7 @@ class Database:
             return result[0]
 
     async def switch_rotor(
-            self, username: str, machine_id: int, id: int, place: int
+        self, username: str, machine_id: int, id: int, template_id: int, place: int
     ) -> dict:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -554,19 +554,10 @@ class Database:
                     machine_id,
                     place,
                 )
-                print()
-                print()
-                print()
-                print("HERE:", machine_id, id, place)
-                print(1, count)
-                rotor = await self.get_rotor(username, id)
+                rotor = await self.get_rotor(username, template_id)
                 rotor["username"] = username
                 rotor["machine_id"] = machine_id
                 rotor["place"] = place
-                print(2, rotor)
-                print()
-                print()
-                print()
                 if count is not None:
                     rotor["id"] = count
                     await self.update_rotor(rotor)

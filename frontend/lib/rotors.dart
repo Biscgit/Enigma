@@ -51,6 +51,7 @@ class _RotorWidgetState extends State<RotorWidget> {
         (await APICaller.get("get-rotor-ids", {"machine_id": "$machine_id"}))
             .body);
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
+      "template_id": getId(),
       "id": getId(),
       "machine_id": machine_id,
       "place": widget.rotorNumber
@@ -69,8 +70,8 @@ class _RotorWidgetState extends State<RotorWidget> {
       selectedRotor = value!;
     });
     Map<String, dynamic> rotor = {};
+    rotor["template_id"] = getId();
     rotor["id"] = id;
-    rotor["get_id"] = getId();
     rotor["place"] = widget.rotorNumber;
     rotor["machine_id"] = machine_id;
 
