@@ -11,13 +11,15 @@ class RotorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(this.number_rotors, (index) => RotorWidget(rotorNumber: index + 1)),
+      children: List.generate(
+          this.number_rotors, (index) => RotorWidget(rotorNumber: index + 1)),
     );
   }
 }
 
 class RotorWidget extends StatefulWidget {
   final int rotorNumber;
+
   RotorWidget({required this.rotorNumber});
 
   @override
@@ -31,8 +33,9 @@ class _RotorWidgetState extends State<RotorWidget> {
   int number_rotors = 5;
   int machine_id = 1;
   int id = 1;
-  List<dynamic> rotor_ids = [{"": 0}];
-
+  List<dynamic> rotor_ids = [
+    {"": 0}
+  ];
 
   @override
   void initState() {
@@ -44,8 +47,15 @@ class _RotorWidgetState extends State<RotorWidget> {
   Future<void> _initialize([String _ = ""]) async {
     this.machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 47;
 
-    this.rotor_ids = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": "${this.machine_id}"})).body);
-    var rotor = json.decode((await APICaller.post("switch-rotor", body: {"id": this.get_id(), "machine_id": this.machine_id, "place": widget.rotorNumber})).body);
+    this.rotor_ids = json.decode((await APICaller.get(
+            "get-rotor-ids", {"machine_id": "${this.machine_id}"}))
+        .body);
+    var rotor = json.decode((await APICaller.post("switch-rotor", body: {
+      "id": this.get_id(),
+      "machine_id": this.machine_id,
+      "place": widget.rotorNumber
+    }))
+        .body);
     this.id = rotor["id"];
 
     setState(() {
@@ -58,27 +68,35 @@ class _RotorWidgetState extends State<RotorWidget> {
     setState(() {
       this.selectedRotor = value!;
     });
-    Map<String, int> rotor = {};
+    Map<String, dynamic> rotor = {};
     rotor["id"] = this.id;
+    rotor["get_id"] = get_id();
     rotor["place"] = widget.rotorNumber;
     rotor["machine_id"] = this.machine_id;
-    rotor = json.decode((await APICaller.post("switch-rotor", body: rotor)).body);
+
+    print(rotor);
+
+    final response = await APICaller.post("switch-rotor", body: rotor);
+    assert(response.statusCode == 200);
+    rotor = jsonDecode(response.body);
 
     setState(() {
       this.notch = (rotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
-      this.ringSetting = (rotor["rotor_notch"] as String? ?? "a").codeUnitAt(0) - 97;
+      this.ringSetting =
+          (rotor["rotor_notch"] as String? ?? "a").codeUnitAt(0) - 97;
     });
   }
 
   int? get_id() {
-        return this.rotor_ids[this.selectedRotor-1]["id"];
-    }
+    return this.rotor_ids[this.selectedRotor - 1]["id"];
+  }
 
   void _changeRingSetting(int change) async {
     setState(() {
       ringSetting = (ringSetting + change + 26) % 26;
     });
-    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor":  "${this.id}"})).body);
+    var rotor = json.decode(
+        (await APICaller.get("get-rotor", {"rotor": "${this.id}"})).body);
     rotor["rotor_notch"] = String.fromCharCode(97 + this.ringSetting);
     rotor["id"] = this.get_id();
     APICaller.post("update-rotor", body: rotor);
@@ -88,7 +106,8 @@ class _RotorWidgetState extends State<RotorWidget> {
     setState(() {
       notch = (notch + change + 26) % 26;
     });
-    var rotor = json.decode((await APICaller.get("get-rotor", {"rotor":  "${this.id}"})).body);
+    var rotor = json.decode(
+        (await APICaller.get("get-rotor", {"rotor": "${this.id}"})).body);
     rotor["letter_shift"] = String.fromCharCode(97 + notch);
     rotor["id"] = this.get_id();
     APICaller.post("update-rotor", body: rotor);
@@ -109,10 +128,12 @@ class _RotorWidgetState extends State<RotorWidget> {
           Text('Rotor ${widget.rotorNumber}', style: TextStyle(fontSize: 16)),
           DropdownButton<int>(
             value: selectedRotor,
-            items: List.generate(this.number_rotors, (index) => DropdownMenuItem(
-              child: Text('Rotor ${index + 1}'),
-              value: index + 1,
-            )),
+            items: List.generate(
+                this.number_rotors,
+                (index) => DropdownMenuItem(
+                      child: Text('Rotor ${index + 1}'),
+                      value: index + 1,
+                    )),
             onChanged: _changeRotorSetting,
           ),
           SizedBox(height: 10),
@@ -124,7 +145,8 @@ class _RotorWidgetState extends State<RotorWidget> {
                 icon: Icon(Icons.remove),
                 onPressed: () => _changeRingSetting(-1),
               ),
-              Text('${String.fromCharCode(65 + this.ringSetting)}', style: TextStyle(fontSize: 16)),
+              Text('${String.fromCharCode(65 + this.ringSetting)}',
+                  style: TextStyle(fontSize: 16)),
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () => _changeRingSetting(1),
@@ -140,7 +162,8 @@ class _RotorWidgetState extends State<RotorWidget> {
                 icon: Icon(Icons.remove),
                 onPressed: () => _changeNotch(-1),
               ),
-              Text('${String.fromCharCode(65 + this.notch)}', style: TextStyle(fontSize: 16)),
+              Text('${String.fromCharCode(65 + this.notch)}',
+                  style: TextStyle(fontSize: 16)),
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () => _changeNotch(1),
