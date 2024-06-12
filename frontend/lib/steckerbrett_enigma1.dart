@@ -45,6 +45,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   void _initialize() async {
     machineId = await Cookie.read("current_machine");
+    setState(() {});
   }
 
   // Dictionary, um Buchstabenpaare und ihre Farben zu speichern

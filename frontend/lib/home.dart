@@ -23,6 +23,7 @@ class HomePageState extends State<HomePage> {
 
   void _initialize() async {
     _selectedItem = await Cookie.read("name");
+    setState(() {});
   }
 
   @override

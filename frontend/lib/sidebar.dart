@@ -48,9 +48,9 @@ class Machine extends StatelessWidget{
       title: Text(name),
       onTap: () {
         Cookie.save("name", name);
-        Navigator.pushReplacementNamed(context, '/home');
         Cookie.save("current_machine", "$id");
         Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/home');
       }
     );
   }
