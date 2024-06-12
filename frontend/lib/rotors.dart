@@ -31,7 +31,7 @@ class _RotorWidgetState extends State<RotorWidget> {
   int ringSetting = 0;
   int notch = 0;
   int number_rotors = 5;
-  int machine_id = 1;
+  String machine_id = "1";
   int id = 1;
   List<dynamic> rotor_ids = [
     {"": 0}
@@ -45,10 +45,10 @@ class _RotorWidgetState extends State<RotorWidget> {
   }
 
   Future<void> _initialize([String _ = ""]) async {
-    machine_id = (await Cookie.read("current_machine")).codeUnitAt(0) - 48;
+    machine_id = await Cookie.read("current_machine");
 
     rotor_ids = json.decode(
-        (await APICaller.get("get-rotor-ids", {"machine_id": "$machine_id"}))
+        (await APICaller.get("get-rotor-ids", {"machine_id": machine_id}))
             .body);
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
       "template_id": getId(),

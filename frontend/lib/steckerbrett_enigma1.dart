@@ -37,6 +37,12 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     Colors.brown,
   ];
 
+  @override
+  void initState() async {
+    super.initState();
+    machineId = await Cookie.read("current_machine");
+  }
+
   // Dictionary, um Buchstabenpaare und ihre Farben zu speichern
   final Map<String, Color> _letterColorMap = {};
 
