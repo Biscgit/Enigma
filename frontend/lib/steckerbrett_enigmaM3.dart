@@ -38,8 +38,12 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   ];
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
+    _initialize();
+  }
+
+  void _initialize() async {
     machineId = await Cookie.read("current_machine");
   }
 

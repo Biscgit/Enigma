@@ -41,7 +41,6 @@ class _RotorWidgetState extends State<RotorWidget> {
   void initState() {
     super.initState();
     _initialize();
-    Cookie.setReactor("machine_id", _initialize);
   }
 
   Future<void> _initialize([String _ = ""]) async {

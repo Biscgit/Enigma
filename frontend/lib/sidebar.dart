@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
 
 class SideBar extends StatelessWidget {
-  final Function(String) onItemSelected;
 
-  const SideBar({super.key, required this.onItemSelected});
+  const SideBar({super.key});
 
   final DrawerHeader header = const DrawerHeader(
     decoration: BoxDecoration(
@@ -27,9 +26,9 @@ class SideBar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           header,
-          Machine(name: 'Enigma I', id: 1, onItemSelected: onItemSelected),
-          Machine(name: 'Norway Enigma', id: 2, onItemSelected: onItemSelected),
-          Machine(name: 'Enigma M3', id: 3, onItemSelected: onItemSelected),
+          Machine(name: 'Enigma I', id: 1),
+          Machine(name: 'Norway Enigma', id: 2),
+          Machine(name: 'Enigma M3', id: 3),
           addMachine(context)
         ],
       ),
@@ -40,16 +39,16 @@ class SideBar extends StatelessWidget {
 class Machine extends StatelessWidget{
   final name;
   final id;
-  final Function(String) onItemSelected;
 
-  const Machine({super.key, required this.name, required this.id, required this.onItemSelected});
+  const Machine({super.key, required this.name, required this.id});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(name),
       onTap: () {
-        onItemSelected(name);
+        Cookie.save("name", name);
+        Navigator.pushReplacementNamed(context, '/home');
         Cookie.save("current_machine", "$id");
         Navigator.pop(context);
       }
