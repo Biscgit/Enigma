@@ -20,6 +20,7 @@ class CustomKeyboard extends StatefulWidget {
 }
 
 class _CustomKeyboardState extends State<CustomKeyboard> {
+  String machineId = "1";
   String _inputText = '';
   List<bool> _isButtonSelected = List.generate(26, (_) => false);
   int _selectedCount = 0;
@@ -63,7 +64,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
             APICaller.post(
               "plugboard/save",
               query: {
-                "machine": "1",
+                "machine": machineId,
                 "plug_a": value,
                 "plug_b": _inputText[_inputText.length - 2],
               },
@@ -105,7 +106,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         // api call to delete in backend
         if (keys.length % 2 == 0) {
           APICaller.delete("plugboard/remove", query: {
-            "machine": "1",
+            "machine": machineId,
             "plug_a": keys[0],
             "plug_b": keys[1],
           });
@@ -134,7 +135,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
             .toList();
 
         APICaller.delete("plugboard/remove", query: {
-          "machine": "1",
+          "machine": machineId,
           "plug_a": keys[0],
           "plug_b": keys[1],
         });

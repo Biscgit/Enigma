@@ -27,7 +27,7 @@ class KeyHistoryState extends State<KeyHistoryList> {
 
   void loadKeyHistory(String machineId, String token) async {
     /// Loads pressed keys from server
-    final response = await APICaller.get("keyhistory/load?machine=$machineId");
+    final response = await APICaller.get("keyhistory/load", {"machine": machineId});
 
     if (response.statusCode == 200) {
       final List<Map<String, dynamic>> keyHistory =

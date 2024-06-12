@@ -3,19 +3,6 @@ import 'lampenfeld.dart';
 import 'tastatur.dart';
 import 'package:enigma/keyhistory.dart';
 
-// void main() {
-//   runApp(MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: MainScreen(),
-//     );
-//   }
-// }
-
 class MainScreen extends StatelessWidget {
   final KeyHistoryList keyHistory;
 

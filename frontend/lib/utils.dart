@@ -112,6 +112,20 @@ class APICaller {
     }
   }
 
+  static Future<http.Response> put(String site, {Map<String, String> query = const {}, Map<String, dynamic> body = const {}}) async {
+    try {
+      return await http.put(
+        Uri.parse("$_api$site").replace(queryParameters: query),
+        headers: await APICaller.getHeader(),
+        body: jsonEncode(body)
+      );
+    } catch (e) {
+      // Handle error
+      print('Error in POST request: $e');
+      rethrow;
+    }
+  }
+
   static Future<http.Response> get(String site, [Map<String, String> query = const {}]) async {
     try {
       return await http.get(
