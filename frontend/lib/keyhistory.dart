@@ -64,28 +64,24 @@ class KeyHistoryState extends State<KeyHistoryList> {
       itemCount: _keyHistory.length,
       itemBuilder: (context, index) {
         final keyPair = _keyHistory[index];
-        return Padding(
-          padding: EdgeInsets.zero,
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Row(
-                key: ValueKey('keyPair_$index'),
-                children: [
-                  SizedBox(
-                    width: 60,
-                    child: Text(
-                      '${index + 1}.',
-                      style: tStyle,
-                    ),
-                  ),
-                  Text(
-                    '${keyPair.key} → ${keyPair.value}',
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    '${index + 1}.',
                     style: tStyle,
                   ),
-                ],
-              ),
+                ),
+                Text(
+                  '${keyPair.key} → ${keyPair.value}',
+                  style: tStyle,
+                ),
+              ],
             ),
           ),
         );
