@@ -23,6 +23,7 @@ async def update_rotor(
                 "scramble_alphabet": rotor.scramble_alphabet,
                 "machine_id": rotor.machine_id,
                 "place": rotor.place,
+                "number": rotor.number,
             }
         )
     except Exception as e:
@@ -76,7 +77,12 @@ async def add_rotor(
 ) -> Dict[str, int | str]:
     try:
         rotor = await db_conn.switch_rotor(
-            username, rotor.machine_id, rotor.id, rotor.template_id, rotor.place
+            username,
+            rotor.machine_id,
+            rotor.id,
+            rotor.template_id,
+            rotor.place,
+            rotor.number,
         )
         print(rotor)
     except Exception as e:

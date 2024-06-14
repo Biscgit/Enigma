@@ -18,17 +18,17 @@ async def encrypt(username: str, machine_id: int, db_conn: Database, char: chr) 
     notch = True
     char = reflect_letter(char, to_dict(plugboard))
 
-    for rotor in rotors:
-        print(rotor)
-        notch, char = rotor.rotate_offset_scramble(char, notch, False)
+    for i in range(len(rotors)):
+        notch, char = rotors[i].rotate_offset_scramble(char, notch, False)
 
     char = reflect_letter(char, json.loads(reflector))
+    notch = False
 
-    for rotor in reversed(rotors):
-        notch, char = rotor.rotate_offset_scramble(char, notch, True)
+    for i in range(len(rotors) - 1, -1, -1):
+        notch, char = rotors[i].rotate_offset_scramble(char, notch, True)
 
-    machines[f"{username}:{machine_id}"] = (plugboard, reflector, rotors)
-    await db_conn.update_rotors(rotors)
+    # machines[f"{username}:{machine_id}"] = (plugboard, reflector, rotors)
+    await db_conn.update_rotors(username, rotors)
     return reflect_letter(char, to_dict(plugboard))
 
 

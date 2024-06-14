@@ -159,6 +159,7 @@ class Database:
                 rotor["username"] = username
                 rotor["machine_id"] = 0
                 rotor["place"] = 0
+                rotor["number"] = 0
                 try:
                     await self.set_rotor(rotor)
                 except asyncpg.PostgresError:
@@ -457,7 +458,8 @@ class Database:
 
             results = await conn.fetch(
                 """
-                SELECT id, machine_type, letter_shift, rotor_position, scramble_alphabet
+                SELECT id, machine_id, letter_shift, rotor_position, scramble_alphabet, place, number
+
                 FROM rotors
                 WHERE username = $1 AND machine_id = $2
                 ORDER BY place
@@ -476,7 +478,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place
+                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number
                 FROM rotors
                 WHERE id = $1
                 """,
@@ -486,8 +488,35 @@ class Database:
             logging.info(f"Fetched rotor for {rotor}: {str(result)}")
             return dict(result) if result else None
 
-    async def update_rotors(self, rotors: list) -> None:
-        map(self.update_rotor, rotors)
+    async def get_rotor_by_number(
+        self, username: str, number: int, machine_type: int, place: int
+    ) -> dict:
+        """returns rotor configuration for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchrow(
+                """
+                SELECT username, machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number
+                FROM rotors
+                WHERE number = $1 AND username = $2 AND machine_type = $3 AND machine_id = 0 AND place = $4
+                """,
+                number,
+                username,
+                machine_type,
+                place,
+            )
+
+            logging.info(f"Fetched rotor for {number}: {str(result)}")
+            return dict(result) if result else None
+
+    async def update_rotors(self, username: str, rotors: list) -> None:
+        for rotor in rotors:
+            dict_rotor = vars(rotor)
+            dict_rotor["username"] = username
+            dict_rotor["rotor_position"] = Rotor.alphabet[dict_rotor["rotor_position"]]
+            dict_rotor["letter_shift"] = rotor.get_str_notch()
+            await self.update_rotor(dict_rotor)
 
     async def update_rotor(self, data: dict) -> None:
         async with self.pool.acquire() as conn:
@@ -496,7 +525,7 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE rotors
-                    SET place = $3, rotor_position = $4, letter_shift = $5, scramble_alphabet = $6, machine_id = $7
+                    SET place = $3, rotor_position = $4, letter_shift = $5, scramble_alphabet = $6, machine_id = $7, number = $8
                     WHERE username = $1 AND id = $2
                     """,
                     data["username"],
@@ -506,15 +535,16 @@ class Database:
                     data["letter_shift"].lower(),
                     data["scramble_alphabet"].lower(),
                     data["machine_id"],
+                    data["number"],
                 )
-        logging.info(f"Updated rotor for {data['username']}")
+        logging.info(f"Updated rotor for {data['username']} with {data}")
 
     async def set_rotor(self, data: dict) -> int:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position, place)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7);
+                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position, place, number)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
                     """,
                     data["username"],
                     data["scramble_alphabet"].lower(),
@@ -523,6 +553,7 @@ class Database:
                     data["letter_shift"].lower(),
                     data["rotor_position"].lower(),
                     data["place"],
+                    data["number"],
                 )
                 result = (
                     await conn.fetchval(
@@ -540,7 +571,13 @@ class Database:
             return result[0]
 
     async def switch_rotor(
-        self, username: str, machine_id: int, id: int, template_id: int, place: int
+        self,
+        username: str,
+        machine_id: int,
+        id: int,
+        template_id: int,
+        place: int,
+        number: int,
     ) -> dict:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -559,6 +596,16 @@ class Database:
                 rotor["machine_id"] = machine_id
                 rotor["place"] = place
                 if count is not None:
+                    current_rotor = await self.get_rotor(username, count)
+                    current_rotor["machine_id"] = 0
+                    current_rotor["username"] = username
+                    rotor = (
+                        await self.get_rotor_by_number(
+                            username, number, machine_id, place
+                        )
+                        or rotor
+                    )
+                    _ = await self.set_rotor(current_rotor)
                     rotor["id"] = count
                     await self.update_rotor(rotor)
                     return await self.get_rotor(username, count)
@@ -574,8 +621,13 @@ class Database:
                     rotor["scramble_alphabet"],
                     rotor["rotor_position"],
                     rotor["letter_shift"],
+                    rotor["id"],
+                    rotor["machine_id"],
+                    rotor["place"],
+                    rotor["number"],
                 )
             ]
+            print(rotor)
         return plugboard, reflector, rotors
 
 
