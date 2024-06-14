@@ -16,10 +16,10 @@ class CustomKeyboard extends StatefulWidget {
   const CustomKeyboard({super.key});
 
   @override
-  _CustomKeyboardState createState() => _CustomKeyboardState();
+  CustomKeyboardState createState() => CustomKeyboardState();
 }
 
-class _CustomKeyboardState extends State<CustomKeyboard> {
+class CustomKeyboardState extends State<CustomKeyboard> {
   String machineId = "1";
   String _inputText = '';
   List<bool> _isButtonSelected = List.generate(26, (_) => false);

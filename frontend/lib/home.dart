@@ -4,7 +4,7 @@ import 'package:enigma/tastatur_and_lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
 import 'package:enigma/steckerbrett_enigma1.dart' as enigma1_stk_brt;
-import 'package:enigma/steckerbrett_enigmaM3.dart' as enigma3_stk_brt;
+import 'package:enigma/steckerbrett_enigma_m3.dart' as enigma3_stk_brt;
 import 'package:enigma/keyhistory.dart';
 
 class HomePage extends StatefulWidget {
@@ -79,12 +79,12 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: SideBar(
-        key: const Key('enigma_sidebar'),
+      drawer: const SideBar(
+        key: Key('enigma_sidebar'),
       ),
       body: Row(
         children: [
-          RotorPage(number_rotors: 3),
+          const RotorPage(numberRotors: 3),
           Expanded(
             child: Stack(
               children: [

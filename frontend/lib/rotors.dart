@@ -3,16 +3,16 @@ import 'package:enigma/utils.dart';
 import 'dart:convert';
 
 class RotorPage extends StatelessWidget {
-  final int number_rotors;
+  final int numberRotors;
 
-  const RotorPage({super.key, required this.number_rotors});
+  const RotorPage({super.key, required this.numberRotors});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
-          number_rotors, (index) => RotorWidget(rotorNumber: index + 1)),
+          numberRotors, (index) => RotorWidget(rotorNumber: index + 1)),
     );
   }
 }
@@ -23,17 +23,17 @@ class RotorWidget extends StatefulWidget {
   const RotorWidget({super.key, required this.rotorNumber});
 
   @override
-  _RotorWidgetState createState() => _RotorWidgetState();
+  RotorWidgetState createState() => RotorWidgetState();
 }
 
-class _RotorWidgetState extends State<RotorWidget> {
+class RotorWidgetState extends State<RotorWidget> {
   int selectedRotor = 1;
   int ringSetting = 0;
   int notch = 0;
-  int number_rotors = 5;
-  String machine_id = "1";
+  int numberRotors = 5;
+  String machineId = "1";
   int id = 1;
-  List<dynamic> rotor_ids = [
+  List<dynamic> rotorIds = [
     {"": 0}
   ];
 
@@ -43,16 +43,16 @@ class _RotorWidgetState extends State<RotorWidget> {
     _initialize();
   }
 
-  Future<void> _initialize([String _ = ""]) async {
-    machine_id = await Cookie.read("current_machine");
+  Future<void> _initialize() async {
+    machineId = await Cookie.read("current_machine");
 
-    rotor_ids = json.decode(
-        (await APICaller.get("get-rotor-ids", {"machine_id": machine_id}))
+    rotorIds = json.decode(
+        (await APICaller.get("get-rotor-ids", {"machineId": machineId}))
             .body);
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
       "template_id": getId(),
       "id": getId(),
-      "machine_id": machine_id,
+      "machineId": machineId,
       "place": widget.rotorNumber
     }))
         .body);
@@ -72,7 +72,7 @@ class _RotorWidgetState extends State<RotorWidget> {
     rotor["template_id"] = getId();
     rotor["id"] = id;
     rotor["place"] = widget.rotorNumber;
-    rotor["machine_id"] = machine_id;
+    rotor["machine_id"] = machineId;
 
     print(rotor);
 
@@ -87,7 +87,7 @@ class _RotorWidgetState extends State<RotorWidget> {
   }
 
   int? getId() {
-    return rotor_ids[selectedRotor - 1]["id"];
+    return rotorIds[selectedRotor - 1]["id"];
   }
 
   void _changeRingSetting(int change) async {
@@ -129,7 +129,7 @@ class _RotorWidgetState extends State<RotorWidget> {
           DropdownButton<int>(
             value: selectedRotor,
             items: List.generate(
-                number_rotors,
+                numberRotors,
                 (index) => DropdownMenuItem(
                       value: index + 1,
                       child: Text('Rotor ${index + 1}'),

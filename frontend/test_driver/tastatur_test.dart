@@ -1,7 +1,3 @@
-//import 'package:flutter_test/flutter_test.dart' as ft;
-//import 'package:flutter_test/flutter_test.dart';
-//import 'package:http/testing.dart';
-
 @Timeout(Duration(seconds: 60))
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';

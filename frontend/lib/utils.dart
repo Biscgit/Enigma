@@ -72,7 +72,7 @@ Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   String machineID = await Cookie.read('current_machine');
   Map<String, String> query = {
     'key': s,
-    'machine': "$machineID"
+    'machine': machineID
   };
   http.Response response = await APICaller.get("key_press", query);
 

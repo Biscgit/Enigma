@@ -26,9 +26,9 @@ class SideBar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           header,
-          Machine(name: 'Enigma I', id: 1),
-          Machine(name: 'Norway Enigma', id: 2),
-          Machine(name: 'Enigma M3', id: 3),
+          const Machine(name: 'Enigma I', id: 1),
+          const Machine(name: 'Norway Enigma', id: 2),
+          const Machine(name: 'Enigma M3', id: 3),
           addMachine(context)
         ],
       ),
@@ -37,8 +37,8 @@ class SideBar extends StatelessWidget {
 }
 
 class Machine extends StatelessWidget{
-  final name;
-  final id;
+  final String name;
+  final int id;
 
   const Machine({super.key, required this.name, required this.id});
 
