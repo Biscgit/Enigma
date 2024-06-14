@@ -28,7 +28,7 @@ class RotorWidget extends StatefulWidget {
 
 class RotorWidgetState extends State<RotorWidget> {
   int selectedRotor = 1;
-  int ringSetting = 0;
+  int rotorPosition = 0;
   int notch = 0;
   int numberRotors = 5;
   String machineId = "1";
@@ -46,20 +46,20 @@ class RotorWidgetState extends State<RotorWidget> {
   Future<void> _initialize() async {
     machineId = await Cookie.read("current_machine");
 
-    rotorIds = json.decode(
-        (await APICaller.get("get-rotor-ids", {"machineId": machineId}))
-            .body);
+    rotorIds = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": machineId})).body);
+
+
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
       "template_id": getId(),
       "id": getId(),
-      "machineId": machineId,
-      "place": widget.rotorNumber
-    }))
-        .body);
+      "machine_id": machineId,
+      "place": widget.rotorNumber,
+      "number": 1,
+    })).body);
     id = rotor["id"];
 
     setState(() {
-      ringSetting = rotor["rotor_position"].codeUnitAt(0) - 97;
+      rotorPosition = rotor["rotor_position"].codeUnitAt(0) - 97;
       notch = rotor["letter_shift"].codeUnitAt(0) - 97;
     });
   }
@@ -73,16 +73,15 @@ class RotorWidgetState extends State<RotorWidget> {
     rotor["id"] = id;
     rotor["place"] = widget.rotorNumber;
     rotor["machine_id"] = machineId;
+    rotor["number"] = value;
 
-    print(rotor);
-
-    final response = await APICaller.post("switch-rotor", body: rotor);
-    assert(response.statusCode == 200);
-    rotor = jsonDecode(response.body);
+      final response = await APICaller.post("switch-rotor", body: rotor);
+      assert(response.statusCode == 200);
+      var getRotor = jsonDecode(response.body);
 
     setState(() {
-      notch = (rotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
-      ringSetting = (rotor["rotor_notch"] as String? ?? "a").codeUnitAt(0) - 97;
+      notch = (getRotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
+      rotorPosition = (getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97;
     });
   }
 
@@ -90,14 +89,16 @@ class RotorWidgetState extends State<RotorWidget> {
     return rotorIds[selectedRotor - 1]["id"];
   }
 
-  void _changeRingSetting(int change) async {
+  void _changeRotorPosition(int change) async {
     setState(() {
-      ringSetting = (ringSetting + change + 26) % 26;
+      rotorPosition = (rotorPosition + change + 26) % 26;
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_notch"] = String.fromCharCode(97 + ringSetting);
+    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
+    rotor["letter_shift"] = String.fromCharCode(97 + notch);
     rotor["id"] = getId();
+    rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
   }
 
@@ -108,7 +109,9 @@ class RotorWidgetState extends State<RotorWidget> {
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["letter_shift"] = String.fromCharCode(97 + notch);
+    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
     rotor["id"] = getId();
+    rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
   }
 
@@ -143,13 +146,13 @@ class RotorWidgetState extends State<RotorWidget> {
             children: [
               IconButton(
                 icon: const Icon(Icons.remove),
-                onPressed: () => _changeRingSetting(-1),
+                onPressed: () => _changeRotorPosition(-1),
               ),
-              Text(String.fromCharCode(65 + ringSetting),
+              Text(String.fromCharCode(65 + rotorPosition),
                   style: const TextStyle(fontSize: 16)),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: () => _changeRingSetting(1),
+                onPressed: () => _changeRotorPosition(1),
               ),
             ],
           ),

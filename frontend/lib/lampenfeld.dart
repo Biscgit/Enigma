@@ -168,13 +168,7 @@ class CircularTextBoxState extends State<CircularTextBox> {
     super.initState();
     text = widget.text;
     //colorBox == widget.defaultColorBox;
-    if (text == "O") {
-      //For testing; remove once backend communicates to frontend
-      colorBox = widget.highlightedColor;
-      highlighted = 1;
-    } else {
-      colorBox = widget.defaultColorBox;
-    }
+    colorBox = widget.defaultColorBox;
   }
 
   void changeColor(bool color) {
