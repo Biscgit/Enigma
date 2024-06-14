@@ -207,7 +207,8 @@ class CircularTextBoxState extends State<CircularTextBox> {
             color: widget.colorText,
             fontSize: widget.fontSize,
             fontWeight: FontWeight.bold,
-            fontFamily: "Wallau"),
+            fontFamily: "Wallau",
+        ),
       ),
     );
   }

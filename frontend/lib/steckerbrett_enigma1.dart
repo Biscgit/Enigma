@@ -21,6 +21,8 @@ class CustomKeyboard extends StatefulWidget {
 
 class _CustomKeyboardState extends State<CustomKeyboard> {
   String _inputText = '';
+  bool _is_enabled = true;
+
   List<bool> _isButtonSelected = List.generate(26, (_) => false);
   int _selectedCount = 0;
   final List<Color> _availableColors = [
@@ -193,70 +195,74 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   // Tastatur mit QWERTZU-Layout
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Text(
-          _inputText,
-          style: const TextStyle(fontSize: 20.0),
-        ),
-        const SizedBox(height: 20.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildKeyboardButton('Q'),
-            _buildKeyboardButton('W'),
-            _buildKeyboardButton('E'),
-            _buildKeyboardButton('R'),
-            _buildKeyboardButton('T'),
-            _buildKeyboardButton('Z'),
-            _buildKeyboardButton('U'),
-            _buildKeyboardButton('I'),
-            _buildKeyboardButton('O'),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildKeyboardButton('A'),
-            _buildKeyboardButton('S'),
-            _buildKeyboardButton('D'),
-            _buildKeyboardButton('F'),
-            _buildKeyboardButton('G'),
-            _buildKeyboardButton('H'),
-            _buildKeyboardButton('J'),
-            _buildKeyboardButton('K'),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildKeyboardButton('P'),
-            _buildKeyboardButton('Y'),
-            _buildKeyboardButton('X'),
-            _buildKeyboardButton('C'),
-            _buildKeyboardButton('V'),
-            _buildKeyboardButton('B'),
-            _buildKeyboardButton('N'),
-            _buildKeyboardButton('M'),
-            _buildKeyboardButton('L'),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // IconButton(
-            //   padding: EdgeInsets.all(0),
-            //   icon: Icon(Icons.backspace),
-            //   onPressed: _onDeletePressed,
-            // ),
-            ElevatedButton(
-              onPressed: _resetKeyboard,
-              child: const Text('Reset'),
-            ),
-          ],
-        ),
-      ],
+    final switchW = Switch(
+      value: _is_enabled,
+      onChanged: (value) async {
+        await APICaller.post("plugboard/enable", query: {
+          "machine": "1",
+          "enabled": "$value",
+        });
+
+        setState(() {
+          _is_enabled = value;
+        });
+      },
+      activeColor: Colors.blue,
     );
+    return _is_enabled
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildKeyboardButton('Q'),
+                  _buildKeyboardButton('W'),
+                  _buildKeyboardButton('E'),
+                  _buildKeyboardButton('R'),
+                  _buildKeyboardButton('T'),
+                  _buildKeyboardButton('Z'),
+                  _buildKeyboardButton('U'),
+                  _buildKeyboardButton('I'),
+                  _buildKeyboardButton('O'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildKeyboardButton('A'),
+                  _buildKeyboardButton('S'),
+                  _buildKeyboardButton('D'),
+                  _buildKeyboardButton('F'),
+                  _buildKeyboardButton('G'),
+                  _buildKeyboardButton('H'),
+                  _buildKeyboardButton('J'),
+                  _buildKeyboardButton('K'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildKeyboardButton('P'),
+                  _buildKeyboardButton('Y'),
+                  _buildKeyboardButton('X'),
+                  _buildKeyboardButton('C'),
+                  _buildKeyboardButton('V'),
+                  _buildKeyboardButton('B'),
+                  _buildKeyboardButton('N'),
+                  _buildKeyboardButton('M'),
+                  _buildKeyboardButton('L'),
+                ],
+              ),
+              const SizedBox(height: 6),
+              ElevatedButton(
+                onPressed: _resetKeyboard,
+                child: const Text('Reset'),
+              ),
+              const SizedBox(height: 3),
+              switchW,
+            ],
+          )
+        : switchW;
   }
 }
