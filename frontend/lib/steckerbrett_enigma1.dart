@@ -166,29 +166,40 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     });
   }
 
-  void _resetKeyboard() {
+  Future<void> _resetKeyboard() async {
+    List<String> allKeys = [];
+
+    // remove all from DB
+    final clonedColors = HashMap.from(_letterColorMap);
+    while (clonedColors.isNotEmpty) {
+      final color = clonedColors[clonedColors.keys.first];
+      List keys =
+          clonedColors.keys.where((key) => clonedColors[key] == color).toList();
+
+      // need to do sequentially for backend
+      final response = await APICaller.delete("plugboard/remove", query: {
+        "machine": "1",
+        "plug_a": keys[0],
+        "plug_b": keys[1],
+      });
+      assert(response.statusCode == 200);
+
+      for (String key in keys) {
+        allKeys.add(key);
+        clonedColors.remove(key);
+      }
+    }
+
     setState(() {
-      // remove all from DB
-      while (_letterColorMap.isNotEmpty) {
-        final color = _letterColorMap[_letterColorMap.keys.first];
-        List<String> keys = _letterColorMap.keys
-            .where((key) => _letterColorMap[key] == color)
-            .toList();
-
-        APICaller.delete("plugboard/remove", query: {
-          "machine": "1",
-          "plug_a": keys[0],
-          "plug_b": keys[1],
-        });
-
-        _letterColorMap.remove(keys[0]);
-        _letterColorMap.remove(keys[1]);
+      // delete all keys
+      for (var key in allKeys) {
+        _letterColorMap.remove(key);
       }
 
       // Lösche die aktuellen Farben
       _letterColorMap.clear();
-
       _inputText = '';
+
       _isButtonSelected = List.generate(26, (_) => false);
       _selectedCount = 0;
     });
