@@ -10,7 +10,7 @@ import 'dart:math';
 // ABC-Layout für die Enigma M3
 // 2 Buchstaben haben jeweils eine Farbe
 // Begrenzung auf 20 Paare + inklusive Fehler-Meldung
-// Fehler-Meldung, dass eine Verknüfung gewählt werden muss
+// Fehler-Meldung, dass eine Verknüpfung gewählt werden muss
 // Aufhebung der gewählten Buchstaben durch Backspace-Taste (noch optional)
 // Reset-Button für Werkseinstellungen
 
@@ -18,10 +18,10 @@ class CustomKeyboard extends StatefulWidget {
   const CustomKeyboard({super.key});
 
   @override
-  _CustomKeyboardState createState() => _CustomKeyboardState();
+  CustomKeyboardState createState() => CustomKeyboardState();
 }
 
-class _CustomKeyboardState extends State<CustomKeyboard> {
+class CustomKeyboardState extends State<CustomKeyboard> {
   String _inputText = '';
   bool _isEnabled = true;
 
