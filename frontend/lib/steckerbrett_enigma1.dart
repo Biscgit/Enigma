@@ -1,3 +1,5 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -40,6 +42,44 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   // Dictionary, um Buchstabenpaare und ihre Farben zu speichern
   final Map<String, Color> _letterColorMap = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () async {
+      final result = await APICaller.get("plugboard/load", {
+        "machine": "1",
+      });
+      assert(result.statusCode == 200);
+      final plugs = jsonDecode(result.body)["plugboard"];
+
+      _selectedCount = plugs.length;
+      setState(() {
+        for (var plug in plugs) {
+          final availableColors = _availableColors
+              .where((color) => !_letterColorMap.containsValue(color))
+              .toList();
+          final randomColor =
+              availableColors[Random().nextInt(availableColors.length)];
+
+          // make plugs uppercase for frontend
+          plug[0] = plug[0].toString().toUpperCase();
+          plug[1] = plug[1].toString().toUpperCase();
+
+          final charIndex1 = plug[0].codeUnitAt(0) - 65;
+          _letterColorMap[plug[0]] = randomColor;
+          _isButtonSelected[charIndex1] = true;
+          _inputText += plug[0];
+
+          final charIndex2 = plug[1].codeUnitAt(0) - 65;
+          _letterColorMap[plug[1]] = randomColor;
+          _isButtonSelected[charIndex2] = true;
+          _inputText += plug[1];
+        }
+      });
+    });
+  }
 
   void _onKeyPressed(String value) {
     if (_selectedCount < 20) {
