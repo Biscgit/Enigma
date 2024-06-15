@@ -498,7 +498,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate
+                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate, id
                 FROM rotors
                 WHERE number = $1 AND username = $2 AND machine_type = $3 AND machine_id = 0 AND place = $4
                 """,
@@ -519,6 +519,15 @@ class Database:
                 (dict_rotor["rotor_position"] - 7) % 26
             ]
             dict_rotor["letter_shift"] = rotor.get_str_notch()
+            await self.update_rotor(dict_rotor)
+            old_rotor = await self.get_rotor_by_number(
+                username,
+                dict_rotor["number"],
+                dict_rotor["machine_id"],
+                dict_rotor["place"],
+            )
+            dict_rotor["machine_id"] = 0
+            dict_rotor["id"] = old_rotor["id"]
             await self.update_rotor(dict_rotor)
 
     async def update_rotor(self, data: dict) -> None:
@@ -600,22 +609,27 @@ class Database:
                 rotor["username"] = username
                 rotor["machine_id"] = machine_id
                 rotor["place"] = place
+                rotor["number"] = number
                 if count is not None:
                     current_rotor = await self.get_rotor(username, count)
                     current_rotor["machine_id"] = 0
                     current_rotor["username"] = username
-                    rotor = (
-                        await self.get_rotor_by_number(
-                            username, number, machine_id, place
-                        )
-                        or rotor
-                    )
-                    _ = await self.set_rotor(current_rotor)
-                    rotor["id"] = count
-                    rotor["machine_id"] = machine_id
-                    await self.update_rotor(rotor)
+                    if now_rotor := await self.get_rotor_by_number(
+                        username, number, machine_id, place
+                    ):
+                        await self.update_rotor(current_rotor)
+                    else:
+                        now_rotor = rotor
+                        _ = await self.set_rotor(current_rotor)
+                    now_rotor["id"] = count
+                    now_rotor["machine_id"] = machine_id
+                    await self.update_rotor(now_rotor)
                     return await self.get_rotor(username, count)
-                return await self.get_rotor(username, (await self.set_rotor(rotor)))
+
+                id = await self.get_rotor(username, (await self.set_rotor(rotor)))
+                rotor["machine_id"] = 0
+                await self.set_rotor(rotor)
+                return id
 
     async def get_machine(self, username: str, machine_id: int):
         plugboard = await self.get_plugboards(username, machine_id)
