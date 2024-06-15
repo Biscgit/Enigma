@@ -2,9 +2,6 @@ import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/keyhistory.dart';
 
-// void main() {
-//   runApp(const Tastatur());
-// }
 
 class Tastatur extends StatefulWidget {
   final KeyHistoryList keyHistory;
@@ -22,8 +19,7 @@ class TastaturState extends State<Tastatur> {
   Widget build(BuildContext context) {
     final history = widget.keyHistory;
 
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -74,14 +70,14 @@ class TastaturState extends State<Tastatur> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
 class SquareButton extends StatelessWidget {
-  final double size = 48;
-  final Color color = Colors.black;
+  final double size = 50;
+  final Color color_lightmode = Colors.black;
+  final Color color_darkmode = Colors.grey.shade600;
   final String label;
   final KeyHistoryList keyHistory;
 
@@ -89,6 +85,15 @@ class SquareButton extends StatelessWidget {
     required this.label,
     required this.keyHistory,
   });
+
+  Color? returnColor(BuildContext context) {
+    if(Theme.of(context).brightness == Brightness.light) {
+      return color_lightmode;
+    }
+    else {
+      return color_darkmode;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +108,7 @@ class SquareButton extends StatelessWidget {
           keyHistory.addKey(letter, encryptedLetter);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: color, // background color lol
+          backgroundColor: returnColor(context), // background color lol
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // rounded corners
           ),
