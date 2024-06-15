@@ -21,7 +21,7 @@ class CustomKeyboard extends StatefulWidget {
 
 class _CustomKeyboardState extends State<CustomKeyboard> {
   String _inputText = '';
-  bool _is_enabled = true;
+  bool _isEnabled = true;
 
   List<bool> _isButtonSelected = List.generate(26, (_) => false);
   int _selectedCount = 0;
@@ -196,20 +196,21 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   @override
   Widget build(BuildContext context) {
     final switchW = Switch(
-      value: _is_enabled,
+      value: _isEnabled,
       onChanged: (value) async {
-        await APICaller.post("plugboard/enable", query: {
+        final response = await APICaller.post("plugboard/enable", query: {
           "machine": "1",
           "enabled": "$value",
         });
+        assert(response.statusCode == 200);
 
         setState(() {
-          _is_enabled = value;
+          _isEnabled = value;
         });
       },
       activeColor: Colors.blue,
     );
-    return _is_enabled
+    return _isEnabled
         ? Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
