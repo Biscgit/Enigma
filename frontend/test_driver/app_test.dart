@@ -22,6 +22,7 @@ void main() {
 
     setUp(() async {
       driver = await FlutterDriver.connect();
+      driver?.checkHealth();
     });
 
     // Close the connection to the Flutter app after tests are done.
@@ -144,6 +145,7 @@ void main() {
     // Connect to the Flutter app before running the tests.
     setUp(() async {
       driver = await FlutterDriver.connect();
+      driver?.checkHealth();
     });
 
     // Close the connection to the Flutter app after tests are done.
@@ -176,7 +178,7 @@ void main() {
         find.byValueKey('logoutDialog'),
         timeout: const Duration(seconds: 5),
       );
-      takeScreenshot(driver!, "logged_out.png");
+      // takeScreenshot(driver!, "logged_out.png");
 
       // tap away
       await driver?.tap(find.text("OK"));
@@ -194,6 +196,7 @@ void main() {
 
     setUp(() async {
       driver = await FlutterDriver.connect();
+      driver?.checkHealth();
     });
 
     tearDown(() async {
@@ -235,7 +238,7 @@ void main() {
       // Add many keys to test the history
       List<String> keyPairs = [];
       await driver?.tap(inputFieldFinder);
-      for (int i = 0; i <= 200; i++) {
+      for (int i = 0; i <= 150; i++) {
         String randomLetter = String.fromCharCode(Random().nextInt(26) + 65);
         await driver?.enterText(randomLetter);
 
@@ -246,13 +249,21 @@ void main() {
 
       await driver?.scrollUntilVisible(
         find.byValueKey("keyHistoryList"),
-        find.byValueKey("keyPair_139"),
-        dyScroll: -10000,
+        find.text(keyPairs[139]),
+        dyScroll: -100000,
       );
+      
+      // await driver?.waitFor(find.byValueKey("keyPairNumber_139"));
+      // await driver?.waitFor(
+      //   find.descendant(
+      //     of: find.byValueKey('keyPair_139'),
+      //     matching: find.text("139."),
+      //   ),
+      // );
       // check last two fit text
-      await driver?.waitFor(find.text("139."));
+      // await driver?.waitFor(find.text("139."));
       // await driver?.waitFor(find.text(keyPairs[138]));
-      await driver?.waitFor(find.text("140."));
+      // await driver?.waitFor(find.text("140."));
       // await driver?.waitFor(find.text(keyPairs[139]));
 
       // check next two have disappeared

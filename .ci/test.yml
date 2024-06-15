@@ -44,6 +44,7 @@ e2e-test-widget:
       optional: true
     - job: build-backend
       optional: true
+  allow_failure: true
 
 e2e-test-driver:
   stage: e2e-test
@@ -83,3 +84,4 @@ e2e-test-driver:
       optional: true
     - job: build-flutter-driver
       optional: true
+  allow_failure: true

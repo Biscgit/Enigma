@@ -10,20 +10,21 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final align = MediaQuery.of(context).size.height / 8 * 2.5;
     return Stack(
       children: [
         Positioned(
           top: 0,
           left: 0,
           right: 0,
-          bottom: MediaQuery.of(context).size.height / 8 * 2.5,
+          bottom: align,
           child: Lampfield(
             key: Lampfield.lampFieldKey,
             keyHistory: keyHistory,
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height / 8 * 2.5,
+          top: align,
           left: 0,
           right: 0,
           bottom: 0,
