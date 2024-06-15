@@ -16,13 +16,13 @@ class LoginPage extends StatelessWidget {
     String username = _usernameController.text;
     String password = _passwordController.text;
     
-    var response = await APICaller.post("login", body:{"username": username, "password": password, });
+    final response = await APICaller.post("login", body:{"username": username, "password": password, });
 
     if (response.statusCode == 200) {
-      Navigator.pushReplacementNamed(context, '/home');
-
       final token = jsonDecode(response.body)["token"];
       await Cookie.save('token', token);
+
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
         context: context,
