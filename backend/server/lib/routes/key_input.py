@@ -17,10 +17,12 @@ async def encrypt_key(
     # ToDo: implement encryption here and store it to `encrypted_key`
     # ToDo: implement check if machine exists
     # ToDo: add unit + integration tests when completed
+
     encrypted_key: str = "o"
 
     # apply plugboard
-    encrypted_key = await switch_letter(username, machine, encrypted_key, db_conn)
+    if await db_conn.is_plugboard_enabled(username, machine):
+        encrypted_key = await switch_letter(username, machine, encrypted_key, db_conn)
 
     # Save to history and return the switched key
     await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)
