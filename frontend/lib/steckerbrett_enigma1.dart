@@ -243,10 +243,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
     );
   }
 
-  // Tastatur mit QWERTZU-Layout
-  @override
-  Widget build(BuildContext context) {
-    final switchW = Switch(
+  Widget toggleSwitch() {
+    return Switch(
       value: _isEnabled,
       onChanged: (value) async {
         final response = await APICaller.post("plugboard/enable", query: {
@@ -261,6 +259,12 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       },
       activeColor: Colors.blue,
     );
+  }
+
+  // Tastatur mit QWERTZU-Layout
+  @override
+  Widget build(BuildContext context) {
+    final switchW = toggleSwitch();
     return _isEnabled
         ? Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
