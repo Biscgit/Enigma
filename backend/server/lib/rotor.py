@@ -70,7 +70,6 @@ class Rotor:
         :param letter_shift_on_before: Flag to determine if the rotor should rotate.
         :return: True if the letter_shift is at the current position, False otherwise.
         """
-        print(self.rotor_position)
         self.rotor_position += 1 if letter_shift_on_before else 0
         self.rotor_position %= Rotor.len_al
         if self.rotor_position in self.letter_shift:
