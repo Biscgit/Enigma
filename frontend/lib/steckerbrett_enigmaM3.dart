@@ -21,6 +21,8 @@ class CustomKeyboard extends StatefulWidget {
 
 class _CustomKeyboardState extends State<CustomKeyboard> {
   String _inputText = '';
+  bool _isEnabled = true;
+
   List<bool> _isButtonSelected = List.generate(26, (_) => false);
   int _selectedCount = 0;
   final List<Color> _availableColors = [
@@ -193,50 +195,60 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   // Tastatur im ABC-Layout
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Text(
-          _inputText,
-          style: const TextStyle(fontSize: 20.0),
-        ),
-        const SizedBox(height: 20.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < 10; i++)
-              _buildKeyboardButton(String.fromCharCode(65 + i), i),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 10; i < 18; i++)
-              _buildKeyboardButton(String.fromCharCode(65 + i), i),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 18; i < 26; i++)
-              _buildKeyboardButton(String.fromCharCode(65 + i), i),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //IconButton(
-            //  padding: EdgeInsets.all(0),
-            //  icon: Icon(Icons.backspace),
-            //  onPressed: _onDeletePressed,
-            //),
-            ElevatedButton(
-              onPressed: _resetKeyboard,
-              child: const Text('Reset'),
-            ),
-          ],
-        ),
-      ],
+    final switchW = Switch(
+      value: _isEnabled,
+      onChanged: (value) async {
+        final response = await APICaller.post("plugboard/enable", query: {
+          "machine": "1",
+          "enabled": "$value",
+        });
+        assert(response.statusCode == 200);
+
+        setState(() {
+          _isEnabled = value;
+        });
+      },
+      activeColor: Colors.blue,
     );
+    return _isEnabled
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                _inputText,
+                style: const TextStyle(fontSize: 20.0),
+              ),
+              const SizedBox(height: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < 10; i++)
+                    _buildKeyboardButton(String.fromCharCode(65 + i), i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 10; i < 18; i++)
+                    _buildKeyboardButton(String.fromCharCode(65 + i), i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 18; i < 26; i++)
+                    _buildKeyboardButton(String.fromCharCode(65 + i), i),
+                ],
+              ),
+              const SizedBox(height: 6),
+              ElevatedButton(
+                onPressed: _resetKeyboard,
+                child: const Text('Reset'),
+              ),
+              const SizedBox(height: 3),
+              switchW,
+            ],
+          )
+        : switchW;
   }
 }
