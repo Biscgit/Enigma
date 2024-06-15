@@ -106,8 +106,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
               "plugboard/save",
               query: {
                 "machine": "1",
-                "plug_a": value,
-                "plug_b": _inputText[_inputText.length - 2],
+                "plug_a": value.toLowerCase(),
+                "plug_b": _inputText[_inputText.length - 2].toLowerCase(),
               },
             );
           } else {
@@ -148,8 +148,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
         if (keys.length % 2 == 0) {
           APICaller.delete("plugboard/remove", query: {
             "machine": "1",
-            "plug_a": keys[0],
-            "plug_b": keys[1],
+            "plug_a": keys[0].toLowerCase(),
+            "plug_b": keys[1].toLowerCase(),
           });
         }
 
