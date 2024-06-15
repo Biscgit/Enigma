@@ -122,4 +122,9 @@ async def enable_disable_plugboard(
         username: str = Depends(check_auth),
         db: Database = Depends(get_database)
 ):
-    print(enabled)
+    try:
+        await db.set_plugboard_enabled(username, machine, enabled)
+    except Exception as e:
+        logging.error(f"Error setting plugboard: {type(e)} -> {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
