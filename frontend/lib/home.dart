@@ -44,6 +44,7 @@ class HomePageState extends State<HomePage> {
       key: _keyHistoryKey,
       keyHistoryKey: _keyHistoryKey,
     );
+    final rotorWidget = RotorPage(numberRotors: 3);
 
     return Scaffold(
       appBar: AppBar(
@@ -84,7 +85,7 @@ class HomePageState extends State<HomePage> {
       ),
       body: Row(
         children: [
-          const RotorPage(numberRotors: 3),
+          rotorWidget,
           Expanded(
             child: Stack(
               children: [

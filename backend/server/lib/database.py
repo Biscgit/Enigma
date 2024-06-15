@@ -669,7 +669,6 @@ class Database:
                     rotor["is_rotate"],
                 )
             ]
-            print(rotor)
         return plugboard, reflector, rotors
 
 

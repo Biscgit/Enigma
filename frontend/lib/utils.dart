@@ -7,7 +7,7 @@ import 'dart:convert';
 
 class Cookie {
   static const _storage = FlutterSecureStorage();
-  static Map<String, List<Function(String)>> reactors = {};
+  static Map<String, List<Function()>> reactors = {};
 
   static Future<String> read(String key) async {
     String value = await _storage.read(key: key) ?? "";
@@ -16,7 +16,6 @@ class Cookie {
   
   static Future<void> save(String key, String value) async {
     await _storage.write(key: key, value: value);
-    reactors[key]?.forEach((reactor) async => await reactor(value));
   }
 
   static Future<void> delete(String key) async {
@@ -27,46 +26,15 @@ class Cookie {
     return Cookie.read('token').then((token) => token != "");
   }
 
-  static void setReactor(String trigger, Function(String) reactor) {
+  static void setReactor(String trigger, Function() reactor) {
     (reactors[trigger] ??= []).add(reactor);
   }
+
+  static void trigger(String trigger) {
+    reactors[trigger]?.forEach((reactor) => reactor());
+    }
 }
 
-const String apiUrl = "http://localhost:8001/key_press"; // Linux
-
-/*Future<String> sendPressedKeyToRotors(String pressedKey) async {
-  // Used by Tastatur (virtual keyboard) and textfield below lamppanel to send key inputs to backend;
-  // This can also be implemented in tastatur.dart and lampenfeld.dart separately
-
-
-  // replace API call in future by new implementation
-
-  //var machineID = await Cookie.read('machine_id'); //Implement machine_id in cookies? Or how else can the global variable be accessed?
-  var token = await Cookie.read('token');
-  var header = await APICaller.getHeader();
-  var uri = Uri.parse(apiUrl).replace(queryParameters: {
-    'token': token,
-    'key': pressedKey,
-    //'machine': machineID
-    'machine': "0"
-  });
-
-  var response = await http.post(
-    uri,
-    headers: header,
-  );
-
-  if(response.statusCode != 200) {
-    return '?';
-  }
-
-  var jsonReponse = jsonDecode(response.body);
-  print(jsonReponse);
-  String encKey = jsonReponse['key'];
-
-  Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
-  return jsonReponse['key'];
-}*/
 
 Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   String machineID = await Cookie.read('current_machine');

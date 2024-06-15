@@ -106,6 +106,7 @@ class SquareButton extends StatelessWidget {
           final letter = label;
           final encryptedLetter = await sendPressedKeyToRotors(letter);
           keyHistory.addKey(letter, encryptedLetter);
+          Cookie.trigger("update");
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: returnColor(context), // background color lol

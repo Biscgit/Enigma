@@ -117,6 +117,7 @@ class LampfieldState extends State<Lampfield> {
                   final letter = value.substring(value.length - 1);
                   final encryptedLetter = await sendPressedKeyToRotors(
                       value.substring(value.length - 1));
+                  Cookie.trigger("update");
                   widget.sendToHistory(letter, encryptedLetter);
                 }
               },

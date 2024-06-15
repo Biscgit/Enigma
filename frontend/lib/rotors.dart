@@ -41,6 +41,7 @@ class RotorWidgetState extends State<RotorWidget> {
   void initState() {
     super.initState();
     _initialize();
+    Cookie.setReactor("update", _initialize);
   }
 
   Future<void> _initialize() async {
@@ -52,7 +53,6 @@ class RotorWidgetState extends State<RotorWidget> {
     setState(() {
       selectedRotor = rotorNumber["number"];
     });
-    print(rotorNumber);
 
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
       "template_id": getId(),
