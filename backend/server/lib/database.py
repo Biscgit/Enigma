@@ -304,6 +304,37 @@ class Database:
         boards = await self.get_plugboards(username, machine)
         return len(boards)
 
+    async def set_plugboard_enabled(self, username: str, machine: int, enabled: bool) -> None:
+        """toggles the plugboards state"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            await conn.execute(
+                """
+                UPDATE machines
+                SET plugboard_enabled = $3
+                WHERE username = $1 AND id = $2
+                """,
+                username, machine, enabled
+            )
+            logging.info(f"Plugboard toggled for {username}.{machine}: {enabled}")
+
+    async def is_plugboard_enabled(self, username: str, machine: int) -> bool:
+        """returns weather the plugboard is enabled"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                Select plugboard_enabled
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username, machine,
+            )
+            logging.info(f"Plugboard enabled for {username}.{machine}: {result}")
+            return bool(result)
+
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     async def create_machine(self, username: str, machine_id: int, machine_type: int) -> None:
