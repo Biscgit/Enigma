@@ -66,44 +66,44 @@ class LampfieldState extends State<Lampfield> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //Initialises 26 textboxes that look like lamps in a QWERTZ keyboard layout. Globalkey-index is spot_in_alphabet - 1.
-              CircularTextBox(key: listOfGlobalKeys[16], text: 'Q'),
-              CircularTextBox(key: listOfGlobalKeys[22], text: 'W'),
-              CircularTextBox(key: listOfGlobalKeys[4], text: 'E'),
-              CircularTextBox(key: listOfGlobalKeys[17], text: 'R'),
-              CircularTextBox(key: listOfGlobalKeys[19], text: 'T'),
-              CircularTextBox(key: listOfGlobalKeys[25], text: 'Z'),
-              CircularTextBox(key: listOfGlobalKeys[20], text: 'U'),
-              CircularTextBox(key: listOfGlobalKeys[8], text: 'I'),
-              CircularTextBox(key: listOfGlobalKeys[14], text: 'O'),
-              CircularTextBox(key: listOfGlobalKeys[15], text: 'P'),
+              CircularTextBox(key: listOfGlobalKeys[16], text: 'Q', context: context),
+              CircularTextBox(key: listOfGlobalKeys[22], text: 'W', context: context),
+              CircularTextBox(key: listOfGlobalKeys[4], text: 'E', context: context),
+              CircularTextBox(key: listOfGlobalKeys[17], text: 'R', context: context),
+              CircularTextBox(key: listOfGlobalKeys[19], text: 'T', context: context),
+              CircularTextBox(key: listOfGlobalKeys[25], text: 'Z', context: context),
+              CircularTextBox(key: listOfGlobalKeys[20], text: 'U', context: context),
+              CircularTextBox(key: listOfGlobalKeys[8], text: 'I', context: context),
+              CircularTextBox(key: listOfGlobalKeys[14], text: 'O', context: context),
+              CircularTextBox(key: listOfGlobalKeys[15], text: 'P', context: context),
             ],
           ),
           SizedBox(height: seizedBoxHeight),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularTextBox(key: listOfGlobalKeys[0], text: 'A'),
-              CircularTextBox(key: listOfGlobalKeys[18], text: 'S'),
-              CircularTextBox(key: listOfGlobalKeys[3], text: 'D'),
-              CircularTextBox(key: listOfGlobalKeys[5], text: 'F'),
-              CircularTextBox(key: listOfGlobalKeys[6], text: 'G'),
-              CircularTextBox(key: listOfGlobalKeys[7], text: 'H'),
-              CircularTextBox(key: listOfGlobalKeys[9], text: 'J'),
-              CircularTextBox(key: listOfGlobalKeys[10], text: 'K'),
-              CircularTextBox(key: listOfGlobalKeys[11], text: 'L'),
+              CircularTextBox(key: listOfGlobalKeys[0], text: 'A', context: context),
+              CircularTextBox(key: listOfGlobalKeys[18], text: 'S', context: context),
+              CircularTextBox(key: listOfGlobalKeys[3], text: 'D', context: context),
+              CircularTextBox(key: listOfGlobalKeys[5], text: 'F', context: context),
+              CircularTextBox(key: listOfGlobalKeys[6], text: 'G', context: context),
+              CircularTextBox(key: listOfGlobalKeys[7], text: 'H', context: context),
+              CircularTextBox(key: listOfGlobalKeys[9], text: 'J', context: context),
+              CircularTextBox(key: listOfGlobalKeys[10], text: 'K', context: context),
+              CircularTextBox(key: listOfGlobalKeys[11], text: 'L', context: context),
             ],
           ),
           SizedBox(height: seizedBoxHeight),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularTextBox(key: listOfGlobalKeys[24], text: 'Y'),
-              CircularTextBox(key: listOfGlobalKeys[23], text: 'X'),
-              CircularTextBox(key: listOfGlobalKeys[2], text: 'C'),
-              CircularTextBox(key: listOfGlobalKeys[21], text: 'V'),
-              CircularTextBox(key: listOfGlobalKeys[1], text: 'B'),
-              CircularTextBox(key: listOfGlobalKeys[13], text: 'N'),
-              CircularTextBox(key: listOfGlobalKeys[12], text: 'M')
+              CircularTextBox(key: listOfGlobalKeys[24], text: 'Y', context: context),
+              CircularTextBox(key: listOfGlobalKeys[23], text: 'X', context: context),
+              CircularTextBox(key: listOfGlobalKeys[2], text: 'C', context: context),
+              CircularTextBox(key: listOfGlobalKeys[21], text: 'V', context: context),
+              CircularTextBox(key: listOfGlobalKeys[1], text: 'B', context: context),
+              CircularTextBox(key: listOfGlobalKeys[13], text: 'N', context: context),
+              CircularTextBox(key: listOfGlobalKeys[12], text: 'M', context: context)
             ],
           ),
           SizedBox(
@@ -138,18 +138,24 @@ class CircularTextBox extends StatefulWidget {
   //Helper class that creates textboxes which are not rectangles.
   final String text;
   final Color colorText;
-  final Color defaultColorBox;
+  //final Color defaultColorBox;
   final Color highlightedColor;
   final double fontSize;
   final double diameter;
+  final Color defaultColorBox_lightmode;
+  final Color defaultColorBox_darkmode;
+  final BuildContext context;
 
   const CircularTextBox({
     super.key,
     required this.text,
+    required this.context,
     this.colorText = Colors.black54,
-    this.defaultColorBox = Colors.black12,
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
+    //this.defaultColorBox = Colors.black12,
+    this.defaultColorBox_lightmode = Colors.black12,
+    this.defaultColorBox_darkmode  = Colors.white,
     this.diameter = 45,
   });
 
@@ -173,7 +179,12 @@ class CircularTextBoxState extends State<CircularTextBox> {
       colorBox = widget.highlightedColor;
       highlighted = 1;
     } else {
-      colorBox = widget.defaultColorBox;
+        if(Theme.of(widget.context).brightness == Brightness.light) {
+          colorBox = widget.defaultColorBox_lightmode;
+        }
+        else {
+          colorBox = widget.defaultColorBox_darkmode;
+        }
     }
   }
 
@@ -183,7 +194,12 @@ class CircularTextBoxState extends State<CircularTextBox> {
         colorBox = widget.highlightedColor;
         highlighted = 1;
       } else {
-        colorBox = widget.defaultColorBox;
+        if(Theme.of(widget.context).brightness == Brightness.light) {
+          colorBox = widget.defaultColorBox_lightmode;
+        }
+        else {
+          colorBox = widget.defaultColorBox_darkmode;
+        }
         highlighted = 0;
       }
     });
