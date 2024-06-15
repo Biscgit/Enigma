@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key});
 
-  void _login(BuildContext context) async {
+  Future<void> _login(BuildContext context) async {
     String username = _usernameController.text;
     String password = _passwordController.text;
     
@@ -85,7 +85,7 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   key: const ValueKey('Login'),
-                  onPressed: () => _login(context),
+                  onPressed: () async => await _login(context),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Theme.of(context).primaryColor,
