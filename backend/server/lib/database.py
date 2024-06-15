@@ -497,7 +497,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT username, machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number
+                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number
                 FROM rotors
                 WHERE number = $1 AND username = $2 AND machine_type = $3 AND machine_id = 0 AND place = $4
                 """,
@@ -514,7 +514,9 @@ class Database:
         for rotor in rotors:
             dict_rotor = vars(rotor)
             dict_rotor["username"] = username
-            dict_rotor["rotor_position"] = Rotor.alphabet[dict_rotor["rotor_position"]]
+            dict_rotor["rotor_position"] = Rotor.alphabet[
+                (dict_rotor["rotor_position"] - 7) % 26
+            ]
             dict_rotor["letter_shift"] = rotor.get_str_notch()
             await self.update_rotor(dict_rotor)
 
@@ -607,6 +609,7 @@ class Database:
                     )
                     _ = await self.set_rotor(current_rotor)
                     rotor["id"] = count
+                    rotor["machine_id"] = machine_id
                     await self.update_rotor(rotor)
                     return await self.get_rotor(username, count)
                 return await self.get_rotor(username, (await self.set_rotor(rotor)))

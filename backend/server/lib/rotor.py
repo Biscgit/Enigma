@@ -26,7 +26,7 @@ class Rotor:
         """
         self.scramble_alphabet = alphabet.lower()
         get_ord_false = partial(self.get_ord, back=False)
-        self.rotor_position = get_ord_false(rotor_position) - 7
+        self.rotor_position = get_ord_false(rotor_position) + 7
         self.letter_shift = list(map(get_ord_false, letter_shift))
         self.id = id
         self.machine_id = machine_id

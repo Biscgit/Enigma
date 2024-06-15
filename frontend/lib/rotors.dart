@@ -97,7 +97,7 @@ class RotorWidgetState extends State<RotorWidget> {
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
     rotor["letter_shift"] = String.fromCharCode(97 + notch);
-    rotor["id"] = getId();
+    rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
   }
@@ -110,7 +110,7 @@ class RotorWidgetState extends State<RotorWidget> {
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["letter_shift"] = String.fromCharCode(97 + notch);
     rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["id"] = getId();
+    rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
   }
