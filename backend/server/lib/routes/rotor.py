@@ -24,6 +24,7 @@ async def update_rotor(
                 "machine_id": rotor.machine_id,
                 "place": rotor.place,
                 "number": rotor.number,
+                "is_rotate": rotor.is_rotate,
             }
         )
     except Exception as e:
@@ -67,6 +68,17 @@ async def get_rotor_ids(
 ) -> list[Dict[str, int]]:
     rotor_ids = await db_conn.get_rotor_ids(username, machine_id)
     return rotor_ids
+
+
+@router.get("/get-rotor-number")
+async def get_rotor_number(
+    machine_id: int,
+    place: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> Dict[str, int]:
+    rotor_number = await db_conn.get_rotor_number(username, place, machine_id)
+    return rotor_number
 
 
 @router.post("/switch-rotor")

@@ -18,6 +18,7 @@ class MinRotor(BaseModel):
     template_id: int
     place: int
     number: int
+    is_rotate: Optional[bool] = True
 
     @root_validator(pre=True)
     def id_must_be_positive(cls, values):

@@ -46,15 +46,20 @@ class RotorWidgetState extends State<RotorWidget> {
   Future<void> _initialize() async {
     machineId = await Cookie.read("current_machine");
 
+    var rotorNumber = json.decode((await APICaller.get("get-rotor-number", {"machine_id": machineId, "place": "${widget.rotorNumber}"})).body);
     rotorIds = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": machineId})).body);
 
+    setState(() {
+      selectedRotor = rotorNumber["number"];
+    });
+    print(rotorNumber);
 
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
       "template_id": getId(),
       "id": getId(),
       "machine_id": machineId,
       "place": widget.rotorNumber,
-      "number": 1,
+      "number": rotorNumber["number"],
     })).body);
     id = rotor["id"];
 

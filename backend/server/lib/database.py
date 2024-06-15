@@ -452,6 +452,27 @@ class Database:
             logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
             return [dict(pair) for pair in result or []]
 
+    async def get_rotor_number(self, username: str, place: int, machine_id: int):
+        """returns all rotor ids for a machine type"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetch(
+                """
+                SELECT number
+                FROM rotors
+                WHERE username = $1 AND place = $2 AND machine_id = $3
+                """,
+                username,
+                place,
+                machine_id,
+            )
+
+            logging.info(
+                f"Fetched rotornumber for {username}.{machine_id}: {str(result)}"
+            )
+            return dict(result[0]) if result else {"number": 1}
+
     async def get_rotors(self, username: str, machine: int) -> list[dict]:
         """returns all rotors configurations for a machine"""
         async with self.pool.acquire() as conn:
