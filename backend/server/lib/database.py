@@ -160,6 +160,7 @@ class Database:
                 rotor["machine_id"] = 0
                 rotor["place"] = 0
                 rotor["number"] = 0
+                rotor["is_rotate"] = True
                 try:
                     await self.set_rotor(rotor)
                 except asyncpg.PostgresError:
@@ -458,7 +459,7 @@ class Database:
 
             results = await conn.fetch(
                 """
-                SELECT id, machine_id, letter_shift, rotor_position, scramble_alphabet, place, number
+                SELECT id, machine_id, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate
 
                 FROM rotors
                 WHERE username = $1 AND machine_id = $2
@@ -478,7 +479,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number
+                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number, is_rotate
                 FROM rotors
                 WHERE id = $1
                 """,
@@ -497,7 +498,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number
+                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate
                 FROM rotors
                 WHERE number = $1 AND username = $2 AND machine_type = $3 AND machine_id = 0 AND place = $4
                 """,
@@ -527,7 +528,7 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE rotors
-                    SET place = $3, rotor_position = $4, letter_shift = $5, scramble_alphabet = $6, machine_id = $7, number = $8
+                    SET place = $3, rotor_position = $4, letter_shift = $5, scramble_alphabet = $6, machine_id = $7, number = $8, is_rotate = $9
                     WHERE username = $1 AND id = $2
                     """,
                     data["username"],
@@ -538,6 +539,7 @@ class Database:
                     data["scramble_alphabet"].lower(),
                     data["machine_id"],
                     data["number"],
+                    data["is_rotate"],
                 )
         logging.info(f"Updated rotor for {data['username']} with {data}")
 
@@ -545,8 +547,8 @@ class Database:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position, place, number)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position, place, number, is_rotate)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
                     """,
                     data["username"],
                     data["scramble_alphabet"].lower(),
@@ -556,6 +558,7 @@ class Database:
                     data["rotor_position"].lower(),
                     data["place"],
                     data["number"],
+                    data["is_rotate"],
                 )
                 result = (
                     await conn.fetchval(
@@ -628,6 +631,7 @@ class Database:
                     rotor["machine_id"],
                     rotor["place"],
                     rotor["number"],
+                    rotor["is_rotate"],
                 )
             ]
             print(rotor)

@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS rotors (
 
     place INTEGER,
     number INTEGER,
+    is_rotate BOOLEAN,
 
     PRIMARY KEY (id),
     FOREIGN KEY (machine_id, username) REFERENCES machines(id, username)

@@ -16,6 +16,7 @@ class Rotor:
         machine_id: int,
         place: int,
         number: int,
+        is_rotate: bool,
     ):
         """
         Initialize the Rotor with a given alphabet, rotor_positioning position, and letter_shift positions.
@@ -32,6 +33,7 @@ class Rotor:
         self.machine_id = machine_id
         self.place = place
         self.number = number
+        self.is_rotate = is_rotate
 
     def scramble(self, char: chr) -> chr:
         """
@@ -70,7 +72,13 @@ class Rotor:
         """
         self.rotor_position += 1 if letter_shift_on_before else 0
         self.rotor_position %= Rotor.len_al
-        return self.rotor_position in self.letter_shift
+        if self.rotor_position in self.letter_shift:
+            result = self.is_rotate
+            self.is_rotate = False
+            return result
+
+        self.is_rotate = True
+        return False
 
     def add_offset(self, char: chr, back: bool) -> chr:
         """
