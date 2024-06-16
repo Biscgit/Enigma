@@ -142,8 +142,8 @@ class CircularTextBox extends StatefulWidget {
   final Color highlightedColor;
   final double fontSize;
   final double diameter;
-  final Color defaultColorBox_lightmode;
-  final Color defaultColorBox_darkmode;
+  final Color defaultColorBoxLightMode;
+  final Color defaultColorBoxDarkMode;
   final BuildContext context;
 
   const CircularTextBox({
@@ -154,8 +154,8 @@ class CircularTextBox extends StatefulWidget {
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
     //this.defaultColorBox = Colors.black12,
-    this.defaultColorBox_lightmode = Colors.black12,
-    this.defaultColorBox_darkmode  = Colors.white60,
+    this.defaultColorBoxLightMode = Colors.black12,
+    this.defaultColorBoxDarkMode  = Colors.white60,
     this.diameter = 45,
   });
 
@@ -180,10 +180,10 @@ class CircularTextBoxState extends State<CircularTextBox> {
       highlighted = 1;
     } else {
         if(Theme.of(widget.context).brightness == Brightness.light) {
-          colorBox = widget.defaultColorBox_lightmode;
+          colorBox = widget.defaultColorBoxLightMode;
         }
         else {
-          colorBox = widget.defaultColorBox_darkmode;
+          colorBox = widget.defaultColorBoxDarkMode;
         }
     }
   }
@@ -195,10 +195,10 @@ class CircularTextBoxState extends State<CircularTextBox> {
         highlighted = 1;
       } else {
         if(Theme.of(widget.context).brightness == Brightness.light) {
-          colorBox = widget.defaultColorBox_lightmode;
+          colorBox = widget.defaultColorBoxLightMode;
         }
         else {
-          colorBox = widget.defaultColorBox_darkmode;
+          colorBox = widget.defaultColorBoxDarkMode;
         }
         highlighted = 0;
       }
@@ -223,7 +223,8 @@ class CircularTextBoxState extends State<CircularTextBox> {
             color: widget.colorText,
             fontSize: widget.fontSize,
             fontWeight: FontWeight.bold,
-            fontFamily: "Wallau"),
+            fontFamily: "Wallau",
+        ),
       ),
     );
   }
