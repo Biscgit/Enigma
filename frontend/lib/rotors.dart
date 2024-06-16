@@ -2,25 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
 import 'dart:convert';
 
+class Data {
+  final String machineId;
+  final List<dynamic> rotorIds;
+  const Data({required this.machineId, required this.rotorIds});
+}
+
 class RotorPage extends StatelessWidget {
   final int numberRotors;
-
   const RotorPage({super.key, required this.numberRotors});
+
+  Future<Data> _initialize() async {
+    var machineId = await Cookie.read("current_machine");
+    var rotorIds = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": machineId})).body);
+    return Data(
+      machineId: machineId,
+      rotorIds: rotorIds
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-          numberRotors, (index) => RotorWidget(rotorNumber: index + 1)),
+    return FutureBuilder<Data>(
+      future: _initialize(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [CircularProgressIndicator()],
+          );
+        } else {
+          final data = snapshot.data!;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+            numberRotors, (index) => RotorWidget(rotorNumber: index + 1, machineId: data.machineId, rotorIds: data.rotorIds)),
+          );
+        }
+      }
     );
   }
 }
 
 class RotorWidget extends StatefulWidget {
   final int rotorNumber;
+  final String machineId;
+  final List<dynamic> rotorIds;
 
-  const RotorWidget({super.key, required this.rotorNumber});
+  const RotorWidget({super.key, required this.rotorNumber, required this.machineId, required this.rotorIds});
 
   @override
   RotorWidgetState createState() => RotorWidgetState();
@@ -31,11 +60,7 @@ class RotorWidgetState extends State<RotorWidget> {
   int rotorPosition = 0;
   int notch = 0;
   int numberRotors = 5;
-  String machineId = "1";
   int id = 1;
-  List<dynamic> rotorIds = [
-    {"": 0}
-  ];
 
   @override
   void initState() {
@@ -45,10 +70,8 @@ class RotorWidgetState extends State<RotorWidget> {
   }
 
   Future<void> _initialize() async {
-    machineId = await Cookie.read("current_machine");
-
-    var rotorNumber = json.decode((await APICaller.get("get-rotor-number", {"machine_id": machineId, "place": "${widget.rotorNumber}"})).body);
-    rotorIds = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": machineId})).body);
+    numberRotors = widget.rotorIds.length;
+    var rotorNumber = json.decode((await APICaller.get("get-rotor-number", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
 
     setState(() {
       selectedRotor = rotorNumber["number"];
@@ -57,7 +80,7 @@ class RotorWidgetState extends State<RotorWidget> {
     var rotor = json.decode((await APICaller.post("switch-rotor", body: {
       "template_id": getId(),
       "id": getId(),
-      "machine_id": machineId,
+      "machine_id": widget.machineId,
       "place": widget.rotorNumber,
       "number": rotorNumber["number"],
     })).body);
@@ -77,7 +100,7 @@ class RotorWidgetState extends State<RotorWidget> {
     rotor["template_id"] = getId();
     rotor["id"] = id;
     rotor["place"] = widget.rotorNumber;
-    rotor["machine_id"] = machineId;
+    rotor["machine_id"] = widget.machineId;
     rotor["number"] = value;
 
       final response = await APICaller.post("switch-rotor", body: rotor);
@@ -91,7 +114,7 @@ class RotorWidgetState extends State<RotorWidget> {
   }
 
   int? getId() {
-    return rotorIds[selectedRotor - 1]["id"];
+    return widget.rotorIds[selectedRotor - 1]["id"];
   }
 
   void _changeRotorPosition(int change) async {
