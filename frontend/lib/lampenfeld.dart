@@ -155,7 +155,7 @@ class CircularTextBox extends StatefulWidget {
     this.fontSize = 25,
     //this.defaultColorBox = Colors.black12,
     this.defaultColorBox_lightmode = Colors.black12,
-    this.defaultColorBox_darkmode  = Colors.white,
+    this.defaultColorBox_darkmode  = Colors.white60,
     this.diameter = 45,
   });
 

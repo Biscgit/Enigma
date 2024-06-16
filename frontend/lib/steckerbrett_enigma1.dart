@@ -183,7 +183,9 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       child: Text(
         value,
         style: const TextStyle(
-            color: Color.fromARGB(247, 255, 255, 255), fontSize: 18),
+          color: Color.fromARGB(247, 255, 255, 255),
+          fontSize: 18,
+        ),
       ),
     );
   }
