@@ -557,9 +557,7 @@ class Database:
         for rotor in rotors:
             dict_rotor = vars(rotor)
             dict_rotor["username"] = username
-            dict_rotor["rotor_position"] = Rotor.alphabet[
-                (dict_rotor["rotor_position"] - 7) % 26
-            ]
+            dict_rotor["rotor_position"] = Rotor.alphabet[dict_rotor["rotor_position"]]
             dict_rotor["letter_shift"] = rotor.get_str_notch()
             old_rotor = await self.get_rotor_by_number(
                 username,

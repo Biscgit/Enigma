@@ -1,5 +1,4 @@
 import string
-from functools import partial
 from typing import Tuple
 
 
@@ -26,8 +25,10 @@ class Rotor:
         :param letter_shift: The letter_shift positions where the next rotor will be rotated.
         """
         self.scramble_alphabet = alphabet.lower()
-        get_ord_false = partial(self.get_ord, back=False)
-        self.rotor_position = get_ord_false(rotor_position) + 7
+        get_ord_false = (
+            lambda x: (self.get_ord(x, False) - 7) % 26
+        )  # partial(self.get_ord, back=False)
+        self.rotor_position = self.get_ord(rotor_position, False)
         self.letter_shift = list(map(get_ord_false, letter_shift))
         self.id = id
         self.machine_id = machine_id
@@ -80,7 +81,7 @@ class Rotor:
         self.is_rotate = True
         return False
 
-    def add_offset(self, char: chr, back: bool) -> chr:
+    def add_offset(self, char: chr, add: bool) -> chr:
         """
         Add or subtract the rotor's offset to the character.
 
@@ -88,11 +89,12 @@ class Rotor:
         :param back: Direction flag; True for adding offset, False for subtracting.
         :return: The character with offset applied.
         """
+        print(char)
         value = (
-            self.get_ord(char, back)
-            + (self.rotor_position if back else -self.rotor_position)
+            self.get_ord(char, False)
+            + (self.rotor_position if add else -self.rotor_position)
         ) % Rotor.len_al
-        return self.scramble_alphabet[value] if back else Rotor.alphabet[value]
+        return self.scramble_alphabet[value] if False else Rotor.alphabet[value]
 
     def rotate_offset_scramble(
         self, char: chr, rotate: bool, back: bool
@@ -106,7 +108,10 @@ class Rotor:
         :return: Tuple containing the letter_shift status and the processed character.
         """
         letter_shift = self.rotate(rotate)
-        return letter_shift, self.scrambler(self.add_offset(char, back), back)
+        return letter_shift, self.add_offset(
+            self.scrambler(self.add_offset(char, True), back),
+            False,
+        )
 
     def get_ord(self, char: chr, back: bool) -> int:
         """
@@ -128,4 +133,6 @@ class Rotor:
 
         :return: A string where each character represents the notch position in the Rotor's alphabet.
         """
-        return "".join([Rotor.alphabet[notch] for notch in self.letter_shift])
+        return "".join(
+            [Rotor.alphabet[(notch + 7) % 26] for notch in self.letter_shift]
+        )
