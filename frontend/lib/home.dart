@@ -99,7 +99,7 @@ class HomePageState extends State<HomePage> {
               width: 180,
               height: 300,
               decoration: BoxDecoration(
-                color: Colors.black12,
+                color: Colors.white.withAlpha(16),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: keyHistory,

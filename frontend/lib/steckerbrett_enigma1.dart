@@ -165,7 +165,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   Widget _buildKeyboardButton(String value) {
     final isSelected = _isButtonSelected[value.codeUnitAt(0) - 65];
     final letterColor = _letterColorMap[value] ??
-        const Color.fromARGB(255, 134, 182, 136); // Standardfarbe
+        const Color.fromRGBO(134, 182, 136, 0.5); // Standardfarbe
 
     return ElevatedButton(
       onPressed: () {
@@ -178,9 +178,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
-        backgroundColor: isSelected
-            ? letterColor
-            : const Color.fromARGB(255, 34, 34, 34).withOpacity(0.1),
+        backgroundColor: isSelected ? letterColor : Colors.white10,
       ),
       child: Text(
         value,
@@ -252,7 +250,15 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
             // ),
             ElevatedButton(
               onPressed: _resetKeyboard,
-              child: const Text('Reset'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white10,
+              ),
+              child: const Text(
+                'Reset',
+                style: TextStyle(
+                  color: Color.fromARGB(247, 255, 255, 255),
+                ),
+              ),
             ),
           ],
         ),
