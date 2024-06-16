@@ -72,7 +72,7 @@ e2e-test-driver:
     - flutter create --platforms web .
     - flutter pub get
   script:
-    - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --web-browser-flag="--disable-gpu --headless --window-size=1920,1080 --disable-infobars --disable-dev-shm-usage --no-sandbox --no-first-run"'
+    - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release --web-browser-flag="--disable-gpu --headless --window-size=1920,1080 --disable-infobars --disable-dev-shm-usage --no-sandbox --no-first-run"'
   rules:
     - exists:
       - frontend/test_driver/*
