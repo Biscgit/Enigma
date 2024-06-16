@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_driver/flutter_driver.dart';
+import 'package:test/test.dart';
 
 // import 'package:flutter_test/flutter_test.dart' as tester;
-import 'package:test/test.dart';
+import 'tastatur_test.dart' as tastatur_test;
 
 takeScreenshot(FlutterDriver driver, String path) async {
   final List<int> pixels = await driver.screenshot();
@@ -191,6 +192,10 @@ void main() {
     });
   });
 
+  group("Tastatur e2e", () {
+    tastatur_test.main();
+  });
+
   group('KeyHistory e2e tests', () {
     FlutterDriver? driver;
 
@@ -245,14 +250,16 @@ void main() {
         final combo = '$randomLetter → O';
         keyPairs.insert(0, combo);
         await driver?.waitFor(find.text(combo));
+        print("inserted combo $i");
       }
 
+      print("check history");
       await driver?.scrollUntilVisible(
         find.byValueKey("keyHistoryList"),
         find.text(keyPairs[139]),
         dyScroll: -100000,
       );
-      
+
       // await driver?.waitFor(find.byValueKey("keyPairNumber_139"));
       // await driver?.waitFor(
       //   find.descendant(

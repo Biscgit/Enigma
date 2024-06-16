@@ -44,7 +44,7 @@ void login(FlutterDriver? driver) async {
 }
 
 Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String expectedResult) async {
-  print("Check for input: $keyInput, expecting result: $expectedResult.");
+  // print("Check for input: $keyInput, expecting result: $expectedResult.");
 
   Health? health = await driver?.checkHealth();
   assert(health?.status == HealthStatus.ok);
@@ -110,6 +110,6 @@ void main() async {
       await checkForKeyInput(driver, "R", "O"); //Change result to: T
       await checkForKeyInput(driver, "L", "O"); //Change result to: A
       await checkForKeyInput(driver, "D", "O"); //Change result to: Z
-      print("Done!");
+      // print("Done!");
     });
 }
