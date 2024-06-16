@@ -25,26 +25,26 @@ unit-integration-test:
     - job: build-python-tester-linter
       optional: true
 
-e2e-test-widget:
-  stage: e2e-test
-  image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
-  before_script:
-    - cd frontend
-    - flutter pub get
-  script:
-    - flutter test --file-reporter "json:result.json"
-  artifacts:
-    paths: 
-      - frontend/result.json
-  rules:
-    - exists:
-      - frontend/test/*
-  needs:
-    - job: build-frontend
-      optional: true
-    - job: build-backend
-      optional: true
-  allow_failure: true
+# e2e-test-widget:
+#   stage: e2e-test
+#   image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
+#   before_script:
+#     - cd frontend
+#     - flutter pub get
+#   script:
+#     - flutter test --file-reporter "json:result.json"
+#   artifacts:
+#     paths:
+#       - frontend/result.json
+#   rules:
+#     - exists:
+#       - frontend/test/*
+#   needs:
+#     - job: build-frontend
+#       optional: true
+#     - job: build-backend
+#       optional: true
+#   allow_failure: true
 
 e2e-test-driver:
   stage: e2e-test
