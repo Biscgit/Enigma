@@ -92,9 +92,9 @@ class HomePageState extends State<HomePage> {
             ],
           ),
           Positioned(
-            top: 0,
-            bottom: 10,
-            right: 20,
+            top: 12,
+            bottom: 12,
+            right: 12,
             child: Container(
               width: 180,
               height: 300,
