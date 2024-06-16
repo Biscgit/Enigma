@@ -70,6 +70,17 @@ async def get_rotor_ids(
     return rotor_ids
 
 
+@router.get("/get-rotor-by-place")
+async def get_rotor_by_place(
+    machine_id: int,
+    place: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> Dict[str, str | int | None] | None:
+    rotor = await db_conn.get_rotor_by_place(username, machine_id, place)
+    return rotor
+
+
 @router.get("/get-rotor-number")
 async def get_rotor_number(
     machine_id: int,

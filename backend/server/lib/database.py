@@ -510,6 +510,27 @@ class Database:
             logging.info(f"Fetched rotor for {rotor}: {str(result)}")
             return dict(result) if result else None
 
+    async def get_rotor_by_place(
+        self, username: str, machine_id: int, place: int
+    ) -> dict:
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchrow(
+                """
+                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number, is_rotate
+                FROM rotors
+                WHERE username = $1 AND machine_id = $2 AND place = $3
+                """,
+                username,
+                machine_id,
+                place,
+            )
+            logging.info(
+                f"Fetched rotor for {username}.{machine_id}.{place}: {str(result)}"
+            )
+            return dict(result) if result else None
+
     async def get_rotor_by_number(
         self, username: str, number: int, machine_type: int, place: int
     ) -> dict:
@@ -540,16 +561,20 @@ class Database:
                 (dict_rotor["rotor_position"] - 7) % 26
             ]
             dict_rotor["letter_shift"] = rotor.get_str_notch()
-            await self.update_rotor(dict_rotor)
             old_rotor = await self.get_rotor_by_number(
                 username,
                 dict_rotor["number"],
                 dict_rotor["machine_id"],
                 dict_rotor["place"],
             )
-            dict_rotor["machine_id"] = 0
-            dict_rotor["id"] = old_rotor["id"]
             await self.update_rotor(dict_rotor)
+            dict_rotor["machine_type"] = dict_rotor["machine_id"]
+            dict_rotor["machine_id"] = 0
+            if old_rotor:
+                dict_rotor["id"] = old_rotor["id"]
+                await self.update_rotor(dict_rotor)
+                continue
+            await self.set_rotor(dict_rotor)
 
     async def update_rotor(self, data: dict) -> None:
         async with self.pool.acquire() as conn:

@@ -65,25 +65,34 @@ class RotorWidgetState extends State<RotorWidget> {
   @override
   void initState() {
     super.initState();
-    _initialize();
+    _getRotorNumber()
+      .then((_) => apiCall())
+      .then((_) => _initialize());
     Cookie.setReactor("update", _initialize);
   }
 
-  Future<void> _initialize() async {
-    numberRotors = widget.rotorIds.length;
-    var rotorNumber = json.decode((await APICaller.get("get-rotor-number", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
-
-    setState(() {
-      selectedRotor = rotorNumber["number"];
-    });
-
-    var rotor = json.decode((await APICaller.post("switch-rotor", body: {
+  Future<void> apiCall() async {
+    await APICaller.post("switch-rotor", body: {
       "template_id": getId(),
       "id": getId(),
       "machine_id": widget.machineId,
       "place": widget.rotorNumber,
-      "number": rotorNumber["number"],
-    })).body);
+      "number": selectedRotor,
+    });
+
+  }
+
+  Future<void> _getRotorNumber() async {
+    var rotorNumber = json.decode((await APICaller.get("get-rotor-number", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
+    setState(() {
+      selectedRotor = rotorNumber["number"];
+    });
+  }
+
+  Future<void> _initialize() async {
+    numberRotors = widget.rotorIds.length;
+
+    var rotor = json.decode((await APICaller.get("get-rotor-by-place", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
     id = rotor["id"];
 
     setState(() {

@@ -33,6 +33,10 @@ class Cookie {
   static void trigger(String trigger) {
     reactors[trigger]?.forEach((reactor) => reactor());
     }
+
+  static void clearReactors(String trigger) {
+    reactors[trigger] = [];
+  }
 }
 
 
