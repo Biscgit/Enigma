@@ -47,11 +47,11 @@ class Machine extends StatelessWidget{
     return ListTile(
       title: Text(name),
       onTap: () {
-        Cookie.save("name", name);
-        Cookie.save("current_machine", "$id");
-        Cookie.clearReactors("update");
-        Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, '/home');
+        Cookie.save("name", name)
+        .then((_) => Cookie.save("current_machine", "$id"))
+        .then((_) => Cookie.clearReactors("update"))
+        .then((_) => Navigator.pop(context))
+        .then((_) => Navigator.pushReplacementNamed(context, '/home'));
       }
     );
   }

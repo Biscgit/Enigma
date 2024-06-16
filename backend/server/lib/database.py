@@ -442,7 +442,7 @@ class Database:
                 """
                 SELECT id
                 FROM rotors
-                WHERE username = $1 AND machine_type = $2 AND machine_id = 0
+                WHERE username = $1 AND machine_type = $2 AND machine_id = 0 AND number = 0
                 ORDER by id
                 """,
                 username,
