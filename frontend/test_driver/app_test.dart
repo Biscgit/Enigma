@@ -250,10 +250,8 @@ void main() {
         final combo = '$randomLetter → O';
         keyPairs.insert(0, combo);
         await driver?.waitFor(find.text(combo));
-        print("inserted combo $i");
       }
 
-      print("check history");
       await driver?.scrollUntilVisible(
         find.byValueKey("keyHistoryList"),
         find.text(keyPairs[139]),
