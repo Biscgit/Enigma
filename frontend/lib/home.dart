@@ -87,29 +87,31 @@ class HomePageState extends State<HomePage> {
         children: [
           rotorWidget,
           Expanded(
-            child: Stack(
-              children: [
-                Column(
-                  children: <Widget>[
+              child: Stack(
+            children: [
+              Column(
+                children: <Widget>[
                   Expanded(
-                      child: MainScreen(
+                    child: MainScreen(
                       keyHistory: keyHistory,
-                      ),
+                    ),
                   ),
                   (selectedItem == 'Enigma M3'
                       ? const enigma3_stk_brt.CustomKeyboard()
                       : const enigma1_stk_brt.CustomKeyboard()),
-                  ],
-                ),
-              ],
-            )
-          ),
+                ],
+              ),
+            ],
+          )),
           Container(
             width: 180,
-            height: 300,
-            margin: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
+            margin: const EdgeInsets.only(
+              right: 12,
+              top: 12,
+              bottom: 12,
+            ),
             decoration: BoxDecoration(
-              color: Colors.black12,
+              color: Colors.white.withAlpha(16),
               borderRadius: BorderRadius.circular(10),
             ),
             child: keyHistory,
