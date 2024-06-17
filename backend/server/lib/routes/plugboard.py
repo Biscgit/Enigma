@@ -128,3 +128,15 @@ async def enable_disable_plugboard(
         logging.error(f"Error setting plugboard: {type(e)} -> {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.get("/is_enabled")
+async def is_plugboard_enabled(
+        machine: int,
+        username: str = Depends(check_auth),
+        db: Database = Depends(get_database)
+) -> bool:
+    try:
+        return await db.is_plugboard_enabled(username, machine)
+    except Exception as e:
+        logging.error(f"Error fetching plugboard enabled: {type(e)} -> {e}")
+        raise HTTPException(status_code=500, detail=str(e))
