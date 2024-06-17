@@ -138,20 +138,7 @@ class RotorWidgetState extends State<RotorWidget> {
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
   }
-/*
-  void _changeNotch(int change) async {
-    setState(() {
-      notch = (notch + change + 26) % 26;
-    });
-    var rotor =
-        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["letter_shift"] = String.fromCharCode(97 + notch);
-    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["id"] = id;
-    rotor["number"] = selectedRotor;
-    APICaller.post("update-rotor", body: rotor);
-  }
-*/
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -165,15 +152,19 @@ class RotorWidgetState extends State<RotorWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('Rotor ${widget.rotorNumber}',
-              style: const TextStyle(fontSize: 16)),
+            style: const TextStyle(fontSize: 16),
+          ),
           DropdownButton<int>(
             value: selectedRotor,
             items: List.generate(
-                numberRotors,
-                (index) => DropdownMenuItem(
-                      value: index + 1,
-                      child: Text('Rotor ${index + 1}'),
-                    )),
+              numberRotors,
+              (index) => DropdownMenuItem(
+                value: index + 1,
+                key:  ValueKey("DropDown.${widget.rotorNumber}"),
+                child: Text('Rotor ${index + 1}',
+                  key: ValueKey("Item.${widget.rotorNumber}.$selectedRotor"),
+                ),
+              )),
             onChanged: _changeRotorSetting,
           ),
           const SizedBox(height: 10),
@@ -184,12 +175,16 @@ class RotorWidgetState extends State<RotorWidget> {
               IconButton(
                 icon: const Icon(Icons.remove),
                 onPressed: () => _changeRotorPosition(-1),
+                key: ValueKey("Change.${widget.rotorNumber}.minus")
               ),
               Text(String.fromCharCode(65 + rotorPosition),
-                  style: const TextStyle(fontSize: 16)),
+                  style: const TextStyle(fontSize: 16),
+                key: ValueKey("RotorPosition.${widget.rotorNumber}"),
+              ),
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () => _changeRotorPosition(1),
+                key: ValueKey("Change.${widget.rotorNumber}.plus")
               ),
             ],
           ),
@@ -199,7 +194,8 @@ class RotorWidgetState extends State<RotorWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(notch.toUpperCase(),
-                  style: const TextStyle(fontSize: 16)),
+                style: const TextStyle(fontSize: 16),
+                key: ValueKey("Notch.${widget.rotorNumber}")),
             ],
           ),
         ],
