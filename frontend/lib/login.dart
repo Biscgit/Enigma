@@ -104,6 +104,15 @@ class LoginPage extends StatelessWidget {
       }
     });
 
+    final buttonStyle = ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Enigma Login'),
@@ -144,26 +153,18 @@ class LoginPage extends StatelessWidget {
                     ElevatedButton(
                       key: const ValueKey('Login'),
                       onPressed: () async => await _login(context),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
+                      style: buttonStyle,
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: const Text('Login'),
                     ),
                     Container(width: 10),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
+                      style: buttonStyle,
                       onPressed: () async {
                         if (await _isAuthenticated()) {
                           if (!context.mounted) return;
