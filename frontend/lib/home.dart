@@ -39,6 +39,8 @@ class HomePageState extends State<HomePage> {
       keyHistoryKey: _keyHistoryKey,
     );
 
+    ScaffoldMessenger.of(context).clearSnackBars();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(selectedItem),
