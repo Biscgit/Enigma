@@ -266,58 +266,68 @@ class CustomKeyboardState extends State<CustomKeyboard> {
   Widget build(BuildContext context) {
     final switchW = toggleSwitch();
     return _isEnabled
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildKeyboardButton('Q'),
-                  _buildKeyboardButton('W'),
-                  _buildKeyboardButton('E'),
-                  _buildKeyboardButton('R'),
-                  _buildKeyboardButton('T'),
-                  _buildKeyboardButton('Z'),
-                  _buildKeyboardButton('U'),
-                  _buildKeyboardButton('I'),
-                  _buildKeyboardButton('O'),
-                ],
+        ? Container(
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              border: Border.all(
+                color: Colors.blue.withAlpha(25), // Specify border color
+                width: 4, // Specify border width
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildKeyboardButton('A'),
-                  _buildKeyboardButton('S'),
-                  _buildKeyboardButton('D'),
-                  _buildKeyboardButton('F'),
-                  _buildKeyboardButton('G'),
-                  _buildKeyboardButton('H'),
-                  _buildKeyboardButton('J'),
-                  _buildKeyboardButton('K'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildKeyboardButton('P'),
-                  _buildKeyboardButton('Y'),
-                  _buildKeyboardButton('X'),
-                  _buildKeyboardButton('C'),
-                  _buildKeyboardButton('V'),
-                  _buildKeyboardButton('B'),
-                  _buildKeyboardButton('N'),
-                  _buildKeyboardButton('M'),
-                  _buildKeyboardButton('L'),
-                ],
-              ),
-              const SizedBox(height: 6),
-              ElevatedButton(
-                onPressed: _resetKeyboard,
-                child: const Text('Reset'),
-              ),
-              const SizedBox(height: 3),
-              switchW,
-            ],
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _buildKeyboardButton('Q'),
+                    _buildKeyboardButton('W'),
+                    _buildKeyboardButton('E'),
+                    _buildKeyboardButton('R'),
+                    _buildKeyboardButton('T'),
+                    _buildKeyboardButton('Z'),
+                    _buildKeyboardButton('U'),
+                    _buildKeyboardButton('I'),
+                    _buildKeyboardButton('O'),
+                  ],
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _buildKeyboardButton('A'),
+                    _buildKeyboardButton('S'),
+                    _buildKeyboardButton('D'),
+                    _buildKeyboardButton('F'),
+                    _buildKeyboardButton('G'),
+                    _buildKeyboardButton('H'),
+                    _buildKeyboardButton('J'),
+                    _buildKeyboardButton('K'),
+                  ],
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _buildKeyboardButton('P'),
+                    _buildKeyboardButton('Y'),
+                    _buildKeyboardButton('X'),
+                    _buildKeyboardButton('C'),
+                    _buildKeyboardButton('V'),
+                    _buildKeyboardButton('B'),
+                    _buildKeyboardButton('N'),
+                    _buildKeyboardButton('M'),
+                    _buildKeyboardButton('L'),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                ElevatedButton(
+                  onPressed: _resetKeyboard,
+                  child: const Text('Reset'),
+                ),
+                const SizedBox(height: 3),
+                switchW,
+              ],
+            ),
           )
         : switchW;
   }
