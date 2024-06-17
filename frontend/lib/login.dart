@@ -8,38 +8,41 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key});
 
-  void _login(BuildContext context) async {
+  void _login(BuildContext context) {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    var response = await APICaller.post("login", body: {"username": username, "password": password, });
-    await Cookie.save("current_machine", "1");
-    await Cookie.save("name", "Enigma I");
 
-    if (response.statusCode == 200) {
-      final token = jsonDecode(response.body)["token"];
-      await Cookie.save('token', token);
-
-      Navigator.of(context).pushNamed('/home');
-      //Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            key: const ValueKey('failedLogin'),
-            title: const Text('Login failed'),
-            content: const Text('Invalid username or password'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
+    APICaller.post("login", body: { "username": username, "password": password })
+    .then((response) {
+      return Cookie.save("current_machine", "1")
+      .then((_) => Cookie.save("name", "Enigma I"))
+      .then((_) {
+        if (response.statusCode == 200) {
+          final token = json.decode(response.body)["token"];
+          return Cookie.save('token', token)
+              .then((_) => Navigator.of(context).pushNamed('/home'));
+        }
+        else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                key: const ValueKey('failedLogin'),
+                title: const Text('Login failed'),
+                content: const Text('Invalid username or password'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
           );
-        },
-      );
-    }
+        }
+      });
+    });
   }
 
   @override
