@@ -22,58 +22,56 @@ class TastaturState extends State<Tastatur> {
   Widget build(BuildContext context) {
     final history = widget.keyHistory;
 
-    return MaterialApp(
-      home: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
 
-                SquareButton(label: 'Q', keyHistory: history),
-                SquareButton(label: 'W', keyHistory: history),
-                SquareButton(label: 'E', keyHistory: history),
-                SquareButton(label: 'R', keyHistory: history),
-                SquareButton(label: 'T', keyHistory: history),
-                SquareButton(label: 'Z', keyHistory: history),
-                SquareButton(label: 'U', keyHistory: history),
-                SquareButton(label: 'I', keyHistory: history),
-                SquareButton(label: 'O', keyHistory: history),
-                SquareButton(label: 'P', keyHistory: history),
-              ],
-            ),
-            SizedBox(height: seizedBoxHeight),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SquareButton(label: 'A', keyHistory: history),
-                SquareButton(label: 'S', keyHistory: history),
-                SquareButton(label: 'D', keyHistory: history),
-                SquareButton(label: 'F', keyHistory: history),
-                SquareButton(label: 'G', keyHistory: history),
-                SquareButton(label: 'H', keyHistory: history),
-                SquareButton(label: 'J', keyHistory: history),
-                SquareButton(label: 'K', keyHistory: history),
-                SquareButton(label: 'L', keyHistory: history),
-              ],
-            ),
-            SizedBox(height: seizedBoxHeight),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SquareButton(label: 'Y', keyHistory: history),
-                SquareButton(label: 'X', keyHistory: history),
-                SquareButton(label: 'C', keyHistory: history),
-                SquareButton(label: 'V', keyHistory: history),
-                SquareButton(label: 'B', keyHistory: history),
-                SquareButton(label: 'N', keyHistory: history),
-                SquareButton(label: 'M', keyHistory: history)
-              ],
-            ),
-          ],
-        ),
+              SquareButton(label: 'Q', keyHistory: history),
+              SquareButton(label: 'W', keyHistory: history),
+              SquareButton(label: 'E', keyHistory: history),
+              SquareButton(label: 'R', keyHistory: history),
+              SquareButton(label: 'T', keyHistory: history),
+              SquareButton(label: 'Z', keyHistory: history),
+              SquareButton(label: 'U', keyHistory: history),
+              SquareButton(label: 'I', keyHistory: history),
+              SquareButton(label: 'O', keyHistory: history),
+              SquareButton(label: 'P', keyHistory: history),
+            ],
+          ),
+          SizedBox(height: seizedBoxHeight),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SquareButton(label: 'A', keyHistory: history),
+              SquareButton(label: 'S', keyHistory: history),
+              SquareButton(label: 'D', keyHistory: history),
+              SquareButton(label: 'F', keyHistory: history),
+              SquareButton(label: 'G', keyHistory: history),
+              SquareButton(label: 'H', keyHistory: history),
+              SquareButton(label: 'J', keyHistory: history),
+              SquareButton(label: 'K', keyHistory: history),
+              SquareButton(label: 'L', keyHistory: history),
+            ],
+          ),
+          SizedBox(height: seizedBoxHeight),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SquareButton(label: 'Y', keyHistory: history),
+              SquareButton(label: 'X', keyHistory: history),
+              SquareButton(label: 'C', keyHistory: history),
+              SquareButton(label: 'V', keyHistory: history),
+              SquareButton(label: 'B', keyHistory: history),
+              SquareButton(label: 'N', keyHistory: history),
+              SquareButton(label: 'M', keyHistory: history)
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -81,14 +79,24 @@ class TastaturState extends State<Tastatur> {
 
 class SquareButton extends StatelessWidget {
   final double size = 50;
-  final Color color = Colors.black;
+  final Color colorLightMode = Colors.black;
+  final Color colorDarkMode = Colors.grey.shade600;
   final String label;
   final KeyHistoryList keyHistory;
 
-  SquareButton({super.key, 
+  SquareButton({
+    super.key,
     required this.label,
     required this.keyHistory,
   });
+
+  Color? returnColor(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.light) {
+      return colorLightMode;
+    } else {
+      return colorDarkMode;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +111,22 @@ class SquareButton extends StatelessWidget {
           keyHistory.addKey(letter, encryptedLetter);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: color, // background color lol
+          backgroundColor: returnColor(context), // background color lol
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // rounded corners
           ),
         ),
-        child: Text(label),
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
       ),
     );
   }
+}
 
 // This can be used for manual debugging kind of; shows an alertDialog whenever a button is pressed; shows error or correct functionality
 /*@override
@@ -167,4 +182,3 @@ class SquareButton extends StatelessWidget {
       ),
     );
   }*/
-}

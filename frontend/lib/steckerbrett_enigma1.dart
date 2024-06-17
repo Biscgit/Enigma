@@ -1,5 +1,3 @@
-import 'dart:collection';
-import 'dart:convert';
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -18,10 +16,10 @@ class CustomKeyboard extends StatefulWidget {
   const CustomKeyboard({super.key});
 
   @override
-  CustomKeyboardState createState() => CustomKeyboardState();
+  _CustomKeyboardState createState() => _CustomKeyboardState();
 }
 
-class CustomKeyboardState extends State<CustomKeyboard> {
+class _CustomKeyboardState extends State<CustomKeyboard> {
   String _inputText = '';
   bool _isEnabled = true;
 
@@ -198,8 +196,8 @@ class CustomKeyboardState extends State<CustomKeyboard> {
 
       // Lösche die aktuellen Farben
       _letterColorMap.clear();
-      _inputText = '';
 
+      _inputText = '';
       _isButtonSelected = List.generate(26, (_) => false);
       _selectedCount = 0;
     });
@@ -218,7 +216,7 @@ class CustomKeyboardState extends State<CustomKeyboard> {
   Widget _buildKeyboardButton(String value) {
     final isSelected = _isButtonSelected[value.codeUnitAt(0) - 65];
     final letterColor = _letterColorMap[value] ??
-        const Color.fromARGB(255, 134, 182, 136); // Standardfarbe
+        const Color.fromRGBO(134, 182, 136, 0.5); // Standardfarbe
 
     return ElevatedButton(
       onPressed: () {
@@ -231,14 +229,14 @@ class CustomKeyboardState extends State<CustomKeyboard> {
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
-        backgroundColor: isSelected
-            ? letterColor
-            : const Color.fromARGB(255, 34, 34, 34).withOpacity(0.1),
+        backgroundColor: isSelected ? letterColor : Colors.white10,
       ),
       child: Text(
         value,
         style: const TextStyle(
-            color: Color.fromARGB(247, 255, 255, 255), fontSize: 18),
+          color: Color.fromARGB(247, 255, 255, 255),
+          fontSize: 18,
+        ),
       ),
     );
   }
@@ -322,7 +320,12 @@ class CustomKeyboardState extends State<CustomKeyboard> {
                 const SizedBox(height: 6),
                 ElevatedButton(
                   onPressed: _resetKeyboard,
-                  child: const Text('Reset'),
+                  child: const Text(
+                    'Reset',
+                    style: TextStyle(
+                      color: Color.fromARGB(247, 255, 255, 255),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 3),
                 switchW,
