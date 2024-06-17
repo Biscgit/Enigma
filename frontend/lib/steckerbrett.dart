@@ -211,7 +211,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
   Widget _buildKeyboardButton(String value) {
     final isSelected = _isButtonSelected[value.codeUnitAt(0) - 65];
     final letterColor = _letterColorMap[value] ??
-        const Color.fromARGB(255, 134, 182, 136); // Standardfarbe
+        const Color.fromRGBO(134, 182, 136, 0.5); // Standardfarbe
 
     return ElevatedButton(
       onPressed: () {
@@ -226,7 +226,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
         shape: const CircleBorder(),
         backgroundColor: isSelected
             ? letterColor
-            : const Color.fromARGB(255, 34, 34, 34).withOpacity(0.1),
+            : const Color.fromARGB(255, 34, 34, 34),
       ),
       child: Text(
         value,
@@ -270,6 +270,7 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
     final switchW = toggleSwitch();
     return _isEnabled
         ? Container(
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               color: Colors.white10,
               border: Border.all(
@@ -363,38 +364,49 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
       activeColor: Colors.blue,
     );
     return _isEnabled
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (int i = 0; i < 10; i++)
-                    _buildKeyboardButton(String.fromCharCode(65 + i)),
-                ],
+        ? Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              border: Border.all(
+                color: Colors.blue.withAlpha(25), // Specify border color
+                width: 4, // Specify border width
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (int i = 10; i < 18; i++)
-                    _buildKeyboardButton(String.fromCharCode(65 + i)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (int i = 18; i < 26; i++)
-                    _buildKeyboardButton(String.fromCharCode(65 + i)),
-                ],
-              ),
-              const SizedBox(height: 6),
-              ElevatedButton(
-                onPressed: _resetKeyboard,
-                child: const Text('Reset'),
-              ),
-              const SizedBox(height: 3),
-              switchW,
-            ],
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (int i = 0; i < 10; i++)
+                      _buildKeyboardButton(String.fromCharCode(65 + i)),
+                  ],
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (int i = 10; i < 18; i++)
+                      _buildKeyboardButton(String.fromCharCode(65 + i)),
+                  ],
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (int i = 18; i < 26; i++)
+                      _buildKeyboardButton(String.fromCharCode(65 + i)),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                ElevatedButton(
+                  onPressed: _resetKeyboard,
+                  child: const Text('Reset'),
+                ),
+                const SizedBox(height: 3),
+                switchW,
+              ],
+            ),
           )
         : switchW;
   }

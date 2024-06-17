@@ -1,3 +1,5 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -16,10 +18,10 @@ class CustomKeyboard extends StatefulWidget {
   const CustomKeyboard({super.key});
 
   @override
-  _CustomKeyboardState createState() => _CustomKeyboardState();
+  CustomKeyboardState createState() => CustomKeyboardState();
 }
 
-class _CustomKeyboardState extends State<CustomKeyboard> {
+class CustomKeyboardState extends State<CustomKeyboard> {
   String _inputText = '';
   bool _isEnabled = true;
 
