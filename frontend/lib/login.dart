@@ -8,6 +8,39 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key});
 
+    // bool hasShowed = false;
+  Future<bool> _checkServerOn() async {
+    // check server accessible
+    try {
+      final response = await APICaller.get("ping");
+      return (response.statusCode == 200 && jsonDecode(response.body) == "OK");
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> _isAuthenticated() async {
+    final response = await APICaller.get("is_authenticated");
+    return (response.statusCode == 200 && jsonDecode(response.body) == true);
+  }
+
+  void _showSnackbar(BuildContext context, String message, Color color) {
+    //if (!hasShowed) {
+    // hasShowed = true;
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        showCloseIcon: true,
+        duration: const Duration(days: 1),
+      ),
+    );
+    // }
+  }
+
+
+
   void _login(BuildContext context) {
     String username = _usernameController.text;
     String password = _passwordController.text;
@@ -51,6 +84,34 @@ class LoginPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double loginWidth = screenHeight * 0.6;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final isOnline = await _checkServerOn();
+      if (!context.mounted) return;
+
+      if (isOnline) {
+        _showSnackbar(
+          context,
+          'Backend online!',
+          Colors.green,
+        );
+      } else {
+        _showSnackbar(
+          context,
+          'Backend cannot be reached, check your connection, docker or network!',
+          Colors.red,
+        );
+      }
+    });
+
+    final buttonStyle = ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Enigma Login'),
@@ -85,19 +146,40 @@ class LoginPage extends StatelessWidget {
                   onSubmitted: (value) => _login(context),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  key: const ValueKey('Login'),
-                  onPressed: () => _login(context),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Theme.of(context).primaryColor,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      key: const ValueKey('Login'),
+                      onPressed: () async => await _login(context),
+                      style: buttonStyle,
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: const Text('Login'),
+                    Container(width: 10),
+                    ElevatedButton(
+                      style: buttonStyle,
+                      onPressed: () async {
+                        if (await _isAuthenticated()) {
+                          if (!context.mounted) return;
+                          Navigator.pushReplacementNamed(context, '/home');
+                        } else {
+                          if (!context.mounted) return;
+                          _showSnackbar(
+                            context,
+                            "No authenticated sessions found! Please login again",
+                            Colors.deepOrange,
+                          );
+                        }
+                      },
+                      child: const Text('Continue session'),
+                    ),
+                  ],
                 ),
               ],
             ),

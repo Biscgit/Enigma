@@ -30,6 +30,11 @@ def check_auth(authorization: str = Security(api_key_header)) -> str:
     raise HTTPException(status_code=401, detail="Invalid token!")
 
 
+@router.get("/is_authenticated")
+async def check_authenticated(_: str = Depends(check_auth)) -> bool:
+    return True
+
+
 @router.post("/login")
 async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_database)) -> dict[str, str]:
     """Endpoint for login. Returns an 256-bit token"""

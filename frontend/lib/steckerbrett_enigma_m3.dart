@@ -1,3 +1,5 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -8,7 +10,7 @@ import 'dart:math';
 // ABC-Layout für die Enigma M3
 // 2 Buchstaben haben jeweils eine Farbe
 // Begrenzung auf 20 Paare + inklusive Fehler-Meldung
-// Fehler-Meldung, dass eine Verknüfung gewählt werden muss
+// Fehler-Meldung, dass eine Verknüpfung gewählt werden muss
 // Aufhebung der gewählten Buchstaben durch Backspace-Taste (noch optional)
 // Reset-Button für Werkseinstellungen
 
@@ -22,6 +24,8 @@ class CustomKeyboard extends StatefulWidget {
 class CustomKeyboardState extends State<CustomKeyboard> {
   String machineId = "1";
   String _inputText = '';
+  bool _isEnabled = true;
+
   List<bool> _isButtonSelected = List.generate(26, (_) => false);
   int _selectedCount = 0;
   final List<Color> _availableColors = [
@@ -37,12 +41,6 @@ class CustomKeyboardState extends State<CustomKeyboard> {
     Colors.brown,
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _initialize();
-  }
-
   void _initialize() async {
     machineId = await Cookie.read("current_machine");
     setState(() {});
@@ -50,6 +48,45 @@ class CustomKeyboardState extends State<CustomKeyboard> {
 
   // Dictionary, um Buchstabenpaare und ihre Farben zu speichern
   final Map<String, Color> _letterColorMap = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+
+    Future.delayed(Duration.zero, () async {
+      final result = await APICaller.get("plugboard/load", {
+        "machine": machineId,
+      });
+      assert(result.statusCode == 200);
+      final plugs = jsonDecode(result.body)["plugboard"];
+
+      _selectedCount = plugs.length;
+      setState(() {
+        for (var plug in plugs) {
+          final availableColors = _availableColors
+              .where((color) => !_letterColorMap.containsValue(color))
+              .toList();
+          final randomColor =
+              availableColors[Random().nextInt(availableColors.length)];
+
+          // make plugs uppercase for frontend
+          plug[0] = plug[0].toString().toUpperCase();
+          plug[1] = plug[1].toString().toUpperCase();
+
+          final charIndex1 = plug[0].codeUnitAt(0) - 65;
+          _letterColorMap[plug[0]] = randomColor;
+          _isButtonSelected[charIndex1] = true;
+          _inputText += plug[0];
+
+          final charIndex2 = plug[1].codeUnitAt(0) - 65;
+          _letterColorMap[plug[1]] = randomColor;
+          _isButtonSelected[charIndex2] = true;
+          _inputText += plug[1];
+        }
+      });
+    });
+  }
 
   void _onKeyPressed(String value) {
     if (_selectedCount < 20) {
@@ -76,8 +113,8 @@ class CustomKeyboardState extends State<CustomKeyboard> {
               "plugboard/save",
               query: {
                 "machine": machineId,
-                "plug_a": value,
-                "plug_b": _inputText[_inputText.length - 2],
+                "plug_a": value.toLowerCase(),
+                "plug_b": _inputText[_inputText.length - 2].toLowerCase(),
               },
             );
           } else {
@@ -118,8 +155,8 @@ class CustomKeyboardState extends State<CustomKeyboard> {
         if (keys.length % 2 == 0) {
           APICaller.delete("plugboard/remove", query: {
             "machine": machineId,
-            "plug_a": keys[0],
-            "plug_b": keys[1],
+            "plug_a": keys[0].toLowerCase(),
+            "plug_b": keys[1].toLowerCase(),
           });
         }
 
@@ -136,29 +173,40 @@ class CustomKeyboardState extends State<CustomKeyboard> {
     });
   }
 
-  void _resetKeyboard() {
+  Future<void> _resetKeyboard() async {
+    List<String> allKeys = [];
+
+    // remove all from DB
+    final clonedColors = HashMap.from(_letterColorMap);
+    while (clonedColors.isNotEmpty) {
+      final color = clonedColors[clonedColors.keys.first];
+      List keys =
+          clonedColors.keys.where((key) => clonedColors[key] == color).toList();
+
+      // need to do sequentially for backend
+      final response = await APICaller.delete("plugboard/remove", query: {
+        "machine": machineId,
+        "plug_a": keys[0],
+        "plug_b": keys[1],
+      });
+      assert(response.statusCode == 200);
+
+      for (String key in keys) {
+        allKeys.add(key);
+        clonedColors.remove(key);
+      }
+    }
+
     setState(() {
-      // remove all from DB
-      while (_letterColorMap.isNotEmpty) {
-        final color = _letterColorMap[_letterColorMap.keys.first];
-        List<String> keys = _letterColorMap.keys
-            .where((key) => _letterColorMap[key] == color)
-            .toList();
-
-        APICaller.delete("plugboard/remove", query: {
-          "machine": machineId,
-          "plug_a": keys[0],
-          "plug_b": keys[1],
-        });
-
-        _letterColorMap.remove(keys[0]);
-        _letterColorMap.remove(keys[1]);
+      // delete all keys
+      for (var key in allKeys) {
+        _letterColorMap.remove(key);
       }
 
       // Lösche die aktuellen Farben
       _letterColorMap.clear();
-
       _inputText = '';
+
       _isButtonSelected = List.generate(26, (_) => false);
       _selectedCount = 0;
     });
@@ -174,7 +222,7 @@ class CustomKeyboardState extends State<CustomKeyboard> {
     );
   }
 
-  Widget _buildKeyboardButton(String value, int index) {
+  Widget _buildKeyboardButton(String value) {
     final isSelected = _isButtonSelected[value.codeUnitAt(0) - 65];
     final letterColor = _letterColorMap[value] ??
         const Color.fromARGB(255, 134, 182, 136); // Standardfarbe
@@ -190,65 +238,89 @@ class CustomKeyboardState extends State<CustomKeyboard> {
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
-        //backgroundColor: buttonColor,
         backgroundColor: isSelected
             ? letterColor
             : const Color.fromARGB(255, 34, 34, 34).withOpacity(0.1),
       ),
       child: Text(
         value,
-        style: const TextStyle(color: Colors.white, fontSize: 18),
+        style: const TextStyle(
+            color: Color.fromARGB(247, 255, 255, 255), fontSize: 18),
       ),
     );
   }
 
+  Widget toggleSwitch() {
+    return Switch(
+      value: _isEnabled,
+      onChanged: (value) async {
+        final response = await APICaller.post("plugboard/enable", query: {
+          "machine": "1",
+          "enabled": "$value",
+        });
+        assert(response.statusCode == 200);
+
+        setState(() {
+          _isEnabled = value;
+        });
+      },
+      activeColor: Colors.blue,
+    );
+  }
+
+
   // Tastatur im ABC-Layout
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Text(
-          _inputText,
-          style: const TextStyle(fontSize: 20.0),
-        ),
-        const SizedBox(height: 20.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < 10; i++)
-              _buildKeyboardButton(String.fromCharCode(65 + i), i),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 10; i < 18; i++)
-              _buildKeyboardButton(String.fromCharCode(65 + i), i),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 18; i < 26; i++)
-              _buildKeyboardButton(String.fromCharCode(65 + i), i),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //IconButton(
-            //  padding: EdgeInsets.all(0),
-            //  icon: Icon(Icons.backspace),
-            //  onPressed: _onDeletePressed,
-            //),
-            ElevatedButton(
-              onPressed: _resetKeyboard,
-              child: const Text('Reset'),
-            ),
-          ],
-        ),
-      ],
+    final switchW = Switch(
+      value: _isEnabled,
+      onChanged: (value) async {
+        final response = await APICaller.post("plugboard/enable", query: {
+          "machine": "1",
+          "enabled": "$value",
+        });
+        assert(response.statusCode == 200);
+
+        setState(() {
+          _isEnabled = value;
+        });
+      },
+      activeColor: Colors.blue,
     );
+    return _isEnabled
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < 10; i++)
+                    _buildKeyboardButton(String.fromCharCode(65 + i)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 10; i < 18; i++)
+                    _buildKeyboardButton(String.fromCharCode(65 + i)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 18; i < 26; i++)
+                    _buildKeyboardButton(String.fromCharCode(65 + i)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              ElevatedButton(
+                onPressed: _resetKeyboard,
+                child: const Text('Reset'),
+              ),
+              const SizedBox(height: 3),
+              switchW,
+            ],
+          )
+        : switchW;
   }
 }

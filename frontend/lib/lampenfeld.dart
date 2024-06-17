@@ -22,7 +22,7 @@ class Lampfield extends StatefulWidget {
 
 class LampfieldState extends State<Lampfield> {
   int counter = 0;
-  final double seizedBoxHeight = 0;
+  final double seizedBoxHeight = 5;
   final List<GlobalKey<CircularTextBoxState>> listOfGlobalKeys =
       List.generate(26, (index) => GlobalKey<CircularTextBoxState>());
 
@@ -143,8 +143,8 @@ class CircularTextBox extends StatefulWidget {
   final Color highlightedColor;
   final double fontSize;
   final double diameter;
-  final Color defaultColorBoxLightmode;
-  final Color defaultColorBoxDarkmode;
+  final Color defaultColorBoxLightMode;
+  final Color defaultColorBoxDarkMode;
   final BuildContext context;
 
   const CircularTextBox({
@@ -155,8 +155,8 @@ class CircularTextBox extends StatefulWidget {
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
     //this.defaultColorBox = Colors.black12,
-    this.defaultColorBoxLightmode = Colors.black12,
-    this.defaultColorBoxDarkmode  = Colors.white,
+    this.defaultColorBoxLightMode = Colors.black12,
+    this.defaultColorBoxDarkMode  = Colors.white70,
     this.diameter = 45,
   });
 
@@ -175,12 +175,20 @@ class CircularTextBoxState extends State<CircularTextBox> {
     super.initState();
     text = widget.text;
     //colorBox == widget.defaultColorBox;
-    if(Theme.of(widget.context).brightness == Brightness.light) {
-      colorBox = widget.defaultColorBoxLightmode;
-    }
-    else {
-      colorBox = widget.defaultColorBoxDarkmode;
-    }
+    // if (text == "O") {
+    //   //For testing; remove once backend communicates to frontend
+    //   colorBox = widget.highlightedColor;
+    //   highlighted = 1;
+    // } else {
+    //     if(Theme.of(widget.context).brightness == Brightness.light) {
+    //       colorBox = widget.defaultColorBoxLightMode;
+    //     }
+    //     else {
+    //       colorBox = widget.defaultColorBoxDarkMode;
+    //     }
+    // }
+
+    colorBox = widget.defaultColorBoxDarkMode;
   }
 
   void changeColor(bool color) {
@@ -190,10 +198,10 @@ class CircularTextBoxState extends State<CircularTextBox> {
         highlighted = 1;
       } else {
         if(Theme.of(widget.context).brightness == Brightness.light) {
-          colorBox = widget.defaultColorBoxLightmode;
+          colorBox = widget.defaultColorBoxLightMode;
         }
         else {
-          colorBox = widget.defaultColorBoxDarkmode;
+          colorBox = widget.defaultColorBoxDarkMode;
         }
         highlighted = 0;
       }
@@ -218,7 +226,8 @@ class CircularTextBoxState extends State<CircularTextBox> {
             color: widget.colorText,
             fontSize: widget.fontSize,
             fontWeight: FontWeight.bold,
-            fontFamily: "Wallau"),
+            fontFamily: "Wallau",
+        ),
       ),
     );
   }

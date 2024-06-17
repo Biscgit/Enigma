@@ -3,8 +3,7 @@ import 'package:enigma/rotors.dart';
 import 'package:enigma/tastatur_and_lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
-import 'package:enigma/steckerbrett_enigma1.dart' as enigma1_stk_brt;
-import 'package:enigma/steckerbrett_enigma_m3.dart' as enigma3_stk_brt;
+import 'package:enigma/steckerbrett.dart';
 import 'package:enigma/keyhistory.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,7 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  String _selectedItem = "Enigma I";
+  String _selectedItem = 'Enigma I';
   final GlobalKey<KeyHistoryState> _keyHistoryKey =
       GlobalKey<KeyHistoryState>();
 
@@ -33,8 +32,10 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> _logout(BuildContext context) async {
-    var _ = await APICaller.delete("logout");
+    await APICaller.delete("logout");
     await Cookie.delete('token');
+
+    if (!context.mounted) return;
     Navigator.pushReplacementNamed(context, '/login');
   }
 
@@ -46,6 +47,8 @@ class HomePageState extends State<HomePage> {
     );
     const rotorWidget = RotorPage(numberRotors: 3);
 
+    ScaffoldMessenger.of(context).clearSnackBars();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(selectedItem),
@@ -56,6 +59,8 @@ class HomePageState extends State<HomePage> {
             key: const ValueKey('logoutButton'),
             onPressed: () async {
               await _logout(context);
+              if (!context.mounted) return;
+
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -70,7 +75,13 @@ class HomePageState extends State<HomePage> {
                           Navigator.of(dialogContext).pop();
                           // Navigator.pushReplacementNamed(context, '/login');
                         },
-                        child: const Text('OK'),
+                        child: const Text(
+                          'OK',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   );
@@ -97,8 +108,8 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                   (selectedItem == 'Enigma M3'
-                      ? const enigma3_stk_brt.CustomKeyboard()
-                      : const enigma1_stk_brt.CustomKeyboard()),
+                      ? const SteckbrettEnigma3()
+                      : const SteckbrettEnigma1()),
                 ],
               ),
             ],

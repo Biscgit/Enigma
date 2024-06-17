@@ -12,7 +12,8 @@ COPY . .
 RUN flutter build web --release
 
 # serve site with nginx
-FROM nginx:stable-alpine-slim
+FROM nginx:mainline-alpine-slim
+RUN apk update && apk upgrade
 
 # copy files
 WORKDIR /home/webserver

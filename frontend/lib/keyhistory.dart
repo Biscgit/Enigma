@@ -20,21 +20,32 @@ class KeyHistoryList extends StatefulWidget {
 
 class KeyHistoryState extends State<KeyHistoryList> {
   static const maxKeys = 140;
+  final List<MapEntry<String, String>> _keyHistory = [];
 
-  final List<MapEntry<String, String>> _keyHistory =
-      <MapEntry<String, String>>[];
+  @override
+  void initState() {
+    super.initState();
+    // ToDo: Set machineId to the correct value
+    loadKeyHistory("1");
+  }
 
-  void loadKeyHistory(String machineId, String token) async {
+  void loadKeyHistory(String machineId) async {
     /// Loads pressed keys from server
-    final response = await APICaller.get("keyhistory/load", {"machine": machineId});
+    final response = await APICaller.get("load_key_history", {
+      "machine": machineId,
+    });
 
     if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> keyHistory =
-          List<Map<String, dynamic>>.from(jsonDecode(response.body));
+      final keyHistory = jsonDecode(response.body);
+
       setState(() {
         _keyHistory.clear();
-        _keyHistory.addAll(keyHistory.map((item) =>
-            MapEntry(item['clear'] as String, item['encrypted'] as String)));
+        keyHistory.forEach((item) {
+          _keyHistory.add(MapEntry(
+            item[0].toString().toUpperCase(),
+            item[1].toString().toUpperCase(),
+          ));
+        });
       });
     }
   }

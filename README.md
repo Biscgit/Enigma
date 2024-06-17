@@ -35,3 +35,4 @@ go to `/backend` directory
 - **Stop** Compose: `docker compose down`
 - **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!
   **)
+- **Restart** clean: `docker compose -f docker-compose.local.yml down --rmi all --volumes && docker compose -f docker-compose.local.yml up --build -d`

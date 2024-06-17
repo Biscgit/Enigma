@@ -113,3 +113,30 @@ async def delete_plugboard_pair(
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"message": "Plugboard reset successfully"}  # Return a ResetPlugboardResponse instance
+
+
+@router.post("/enable")
+async def enable_disable_plugboard(
+        machine: int,
+        enabled: bool,
+        username: str = Depends(check_auth),
+        db: Database = Depends(get_database)
+):
+    try:
+        await db.set_plugboard_enabled(username, machine, enabled)
+    except Exception as e:
+        logging.error(f"Error setting plugboard: {type(e)} -> {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/is_enabled")
+async def is_plugboard_enabled(
+        machine: int,
+        username: str = Depends(check_auth),
+        db: Database = Depends(get_database)
+) -> bool:
+    try:
+        return await db.is_plugboard_enabled(username, machine)
+    except Exception as e:
+        logging.error(f"Error fetching plugboard enabled: {type(e)} -> {e}")
+        raise HTTPException(status_code=500, detail=str(e))

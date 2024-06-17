@@ -18,7 +18,6 @@ from .rotor import Rotor
 
 class Database:
     """Database interface"""
-
     char_max = 140
     instance: "Database" = None
 
@@ -401,8 +400,7 @@ class Database:
                 FROM machines
                 WHERE username = $1 AND id = $2
                 """,
-                username,
-                machine,
+                username, machine,
             )
 
             logging.info(f"Fetched plugboard for {username}.{machine}: {str(result)}")
@@ -412,6 +410,37 @@ class Database:
         """counts the number of currently set plugboards"""
         boards = await self.get_plugboards(username, machine)
         return len(boards)
+
+    async def set_plugboard_enabled(self, username: str, machine: int, enabled: bool) -> None:
+        """toggles the plugboards state"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            await conn.execute(
+                """
+                UPDATE machines
+                SET plugboard_enabled = $3
+                WHERE username = $1 AND id = $2
+                """,
+                username, machine, enabled
+            )
+            logging.info(f"Plugboard toggled for {username}.{machine}: {enabled}")
+
+    async def is_plugboard_enabled(self, username: str, machine: int) -> bool:
+        """returns weather the plugboard is enabled"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                Select plugboard_enabled
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username, machine,
+            )
+            logging.info(f"Plugboard enabled for {username}.{machine}: {result}")
+            return bool(result)
 
     async def get_reflector(self, username: str, machine: int) -> list:
         """returns return rotor configurations for a machine"""
@@ -430,6 +459,7 @@ class Database:
 
             logging.debug(f"Fetched reflector for {username}.{machine}: {str(result)}")
             return result
+
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
