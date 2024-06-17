@@ -9,7 +9,8 @@ class LoginPage extends StatelessWidget {
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool hasShowed = false;
+
+  // bool hasShowed = false;
 
   LoginPage({super.key});
 
@@ -24,18 +25,18 @@ class LoginPage extends StatelessWidget {
   }
 
   void _showSnackbar(BuildContext context, String message, Color color) {
-    if (!hasShowed) {
-      hasShowed = true;
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: color,
-          showCloseIcon: true,
-          duration: const Duration(days: 1),
-        ),
-      );
-    }
+    //if (!hasShowed) {
+    // hasShowed = true;
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        showCloseIcon: true,
+        duration: const Duration(days: 1),
+      ),
+    );
+    // }
   }
 
   Future<void> _login(BuildContext context) async {
