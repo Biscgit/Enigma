@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:enigma/tastatur_and_lampenfeld.dart';
 import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
-import 'package:enigma/steckerbrett_enigma1.dart' as enigma1_stk_brt;
-import 'package:enigma/steckerbrett_enigmaM3.dart' as enigma3_stk_brt;
+import 'package:enigma/steckerbrett.dart';
 import 'package:enigma/keyhistory.dart';
 
 class HomePage extends StatefulWidget {
@@ -89,8 +88,8 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
               _selectedItem == 'Enigma M3'
-                  ? const enigma3_stk_brt.CustomKeyboard()
-                  : const enigma1_stk_brt.CustomKeyboard(),
+                  ? const SteckbrettEnigma3()
+                  : const SteckbrettEnigma1(),
             ],
           ),
           Positioned(
