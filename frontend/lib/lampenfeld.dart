@@ -143,8 +143,8 @@ class CircularTextBox extends StatefulWidget {
   final Color highlightedColor;
   final double fontSize;
   final double diameter;
-  final Color defaultColorBox_lightmode;
-  final Color defaultColorBox_darkmode;
+  final Color defaultColorBoxLightmode;
+  final Color defaultColorBoxDarkmode;
   final BuildContext context;
 
   const CircularTextBox({
@@ -155,8 +155,8 @@ class CircularTextBox extends StatefulWidget {
     this.highlightedColor = Colors.yellow,
     this.fontSize = 25,
     //this.defaultColorBox = Colors.black12,
-    this.defaultColorBox_lightmode = Colors.black12,
-    this.defaultColorBox_darkmode  = Colors.white,
+    this.defaultColorBoxLightmode = Colors.black12,
+    this.defaultColorBoxDarkmode  = Colors.white,
     this.diameter = 45,
   });
 
@@ -176,10 +176,10 @@ class CircularTextBoxState extends State<CircularTextBox> {
     text = widget.text;
     //colorBox == widget.defaultColorBox;
     if(Theme.of(widget.context).brightness == Brightness.light) {
-      colorBox = widget.defaultColorBox_lightmode;
+      colorBox = widget.defaultColorBoxLightmode;
     }
     else {
-      colorBox = widget.defaultColorBox_darkmode;
+      colorBox = widget.defaultColorBoxDarkmode;
     }
   }
 
@@ -190,10 +190,10 @@ class CircularTextBoxState extends State<CircularTextBox> {
         highlighted = 1;
       } else {
         if(Theme.of(widget.context).brightness == Brightness.light) {
-          colorBox = widget.defaultColorBox_lightmode;
+          colorBox = widget.defaultColorBoxLightmode;
         }
         else {
-          colorBox = widget.defaultColorBox_darkmode;
+          colorBox = widget.defaultColorBoxDarkmode;
         }
         highlighted = 0;
       }

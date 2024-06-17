@@ -27,7 +27,7 @@ class RotorPage extends StatelessWidget {
       future: _initialize(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Row(
+          return const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [CircularProgressIndicator()],
           );

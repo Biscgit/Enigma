@@ -78,8 +78,6 @@ class APICaller {
         body: jsonEncode(body)
       );
     } catch (e) {
-      // Handle error
-      print('Error in POST request: $e');
       rethrow;
     }
   }
@@ -92,8 +90,6 @@ class APICaller {
         body: jsonEncode(body)
       );
     } catch (e) {
-      // Handle error
-      print('Error in POST request: $e');
       rethrow;
     }
   }
@@ -105,8 +101,6 @@ class APICaller {
         headers: await APICaller.getHeader()
       );
     } catch (e) {
-      // Handle error
-      print('Error in GET request: $e');
       rethrow;
     }
   }
@@ -119,8 +113,6 @@ class APICaller {
         body: jsonEncode(body)
       );
     } catch (e) {
-      // Handle error
-      print('Error in DELETE request: $e');
       rethrow;
     }
   }

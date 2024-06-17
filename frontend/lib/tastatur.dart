@@ -76,8 +76,8 @@ class TastaturState extends State<Tastatur> {
 
 class SquareButton extends StatelessWidget {
   final double size = 50;
-  final Color color_lightmode = Colors.black;
-  final Color color_darkmode = Colors.grey.shade600;
+  final Color colorLightmode = Colors.black;
+  final Color colorDarkmode = Colors.grey.shade600;
   final String label;
   final KeyHistoryList keyHistory;
 
@@ -88,10 +88,10 @@ class SquareButton extends StatelessWidget {
 
   Color? returnColor(BuildContext context) {
     if(Theme.of(context).brightness == Brightness.light) {
-      return color_lightmode;
+      return colorLightmode;
     }
     else {
-      return color_darkmode;
+      return colorDarkmode;
     }
   }
 

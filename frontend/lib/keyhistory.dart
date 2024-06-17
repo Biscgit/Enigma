@@ -11,7 +11,6 @@ class KeyHistoryList extends StatefulWidget {
   State<KeyHistoryList> createState() => KeyHistoryState();
 
   void addKey(String clear, String encrypted) {
-    print("Sending to history: $clear -> $encrypted");
     keyHistoryKey.currentState!.addKey(
       clear.toUpperCase(),
       encrypted.toUpperCase(),
