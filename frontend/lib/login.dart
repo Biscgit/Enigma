@@ -166,7 +166,7 @@ class LoginPage extends StatelessWidget {
                         } else {
                           _showSnackbar(
                             context,
-                            "No authenticated sessions found! Pleas login again",
+                            "No authenticated sessions found! Please login again",
                             Colors.deepOrange,
                           );
                         }
