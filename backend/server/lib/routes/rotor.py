@@ -102,7 +102,6 @@ async def add_rotor(
         rotor = await db_conn.switch_rotor(
             username,
             rotor.machine_id,
-            rotor.id,
             rotor.template_id,
             rotor.place,
             rotor.number,

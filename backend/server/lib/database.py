@@ -632,7 +632,6 @@ class Database:
         self,
         username: str,
         machine_id: int,
-        id: int,
         template_id: int,
         place: int,
         number: int,
