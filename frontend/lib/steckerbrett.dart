@@ -224,6 +224,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
+        foregroundColor: Colors.white,
         backgroundColor:
             isSelected ? letterColor : const Color.fromARGB(255, 34, 34, 34),
       ),
@@ -295,7 +296,7 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
             decoration: BoxDecoration(
               color: Colors.white10,
               border: Border.all(
-                color: Colors.blue.withAlpha(25), // Specify border color
+                color: Colors.white.withOpacity(0), // Specify border color
                 width: 4, // Specify border width
               ),
               borderRadius: BorderRadius.circular(10.0),
@@ -369,7 +370,7 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
             decoration: BoxDecoration(
               color: Colors.white10,
               border: Border.all(
-                color: Colors.blue.withAlpha(25), // Specify border color
+                color: Colors.white.withOpacity(0), // Specify border color
                 width: 4, // Specify border width
               ),
               borderRadius: BorderRadius.circular(10.0),
