@@ -663,7 +663,7 @@ class Database:
                         await self.update_rotor(current_rotor)
                     else:
                         now_rotor = rotor
-                        _ = await self.set_rotor(current_rotor)
+                        await self.set_rotor(current_rotor)
                     now_rotor["id"] = count
                     now_rotor["machine_id"] = machine_id
                     await self.update_rotor(now_rotor)
