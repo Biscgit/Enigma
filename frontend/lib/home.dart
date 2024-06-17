@@ -53,7 +53,7 @@ class HomePageState extends State<HomePage> {
             onPressed: () async {
               await _logout(context);
               if (!context.mounted) return;
-              
+
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -68,7 +68,13 @@ class HomePageState extends State<HomePage> {
                           Navigator.of(dialogContext).pop();
                           // Navigator.pushReplacementNamed(context, '/login');
                         },
-                        child: const Text('OK'),
+                        child: const Text(
+                          'OK',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   );
