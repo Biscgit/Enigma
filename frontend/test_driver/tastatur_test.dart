@@ -83,7 +83,7 @@ void main() async {
     });
 
     test('Check Flutter-driver health', () async {
-      Health? health = await driver?.checkHealth();
+     Health? health = await driver?.checkHealth();
       assert(health?.status == HealthStatus.ok);
     });
 
@@ -95,17 +95,17 @@ void main() async {
       // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)
       // Change the expectedResults once backend runs correctly!
 
-      await checkForKeyInput(driver, "H", "O"); //This is correct
-      await checkForKeyInput(driver, "E", "O"); //Change result to: L
-      await checkForKeyInput(driver, "L", "O"); //Change result to: B
-      await checkForKeyInput(driver, "L", "O"); //Change result to: D
-      await checkForKeyInput(driver, "O", "O"); //Change result to: A
+      await checkForKeyInput(driver, "H", "R"); //This is correct
+      await checkForKeyInput(driver, "E", "Q"); //Change result to: L
+      await checkForKeyInput(driver, "L", "B"); //Change result to: B
+      await checkForKeyInput(driver, "L", "D"); //Change result to: D
+      await checkForKeyInput(driver, "O", "R"); //Change result to: A
 
-      await checkForKeyInput(driver, "W", "O"); //Change result to: A
-      await checkForKeyInput(driver, "O", "O"); //Change result to: M
-      await checkForKeyInput(driver, "R", "O"); //Change result to: T
-      await checkForKeyInput(driver, "L", "O"); //Change result to: A
-      await checkForKeyInput(driver, "D", "O"); //Change result to: Z
+      await checkForKeyInput(driver, "W", "Z"); //Change result to: A
+      await checkForKeyInput(driver, "O", "J"); //Change result to: M
+      await checkForKeyInput(driver, "R", "G"); //Change result to: T
+      await checkForKeyInput(driver, "L", "X"); //Change result to: A
+      await checkForKeyInput(driver, "D", "A"); //Change result to: Z
       // print("Done!");
     });
 }
