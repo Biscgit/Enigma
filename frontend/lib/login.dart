@@ -10,10 +10,9 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // bool hasShowed = false;
-
   LoginPage({super.key});
 
+  // bool hasShowed = false;
   Future<bool> _checkServerOn() async {
     // check server accessible
     try {
@@ -57,8 +56,10 @@ class LoginPage extends StatelessWidget {
       final token = jsonDecode(response.body)["token"];
       await Cookie.save('token', token);
 
+      if (!context.mounted) return;
       Navigator.pushReplacementNamed(context, '/home');
     } else {
+      if (!context.mounted) return;
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -85,7 +86,10 @@ class LoginPage extends StatelessWidget {
     double loginWidth = screenHeight * 0.6;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (await _checkServerOn()) {
+      final isOnline = await _checkServerOn();
+      if (!context.mounted) return;
+
+      if (isOnline) {
         _showSnackbar(
           context,
           'Backend online!',
@@ -162,8 +166,10 @@ class LoginPage extends StatelessWidget {
                       ),
                       onPressed: () async {
                         if (await _isAuthenticated()) {
+                          if (!context.mounted) return;
                           Navigator.pushReplacementNamed(context, '/home');
                         } else {
+                          if (!context.mounted) return;
                           _showSnackbar(
                             context,
                             "No authenticated sessions found! Please login again",

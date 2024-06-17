@@ -28,6 +28,8 @@ class HomePageState extends State<HomePage> {
   Future<void> _logout(BuildContext context) async {
     var _ = await APICaller.delete("logout", query: {});
     await Cookie.delete('token');
+
+    if (!context.mounted) return;
     Navigator.pushReplacementNamed(context, '/login');
   }
 
@@ -50,6 +52,8 @@ class HomePageState extends State<HomePage> {
             key: const ValueKey('logoutButton'),
             onPressed: () async {
               await _logout(context);
+              if (!context.mounted) return;
+              
               showDialog(
                 context: context,
                 barrierDismissible: false,
