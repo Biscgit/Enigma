@@ -90,7 +90,6 @@ class Rotor:
         :param back: Direction flag; True for adding offset, False for subtracting.
         :return: The character with offset applied.
         """
-        print(char)
         value = (
             self.get_ord(char, False)
             + (self.rotor_position if add else -self.rotor_position)

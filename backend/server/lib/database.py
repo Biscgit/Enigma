@@ -221,7 +221,7 @@ class Database:
                     json.dumps(reflector),
                 )
 
-                logging.info(
+                logging.debug(
                     f"Created machine {username}.{machine_id} of type {machine_type}"
                 )
 
@@ -428,7 +428,7 @@ class Database:
                 machine,
             )
 
-            logging.info(f"Fetched reflector for {username}.{machine}: {str(result)}")
+            logging.debug(f"Fetched reflector for {username}.{machine}: {str(result)}")
             return result
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -449,7 +449,7 @@ class Database:
                 machine,
             )
 
-            logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
+            logging.debug(f"Fetched rotors for {username}.{machine}: {str(result)}")
             return [dict(pair) for pair in result or []]
 
     async def get_rotor_number(self, username: str, place: int, machine_id: int):
@@ -468,7 +468,7 @@ class Database:
                 machine_id,
             )
 
-            logging.info(
+            logging.debug(
                 f"Fetched rotornumber for {username}.{machine_id}: {str(result)}"
             )
             return dict(result[0]) if result else {"number": 1}
@@ -490,7 +490,7 @@ class Database:
                 machine,
             )
 
-            logging.info(f"Fetched rotors for {username}.{machine}: {str(results)}")
+            logging.debug(f"Fetched rotors for {username}.{machine}: {str(results)}")
             return [dict(record) for record in results if record is not None]
 
     async def get_rotor(self, username: str, rotor: int) -> dict:
@@ -507,7 +507,7 @@ class Database:
                 rotor,
             )
 
-            logging.info(f"Fetched rotor for {rotor}: {str(result)}")
+            logging.debug(f"Fetched rotor for {rotor}: {str(result)}")
             return dict(result) if result else None
 
     async def get_rotor_by_place(
@@ -526,7 +526,7 @@ class Database:
                 machine_id,
                 place,
             )
-            logging.info(
+            logging.debug(
                 f"Fetched rotor for {username}.{machine_id}.{place}: {str(result)}"
             )
             return dict(result) if result else None
@@ -550,7 +550,7 @@ class Database:
                 place,
             )
 
-            logging.info(f"Fetched rotor for {number}: {str(result)}")
+            logging.debug(f"Fetched rotor for {number}: {str(result)}")
             return dict(result) if result else None
 
     async def update_rotors(self, username: str, rotors: list) -> None:
@@ -594,7 +594,7 @@ class Database:
                     data["number"],
                     data["is_rotate"],
                 )
-        logging.info(f"Updated rotor for {data['username']} with {data}")
+        logging.debug(f"Updated rotor for {data['username']} with {data}")
 
     async def set_rotor(self, data: dict) -> int:
         async with self.pool.acquire() as conn:
@@ -625,7 +625,7 @@ class Database:
                         data["machine_id"],
                     ),
                 )
-            logging.info(f"Created rotor for {data['username']}: {str(result)}")
+            logging.debug(f"Created rotor for {data['username']}: {str(result)}")
             return result[0]
 
     async def switch_rotor(
