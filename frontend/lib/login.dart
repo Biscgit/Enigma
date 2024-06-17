@@ -24,6 +24,11 @@ class LoginPage extends StatelessWidget {
     }
   }
 
+  Future<bool> _isAuthenticated() async {
+    final response = await APICaller.get("is_authenticated");
+    return (response.statusCode == 200 && jsonDecode(response.body) == true);
+  }
+
   void _showSnackbar(BuildContext context, String message, Color color) {
     //if (!hasShowed) {
     // hasShowed = true;

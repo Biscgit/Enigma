@@ -29,6 +29,11 @@ def check_auth(authorization: Optional[str] = Header(None)) -> str:
     raise HTTPException(status_code=401, detail="Invalid token!")
 
 
+@router.get("/is_authenticated")
+async def check_authenticated(_: str = Depends(check_auth)) -> bool:
+    return True
+
+
 @router.post("/login")
 async def login(login_form: LoginForm, db_conn: "Database" = Depends(get_database)) -> dict[str, str]:
     """Endpoint for login. Returns an 256-bit token"""
@@ -53,5 +58,5 @@ async def logout(username: str = Depends(check_auth)) -> dict:
     """Endpoint for logging out of the application"""
     global current_auth
     logging.info(f"User {username} has logged out.")
-    current_auth = {key:val for key, val in current_auth.items() if val != username}
+    current_auth = {key: val for key, val in current_auth.items() if val != username}
     return {"message": "OK"}
