@@ -224,9 +224,8 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(50, 50),
         shape: const CircleBorder(),
-        backgroundColor: isSelected
-            ? letterColor
-            : const Color.fromARGB(255, 34, 34, 34),
+        backgroundColor:
+            isSelected ? letterColor : const Color.fromARGB(255, 34, 34, 34),
       ),
       child: Text(
         value,
@@ -253,6 +252,29 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
       activeColor: Colors.blue,
     );
   }
+
+  Widget bottomBar() {
+    return Column(children: [
+      const SizedBox(height: 6),
+      ElevatedButton(
+        onPressed: _resetKeyboard,
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Theme.of(context).primaryColor,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        child: const Text('Reset'),
+      ),
+      const SizedBox(height: 3),
+      toggleSwitch(),
+    ]);
+  }
 }
 
 class SteckbrettEnigma1 extends StatefulWidget {
@@ -267,7 +289,6 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
   // Tastatur mit QWERTZ-Layout
   @override
   Widget build(BuildContext context) {
-    final switchW = toggleSwitch();
     return _isEnabled
         ? Container(
             padding: const EdgeInsets.all(3),
@@ -323,17 +344,11 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
                     _buildKeyboardButton('L'),
                   ],
                 ),
-                const SizedBox(height: 6),
-                ElevatedButton(
-                  onPressed: _resetKeyboard,
-                  child: const Text('Reset'),
-                ),
-                const SizedBox(height: 3),
-                switchW,
+                bottomBar(),
               ],
             ),
           )
-        : switchW;
+        : toggleSwitch();
   }
 }
 
@@ -348,21 +363,6 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
     with SteckbrettMethods {
   @override
   Widget build(BuildContext context) {
-    final switchW = Switch(
-      value: _isEnabled,
-      onChanged: (value) async {
-        final response = await APICaller.post("plugboard/enable", query: {
-          "machine": "1",
-          "enabled": "$value",
-        });
-        assert(response.statusCode == 200);
-
-        setState(() {
-          _isEnabled = value;
-        });
-      },
-      activeColor: Colors.blue,
-    );
     return _isEnabled
         ? Container(
             padding: const EdgeInsets.all(3),
@@ -398,16 +398,10 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
                       _buildKeyboardButton(String.fromCharCode(65 + i)),
                   ],
                 ),
-                const SizedBox(height: 6),
-                ElevatedButton(
-                  onPressed: _resetKeyboard,
-                  child: const Text('Reset'),
-                ),
-                const SizedBox(height: 3),
-                switchW,
+                bottomBar()
               ],
             ),
           )
-        : switchW;
+        : toggleSwitch();
   }
 }
