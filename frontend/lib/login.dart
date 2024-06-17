@@ -134,19 +134,46 @@ class LoginPage extends StatelessWidget {
                   onSubmitted: (value) => _login(context),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  key: const ValueKey('Login'),
-                  onPressed: () async => await _login(context),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Theme.of(context).primaryColor,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      key: const ValueKey('Login'),
+                      onPressed: () async => await _login(context),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: const Text('Login'),
                     ),
-                  ),
-                  child: const Text('Login'),
+                    Container(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (await _isAuthenticated()) {
+                          Navigator.pushReplacementNamed(context, '/home');
+                        } else {
+                          _showSnackbar(
+                            context,
+                            "No authenticated sessions found! Pleas login again",
+                            Colors.deepOrange,
+                          );
+                        }
+                      },
+                      child: const Text('Continue session'),
+                    ),
+                  ],
                 ),
               ],
             ),
