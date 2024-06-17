@@ -31,7 +31,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
-      final result_call = APICaller.get("plugboard/is_enabled", {
+      final resultCall = APICaller.get("plugboard/is_enabled", {
         "machine": "1",
       });
 
@@ -41,12 +41,12 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
       assert(result.statusCode == 200);
       final plugs = jsonDecode(result.body)["plugboard"];
 
-      bool is_enabled = jsonDecode((await result_call).body);
+      bool isEnabled = jsonDecode((await resultCall).body);
 
       _selectedCount = plugs.length * 2;
       setState(() {
         // set switch
-        _isEnabled = is_enabled;
+        _isEnabled = isEnabled;
 
         // set board
         for (var plug in plugs) {
