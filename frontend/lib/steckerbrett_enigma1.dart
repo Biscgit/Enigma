@@ -18,7 +18,7 @@ class CustomKeyboard extends StatefulWidget {
   const CustomKeyboard({super.key});
 
   @override
-  _CustomKeyboardState createState() => _CustomKeyboardState();
+  CustomKeyboardState createState() => CustomKeyboardState();
 }
 
 class CustomKeyboardState extends State<CustomKeyboard> {
@@ -40,11 +40,6 @@ class CustomKeyboardState extends State<CustomKeyboard> {
     Colors.indigo,
     Colors.brown,
   ];
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _initialize() async {
     machineId = await Cookie.read("current_machine");

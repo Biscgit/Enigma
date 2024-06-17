@@ -151,7 +151,7 @@ class LoginPage extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       key: const ValueKey('Login'),
-                      onPressed: () async => await _login(context),
+                      onPressed: () => _login(context),
                       style: buttonStyle,
                       child: const Text(
                         'Login',
