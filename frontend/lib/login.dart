@@ -9,14 +9,43 @@ class LoginPage extends StatelessWidget {
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool hasShowed = false;
 
   LoginPage({super.key});
+
+  Future<bool> _checkServerOn() async {
+    // check server accessible
+    try {
+      final response = await APICaller.get("ping");
+      return (response.statusCode == 200 && jsonDecode(response.body) == "OK");
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void _showSnackbar(BuildContext context, String message, Color color) {
+    if (!hasShowed) {
+      hasShowed = true;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: color,
+          showCloseIcon: true,
+          duration: const Duration(days: 1),
+        ),
+      );
+    }
+  }
 
   Future<void> _login(BuildContext context) async {
     String username = _usernameController.text;
     String password = _passwordController.text;
-    
-    final response = await APICaller.post("login", body:{"username": username, "password": password, });
+
+    final response = await APICaller.post("login", body: {
+      "username": username,
+      "password": password,
+    });
 
     if (response.statusCode == 200) {
       final token = jsonDecode(response.body)["token"];
@@ -48,6 +77,22 @@ class LoginPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double loginWidth = screenHeight * 0.6;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (await _checkServerOn()) {
+        _showSnackbar(
+          context,
+          'Backend online!',
+          Colors.green,
+        );
+      } else {
+        _showSnackbar(
+          context,
+          'Backend cannot be reached, check your connection, docker or network!',
+          Colors.red,
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
