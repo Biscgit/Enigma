@@ -6,7 +6,7 @@ import 'dart:math';
 
 mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
   String _inputText = '';
-  bool _isEnabled = true;
+  bool _isEnabled = false;
 
   List<bool> _isButtonSelected = List.generate(26, (_) => false);
   int _selectedCount = 0;
@@ -31,14 +31,24 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
+      final result_call = APICaller.get("plugboard/is_enabled", {
+        "machine": "1",
+      });
+
       final result = await APICaller.get("plugboard/load", {
         "machine": "1",
       });
       assert(result.statusCode == 200);
       final plugs = jsonDecode(result.body)["plugboard"];
 
+      bool is_enabled = jsonDecode((await result_call).body);
+
       _selectedCount = plugs.length;
       setState(() {
+        // set switch
+        _isEnabled = is_enabled;
+
+        // set board
         for (var plug in plugs) {
           final availableColors = _availableColors
               .where((color) => !_letterColorMap.containsValue(color))
