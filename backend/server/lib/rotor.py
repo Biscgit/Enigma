@@ -25,9 +25,10 @@ class Rotor:
         :param letter_shift: The letter_shift positions where the next rotor will be rotated.
         """
         self.scramble_alphabet = alphabet.lower()
-        get_ord_false = (
-            lambda x: (self.get_ord(x, False) - 7) % 26
-        )  # partial(self.get_ord, back=False)
+
+        def get_ord_false(x):
+            return (self.get_ord(x, False) - 7) % 26
+
         self.rotor_position = self.get_ord(rotor_position, False)
         self.letter_shift = list(map(get_ord_false, letter_shift))
         self.id = id
