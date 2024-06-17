@@ -255,7 +255,7 @@ class CustomKeyboardState extends State<CustomKeyboard> {
       value: _isEnabled,
       onChanged: (value) async {
         final response = await APICaller.post("plugboard/enable", query: {
-          "machine": "1",
+          "machine": machineId,
           "enabled": "$value",
         });
         assert(response.statusCode == 200);
@@ -276,7 +276,7 @@ class CustomKeyboardState extends State<CustomKeyboard> {
       value: _isEnabled,
       onChanged: (value) async {
         final response = await APICaller.post("plugboard/enable", query: {
-          "machine": "1",
+          "machine": machineId,
           "enabled": "$value",
         });
         assert(response.statusCode == 200);

@@ -56,7 +56,7 @@ class CustomKeyboardState extends State<CustomKeyboard> {
 
     Future.delayed(Duration.zero, () async {
       final result = await APICaller.get("plugboard/load", {
-        "machine": "1",
+        "machine": machineId,
       });
       assert(result.statusCode == 200);
       final plugs = jsonDecode(result.body)["plugboard"];
@@ -255,7 +255,7 @@ class CustomKeyboardState extends State<CustomKeyboard> {
       value: _isEnabled,
       onChanged: (value) async {
         final response = await APICaller.post("plugboard/enable", query: {
-          "machine": "1",
+          "machine": machineId,
           "enabled": "$value",
         });
         assert(response.statusCode == 200);
