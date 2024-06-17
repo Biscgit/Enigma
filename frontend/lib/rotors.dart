@@ -58,7 +58,7 @@ class RotorWidget extends StatefulWidget {
 class RotorWidgetState extends State<RotorWidget> {
   int selectedRotor = 1;
   int rotorPosition = 0;
-  int notch = 0;
+  String notch = "a";
   int numberRotors = 5;
   int id = 1;
 
@@ -97,7 +97,7 @@ class RotorWidgetState extends State<RotorWidget> {
 
     setState(() {
       rotorPosition = rotor["rotor_position"].codeUnitAt(0) - 97;
-      notch = rotor["letter_shift"].codeUnitAt(0) - 97;
+      notch = rotor["letter_shift"];
     });
   }
 
@@ -117,7 +117,7 @@ class RotorWidgetState extends State<RotorWidget> {
       var getRotor = jsonDecode(response.body);
 
     setState(() {
-      notch = (getRotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
+      notch = getRotor["letter_shift"] as String? ?? "a";
       rotorPosition = (getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97;
     });
   }
@@ -133,12 +133,12 @@ class RotorWidgetState extends State<RotorWidget> {
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = String.fromCharCode(97 + notch);
+    rotor["letter_shift"] = notch;
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
   }
-
+/*
   void _changeNotch(int change) async {
     setState(() {
       notch = (notch + change + 26) % 26;
@@ -151,7 +151,7 @@ class RotorWidgetState extends State<RotorWidget> {
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -194,20 +194,12 @@ class RotorWidgetState extends State<RotorWidget> {
             ],
           ),
           const SizedBox(height: 10),
-          const Text('Notch drehen', style: TextStyle(fontSize: 12)),
+          const Text('Notch', style: TextStyle(fontSize: 12)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () => _changeNotch(-1),
-              ),
-              Text(String.fromCharCode(65 + notch),
+              Text(notch.toUpperCase(),
                   style: const TextStyle(fontSize: 16)),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => _changeNotch(1),
-              ),
             ],
           ),
         ],
