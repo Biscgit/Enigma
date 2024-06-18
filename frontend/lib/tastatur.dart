@@ -2,7 +2,6 @@ import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/keyhistory.dart';
 
-
 class Tastatur extends StatefulWidget {
   final KeyHistoryList keyHistory;
 
@@ -14,61 +13,89 @@ class Tastatur extends StatefulWidget {
 
 class TastaturState extends State<Tastatur> {
   final double seizedBoxHeight = 10;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_focusNode);
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleKeyEvent(KeyEvent event) {
+    if (event.character != null) {
+      String char = event.character!;
+      if (char.compareTo('a') >= 0 && char.compareTo('z') <= 0) {
+        print("Pressed $char");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final history = widget.keyHistory;
 
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
+    return KeyboardListener(
+      focusNode: _focusNode,
+      onKeyEvent: _handleKeyEvent,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
 
-              SquareButton(label: 'Q', keyHistory: history),
-              SquareButton(label: 'W', keyHistory: history),
-              SquareButton(label: 'E', keyHistory: history),
-              SquareButton(label: 'R', keyHistory: history),
-              SquareButton(label: 'T', keyHistory: history),
-              SquareButton(label: 'Z', keyHistory: history),
-              SquareButton(label: 'U', keyHistory: history),
-              SquareButton(label: 'I', keyHistory: history),
-              SquareButton(label: 'O', keyHistory: history),
-              SquareButton(label: 'P', keyHistory: history),
-            ],
-          ),
-          SizedBox(height: seizedBoxHeight),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SquareButton(label: 'A', keyHistory: history),
-              SquareButton(label: 'S', keyHistory: history),
-              SquareButton(label: 'D', keyHistory: history),
-              SquareButton(label: 'F', keyHistory: history),
-              SquareButton(label: 'G', keyHistory: history),
-              SquareButton(label: 'H', keyHistory: history),
-              SquareButton(label: 'J', keyHistory: history),
-              SquareButton(label: 'K', keyHistory: history),
-              SquareButton(label: 'L', keyHistory: history),
-            ],
-          ),
-          SizedBox(height: seizedBoxHeight),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SquareButton(label: 'Y', keyHistory: history),
-              SquareButton(label: 'X', keyHistory: history),
-              SquareButton(label: 'C', keyHistory: history),
-              SquareButton(label: 'V', keyHistory: history),
-              SquareButton(label: 'B', keyHistory: history),
-              SquareButton(label: 'N', keyHistory: history),
-              SquareButton(label: 'M', keyHistory: history)
-            ],
-          ),
-        ],
+                SquareButton(label: 'Q', keyHistory: history),
+                SquareButton(label: 'W', keyHistory: history),
+                SquareButton(label: 'E', keyHistory: history),
+                SquareButton(label: 'R', keyHistory: history),
+                SquareButton(label: 'T', keyHistory: history),
+                SquareButton(label: 'Z', keyHistory: history),
+                SquareButton(label: 'U', keyHistory: history),
+                SquareButton(label: 'I', keyHistory: history),
+                SquareButton(label: 'O', keyHistory: history),
+                SquareButton(label: 'P', keyHistory: history),
+              ],
+            ),
+            SizedBox(height: seizedBoxHeight),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SquareButton(label: 'A', keyHistory: history),
+                SquareButton(label: 'S', keyHistory: history),
+                SquareButton(label: 'D', keyHistory: history),
+                SquareButton(label: 'F', keyHistory: history),
+                SquareButton(label: 'G', keyHistory: history),
+                SquareButton(label: 'H', keyHistory: history),
+                SquareButton(label: 'J', keyHistory: history),
+                SquareButton(label: 'K', keyHistory: history),
+                SquareButton(label: 'L', keyHistory: history),
+              ],
+            ),
+            SizedBox(height: seizedBoxHeight),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SquareButton(label: 'Y', keyHistory: history),
+                SquareButton(label: 'X', keyHistory: history),
+                SquareButton(label: 'C', keyHistory: history),
+                SquareButton(label: 'V', keyHistory: history),
+                SquareButton(label: 'B', keyHistory: history),
+                SquareButton(label: 'N', keyHistory: history),
+                SquareButton(label: 'M', keyHistory: history)
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
