@@ -120,6 +120,8 @@ class RotorWidgetState extends State<RotorWidget> {
       notch = getRotor["letter_shift"] as String? ?? "a";
       rotorPosition = (getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97;
     });
+
+    Cookie.trigger("set_focus_keyboard");
   }
 
   int? getId() {

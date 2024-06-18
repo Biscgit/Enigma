@@ -22,6 +22,11 @@ class TastaturState extends State<Tastatur> {
   @override
   void initState() {
     super.initState();
+    setFordFocus();
+    Cookie.setReactor("set_focus_keyboard", setFordFocus);
+  }
+
+  void setFordFocus() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
