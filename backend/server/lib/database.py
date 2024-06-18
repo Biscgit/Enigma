@@ -740,6 +740,22 @@ class Database:
             ]
         return plugboard, reflector, rotors
 
+    async def revert_machine(self, username, machine_id) -> None:
+        rotors = await self.get_rotors(username, machine_id)
+        for rotor in rotors:
+            await self.update_rotor(rotor)  # Needs some more doing
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                await conn.execute(
+                    """
+                    UPDATE machines
+                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[]
+                    """
+                )
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
