@@ -110,7 +110,7 @@ class LoginPageState extends State<LoginPage> {
       } else {
         _showSnackbar(
             context,
-            'Backend cannot be reached, check your connection, docker or network!',
+            'Backend cannot be reached. Check your connection, docker or network!',
             Colors.red.withOpacity(0.7),
             textColor: Colors.red.shade200);
       }
