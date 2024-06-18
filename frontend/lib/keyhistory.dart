@@ -3,19 +3,11 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class KeyHistoryList extends StatefulWidget {
-  final GlobalKey<KeyHistoryState> keyHistoryKey;
-
-  const KeyHistoryList({super.key, required this.keyHistoryKey});
+  const KeyHistoryList({super.key});
 
   @override
   State<KeyHistoryList> createState() => KeyHistoryState();
 
-  void addKey(String clear, String encrypted) {
-    keyHistoryKey.currentState!.addKey(
-      clear.toUpperCase(),
-      encrypted.toUpperCase(),
-    );
-  }
 }
 
 class KeyHistoryState extends State<KeyHistoryList> {
@@ -27,6 +19,7 @@ class KeyHistoryState extends State<KeyHistoryList> {
     super.initState();
     // ToDo: Set machineId to the correct value
     loadKeyHistory();
+    Cookie.setReactor("update_history", addKey);
   }
 
   void loadKeyHistory() async {
@@ -51,7 +44,19 @@ class KeyHistoryState extends State<KeyHistoryList> {
     }
   }
 
-  void addKey(String clear, String encrypted) {
+  /*void addKey(String clear, String encrypted) {
+    /// Add the key to the key history
+    setState(() {
+      _keyHistory.insert(0, MapEntry(clear, encrypted));
+      if (_keyHistory.length > maxKeys) {
+        _keyHistory.removeLast();
+      }
+    });
+  }*/
+
+  void addKey([Map<dynamic, dynamic> params = const {"clear": "O", "encrypted": "O"}]) {
+    var clear = params["clear"];
+    var encrypted = params["encrypted"];
     /// Add the key to the key history
     setState(() {
       _keyHistory.insert(0, MapEntry(clear, encrypted));

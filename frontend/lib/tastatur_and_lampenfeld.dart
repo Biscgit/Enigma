@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'lampenfeld.dart';
 import 'tastatur.dart';
-import 'package:enigma/keyhistory.dart';
 
 class MainScreen extends StatelessWidget {
-  final KeyHistoryList keyHistory;
 
-  const MainScreen({super.key, required this.keyHistory});
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,18 +17,14 @@ class MainScreen extends StatelessWidget {
           right: 0,
           bottom: align,
           child: Lampfield(
-            key: Lampfield.lampFieldKey,
-            keyHistory: keyHistory,
-          ),
+            key: Lampfield.lampFieldKey),
         ),
         Positioned(
           top: align,
           left: 0,
           right: 0,
           bottom: 0,
-          child: Tastatur(
-            keyHistory: keyHistory,
-          ),
+          child: const Tastatur(),
         ),
       ],
     );

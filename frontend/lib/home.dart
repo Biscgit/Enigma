@@ -16,8 +16,6 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   String? _selectedItem;
   String _username = '';
-  final GlobalKey<KeyHistoryState> _keyHistoryKey =
-      GlobalKey<KeyHistoryState>();
 
   String? get selectedItem => _selectedItem;
 
@@ -54,10 +52,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final keyHistory = KeyHistoryList(
-      key: _keyHistoryKey,
-      keyHistoryKey: _keyHistoryKey,
-    );
+    const keyHistory = KeyHistoryList();
     const rotorWidget = RotorPage(numberRotors: 3);
 
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -116,10 +111,8 @@ class HomePageState extends State<HomePage> {
             children: [
               Column(
                 children: <Widget>[
-                  Expanded(
-                    child: MainScreen(
-                      keyHistory: keyHistory,
-                    ),
+                  const Expanded(
+                    child: MainScreen(),
                   ),
                   getPlugboard(),
                 ],
