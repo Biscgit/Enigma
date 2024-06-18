@@ -668,16 +668,12 @@ class Database:
             return result[0]
 
     async def switch_rotor(
-        self,
-        username: str,
-        machine_id: int,
-        template_id: int,
-        place: int,
-        number: int,
+        self, username: str, machine_id: int, template_id, place: int, number: int
     ) -> dict:
+        id = 0
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                count = await conn.fetchval(
+                id = await conn.fetchval(
                     """
                     SELECT id
                     FROM rotors
@@ -687,40 +683,40 @@ class Database:
                     machine_id,
                     place,
                 )
-                rotor = await self.get_rotor(username, template_id)  # template
-                rotor["username"] = username
-                rotor["machine_id"] = machine_id
-                rotor["place"] = place
-                rotor["number"] = number
-                if count is not None:
-                    print(1, count)
-                    current_rotor = await self.get_rotor(
-                        username, count
-                    )  # before change
-                    current_rotor["machine_id"] = 0
-                    current_rotor["username"] = username  # to template
-                    # current_rotor["id"] = rotor["id"]
-                    print("current:", current_rotor)
-                    if now_rotor := await self.get_rotor_by_number(  # existing rotor
-                        username, number, machine_id, place
-                    ):
-                        print(1, now_rotor)
-                        await self.update_rotor(current_rotor)
-                    else:
-                        now_rotor = rotor
-                        print(2, now_rotor)
-                        await self.set_rotor(current_rotor)
-                    now_rotor["id"] = count
-                    now_rotor["machine_id"] = machine_id
-                    await self.update_rotor(now_rotor)
-                    return await self.get_rotor(username, count)
 
-                id = await self.get_rotor(username, (await self.set_rotor(rotor)))
-                print(3, id)
-                rotor["machine_id"] = 0
-                print(4, rotor)
-                await self.set_rotor(rotor)
-                return id
+        template_rotor = await self.get_rotor(username, template_id)
+        template_rotor["username"] = username
+        template_rotor["place"] = place
+        template_rotor["number"] = number
+
+        if await self.get_rotor_by_number(username, number, machine_id, place) is None:
+            await self.set_rotor(template_rotor)
+
+        if id is None:
+            template_rotor["machine_id"] = machine_id
+            new_id = await self.set_rotor(template_rotor)
+            return await self.get_rotor(username, new_id)
+
+        before_rotor = await self.get_rotor(username, id)
+        print(before_rotor)
+        actual_rotor_id = before_rotor["id"]
+        before_rotor["username"] = username
+        before_rotor["id"] = (
+            await self.get_rotor_by_number(
+                username, before_rotor["number"], before_rotor["machine_id"], place
+            )
+        )["id"]
+        before_rotor["machine_id"] = 0
+        await self.update_rotor(before_rotor)
+
+        after_rotor = await self.get_rotor_by_number(
+            username, number, machine_id, place
+        )
+        after_rotor["username"] = username
+        after_rotor["machine_id"] = machine_id
+        after_rotor["id"] = actual_rotor_id
+        await self.update_rotor(after_rotor)
+        return await self.get_rotor(username, after_rotor["id"])
 
     async def get_machine(self, username: str, machine_id: int):
         plugboard = (
