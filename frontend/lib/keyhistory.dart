@@ -55,8 +55,8 @@ class KeyHistoryState extends State<KeyHistoryList> {
   }*/
 
   void addKey([Map<dynamic, dynamic> params = const {"clear": "O", "encrypted": "O"}]) {
-    var clear = params["clear"];
-    var encrypted = params["encrypted"];
+    var clear = params["clear"].toString().toUpperCase();
+    var encrypted = params["encrypted"].toString().toUpperCase();
     /// Add the key to the key history
     setState(() {
       _keyHistory.insert(0, MapEntry(clear, encrypted));
