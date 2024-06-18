@@ -4,6 +4,7 @@ import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   static bool notificationSent = false;
+
   const LoginPage({super.key});
 
   @override
@@ -13,7 +14,6 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
 
   // bool hasShowed = false;
   Future<bool> _checkServerOn() async {

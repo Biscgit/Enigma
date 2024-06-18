@@ -16,7 +16,7 @@ class MainScreen extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: align,
-          child: Lampfield(),),
+          child: const Lampfield(),),
         Positioned(
           top: align,
           left: 0,
