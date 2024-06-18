@@ -26,10 +26,11 @@ class KeyHistoryState extends State<KeyHistoryList> {
   void initState() {
     super.initState();
     // ToDo: Set machineId to the correct value
-    loadKeyHistory("1");
+    loadKeyHistory();
   }
 
-  void loadKeyHistory(String machineId) async {
+  void loadKeyHistory() async {
+    var machineId = await Cookie.read("current_machine");
     /// Loads pressed keys from server
     final response = await APICaller.get("load_key_history", {
       "machine": machineId,

@@ -18,6 +18,7 @@ from .rotor import Rotor
 
 class Database:
     """Database interface"""
+
     char_max = 140
     instance: "Database" = None
 
@@ -400,7 +401,8 @@ class Database:
                 FROM machines
                 WHERE username = $1 AND id = $2
                 """,
-                username, machine,
+                username,
+                machine,
             )
 
             logging.info(f"Fetched plugboard for {username}.{machine}: {str(result)}")
@@ -411,7 +413,9 @@ class Database:
         boards = await self.get_plugboards(username, machine)
         return len(boards)
 
-    async def set_plugboard_enabled(self, username: str, machine: int, enabled: bool) -> None:
+    async def set_plugboard_enabled(
+        self, username: str, machine: int, enabled: bool
+    ) -> None:
         """toggles the plugboards state"""
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
@@ -422,7 +426,9 @@ class Database:
                 SET plugboard_enabled = $3
                 WHERE username = $1 AND id = $2
                 """,
-                username, machine, enabled
+                username,
+                machine,
+                enabled,
             )
             logging.info(f"Plugboard toggled for {username}.{machine}: {enabled}")
 
@@ -437,7 +443,8 @@ class Database:
                 FROM machines
                 WHERE username = $1 AND id = $2
                 """,
-                username, machine,
+                username,
+                machine,
             )
             logging.info(f"Plugboard enabled for {username}.{machine}: {result}")
             return bool(result)
@@ -459,7 +466,6 @@ class Database:
 
             logging.debug(f"Fetched reflector for {username}.{machine}: {str(result)}")
             return result
-
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -705,7 +711,11 @@ class Database:
                 return id
 
     async def get_machine(self, username: str, machine_id: int):
-        plugboard = await self.get_plugboards(username, machine_id)
+        plugboard = (
+            await self.get_plugboards(username, machine_id)
+            if self.is_plugboard_enabled(username, machine_id)
+            else []
+        )
         reflector = await self.get_reflector(username, machine_id)
         rotors = []
         for rotor in await self.get_rotors(username, machine_id):

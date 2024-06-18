@@ -7,6 +7,7 @@ import 'dart:math';
 mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
   String _inputText = '';
   bool _isEnabled = false;
+  String machineId = "1";
 
   List<bool> _isButtonSelected = List.generate(26, (_) => false);
   int _selectedCount = 0;
@@ -31,12 +32,13 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
+      machineId = await Cookie.read("current_machine");
       final resultCall = APICaller.get("plugboard/is_enabled", {
-        "machine": "1",
+        "machine": machineId,
       });
 
       final result = await APICaller.get("plugboard/load", {
-        "machine": "1",
+        "machine": machineId,
       });
       assert(result.statusCode == 200);
       final plugs = jsonDecode(result.body)["plugboard"];
@@ -98,7 +100,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
             APICaller.post(
               "plugboard/save",
               query: {
-                "machine": "1",
+                "machine": machineId,
                 "plug_a": value.toLowerCase(),
                 "plug_b": _inputText[_inputText.length - 2].toLowerCase(),
               },
@@ -140,7 +142,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
         // api call to delete in backend
         if (keys.length % 2 == 0) {
           APICaller.delete("plugboard/remove", query: {
-            "machine": "1",
+            "machine": machineId,
             "plug_a": keys[0].toLowerCase(),
             "plug_b": keys[1].toLowerCase(),
           });
@@ -171,7 +173,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
 
       // need to do sequentially for backend
       final response = await APICaller.delete("plugboard/remove", query: {
-        "machine": "1",
+        "machine": machineId,
         "plug_a": keys[0],
         "plug_b": keys[1],
       });
@@ -241,7 +243,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
       value: _isEnabled,
       onChanged: (value) async {
         final response = await APICaller.post("plugboard/enable", query: {
-          "machine": "1",
+          "machine": machineId,
           "enabled": "$value",
         });
         assert(response.statusCode == 200);
