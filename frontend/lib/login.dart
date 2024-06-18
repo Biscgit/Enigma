@@ -5,8 +5,9 @@ import 'dart:convert';
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool notificationSent = false;
 
-  LoginPage({super.key});
+  LoginPage({super.key, required this.notificationSent});
 
   // bool hasShowed = false;
   Future<bool> _checkServerOn() async {
@@ -86,6 +87,8 @@ class LoginPage extends StatelessWidget {
     double loginWidth = screenHeight * 0.6;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (notificationSent == true) return;
+
       final isOnline = await _checkServerOn();
       if (!context.mounted) return;
 
