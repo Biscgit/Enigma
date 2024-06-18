@@ -199,13 +199,13 @@ class Database:
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     async def create_machine(
-            self,
-            machine_id: int,
-            username: str,
-            machine_type: int,
-            name: str,
-            reflector: dict,
-            ignore_exist: bool = False
+        self,
+        machine_id: int,
+        username: str,
+        machine_type: int,
+        name: str,
+        reflector: dict,
+        ignore_exist: bool = False,
     ) -> None:
         """creates a new machine for a user if it does not exist"""
 
@@ -589,7 +589,7 @@ class Database:
                 place,
             )
 
-            logging.debug(f"Fetched rotor for {number}: {str(result)}")
+            logging.info(f"Fetched rotor for {number}: {str(result)}")
             return dict(result) if result else None
 
     async def update_rotors(self, username: str, rotors: list) -> None:
@@ -687,21 +687,28 @@ class Database:
                     machine_id,
                     place,
                 )
-                rotor = await self.get_rotor(username, template_id)
+                rotor = await self.get_rotor(username, template_id)  # template
                 rotor["username"] = username
                 rotor["machine_id"] = machine_id
                 rotor["place"] = place
                 rotor["number"] = number
                 if count is not None:
-                    current_rotor = await self.get_rotor(username, count)
+                    print(1, count)
+                    current_rotor = await self.get_rotor(
+                        username, count
+                    )  # before change
                     current_rotor["machine_id"] = 0
-                    current_rotor["username"] = username
-                    if now_rotor := await self.get_rotor_by_number(
+                    current_rotor["username"] = username  # to template
+                    # current_rotor["id"] = rotor["id"]
+                    print("current:", current_rotor)
+                    if now_rotor := await self.get_rotor_by_number(  # existing rotor
                         username, number, machine_id, place
                     ):
+                        print(1, now_rotor)
                         await self.update_rotor(current_rotor)
                     else:
                         now_rotor = rotor
+                        print(2, now_rotor)
                         await self.set_rotor(current_rotor)
                     now_rotor["id"] = count
                     now_rotor["machine_id"] = machine_id
@@ -709,7 +716,9 @@ class Database:
                     return await self.get_rotor(username, count)
 
                 id = await self.get_rotor(username, (await self.set_rotor(rotor)))
+                print(3, id)
                 rotor["machine_id"] = 0
+                print(4, rotor)
                 await self.set_rotor(rotor)
                 return id
 
