@@ -16,6 +16,7 @@ dependencies:
   http: ^1.2.1
   url_launcher: ^6.0.13
   pure_dart_ui: ^0.1.9
+  synchronized: ^3.1.0
 
 dev_dependencies:
   flutter_driver:

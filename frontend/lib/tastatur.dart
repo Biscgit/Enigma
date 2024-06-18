@@ -1,6 +1,7 @@
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/keyhistory.dart';
+import 'package:synchronized/synchronized.dart';
 
 class Tastatur extends StatefulWidget {
   final KeyHistoryList keyHistory;
@@ -14,6 +15,7 @@ class Tastatur extends StatefulWidget {
 class TastaturState extends State<Tastatur> {
   final double seizedBoxHeight = 10;
   final FocusNode _focusNode = FocusNode();
+  var keyboardLock = Lock();
 
   @override
   void initState() {
@@ -29,11 +31,17 @@ class TastaturState extends State<Tastatur> {
     super.dispose();
   }
 
-  void _handleKeyEvent(KeyEvent event) {
+  void _handleKeyEvent(KeyEvent event) async {
     if (event.character != null) {
       String char = event.character!;
       if (char.compareTo('a') >= 0 && char.compareTo('z') <= 0) {
-        print("Pressed $char");
+        // ensure synchronized access
+        await keyboardLock.synchronized(() async {
+          final encryptedLetter = await sendPressedKeyToRotors(char);
+
+          widget.keyHistory.addKey(char, encryptedLetter);
+          Cookie.trigger("update");
+        });
       }
     }
   }
