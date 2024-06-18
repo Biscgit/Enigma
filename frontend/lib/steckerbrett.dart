@@ -46,6 +46,8 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
       bool isEnabled = jsonDecode((await resultCall).body);
 
       _selectedCount = plugs.length * 2;
+      if (!context.mounted) return;
+
       setState(() {
         // set switch
         _isEnabled = isEnabled;

@@ -14,12 +14,12 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  String _selectedItem = 'Enigma I';
+  String? _selectedItem;
   String _username = '';
   final GlobalKey<KeyHistoryState> _keyHistoryKey =
       GlobalKey<KeyHistoryState>();
 
-  String get selectedItem => _selectedItem;
+  String? get selectedItem => _selectedItem;
 
   void _initialize() async {
     _selectedItem = await Cookie.read("name");
@@ -41,6 +41,17 @@ class HomePageState extends State<HomePage> {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
+  Widget getPlugboard() {
+    switch (_selectedItem) {
+      case null:
+        return Container();
+      case 'Enigma M3':
+        return const SteckbrettEnigma3();
+      default:
+        return const SteckbrettEnigma1();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final keyHistory = KeyHistoryList(
@@ -53,7 +64,7 @@ class HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(selectedItem),
+        title: Text(selectedItem ?? "Create new machine"),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
@@ -110,9 +121,7 @@ class HomePageState extends State<HomePage> {
                       keyHistory: keyHistory,
                     ),
                   ),
-                  (selectedItem == 'Enigma M3'
-                      ? const SteckbrettEnigma3()
-                      : const SteckbrettEnigma1()),
+                  getPlugboard(),
                 ],
               ),
             ],
