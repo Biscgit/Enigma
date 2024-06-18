@@ -143,6 +143,7 @@ class Database:
                         machine["machine_type"],
                         machine["name"],
                         reflector,
+                        ignore_exist=True,
                     )
                 except asyncpg.PostgresError:
                     logging.warning(f"Machine `{machine}` already exists!")
@@ -198,22 +199,23 @@ class Database:
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     async def create_machine(
-        self,
-        machine_id: int,
-        username: str,
-        machine_type: int,
-        name: str,
-        reflector: list,
+            self,
+            machine_id: int,
+            username: str,
+            machine_type: int,
+            name: str,
+            reflector: dict,
+            ignore_exist: bool = False
     ) -> None:
         """creates a new machine for a user if it does not exist"""
 
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    """
+                    f"""
                         INSERT INTO machines(id, username, name, machine_type, reflector, character_pointer, character_history, plugboard_enabled, plugboard_config)
                         VALUES ($1, $2, $3, $4, $5::JSON, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
-                        ON CONFLICT DO NOTHING 
+                        {'ON CONFLICT DO NOTHING' if ignore_exist else ''}
                     """,
                     machine_id,
                     username,
