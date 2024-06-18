@@ -5,13 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "flutter.env");
-  runApp(MyApp());
+  runApp(const EnigmaApp());
 }
 
-class MyApp extends StatelessWidget {
-  bool notificationSent = false;
-
-  MyApp({super.key});
+class EnigmaApp extends StatelessWidget {
+  const EnigmaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +53,7 @@ class MyApp extends StatelessWidget {
           case '/home':
             return MaterialPageRoute(builder: (context) => const HomePage());
           default:
-            return MaterialPageRoute(
-              builder: (context) {
-                final page = LoginPage(notificationSent: notificationSent);
-                notificationSent = true;
-                return page;
-              },
-            );
+            return MaterialPageRoute(builder: (context) => const LoginPage());
         }
       },
     );

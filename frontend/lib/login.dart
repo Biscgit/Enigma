@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'utils.dart';
 import 'dart:convert';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  static bool notificationSent = false;
+  const LoginPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => LoginPageState();
+}
+
+class LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool notificationSent = false;
 
-  LoginPage({super.key, required this.notificationSent});
 
   // bool hasShowed = false;
   Future<bool> _checkServerOn() async {
@@ -87,7 +93,8 @@ class LoginPage extends StatelessWidget {
     double loginWidth = screenHeight * 0.6;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (notificationSent == true) return;
+      if (LoginPage.notificationSent == true) return;
+      LoginPage.notificationSent = true;
 
       final isOnline = await _checkServerOn();
       if (!context.mounted) return;
