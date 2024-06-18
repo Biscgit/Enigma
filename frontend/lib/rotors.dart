@@ -177,9 +177,14 @@ class RotorWidgetState extends State<RotorWidget> {
                 onPressed: () => _changeRotorPosition(-1),
                 key: ValueKey("Change.${widget.rotorNumber}.minus")
               ),
-              Text(String.fromCharCode(65 + rotorPosition),
+              Container(
+                alignment: Alignment.center,
+                width: 16,
+                child: Text(
+                  String.fromCharCode(65 + rotorPosition),
                   style: const TextStyle(fontSize: 16),
-                key: ValueKey("RotorPosition.${widget.rotorNumber}"),
+                  key: ValueKey("RotorPosition.${widget.rotorNumber}"),
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.add),
