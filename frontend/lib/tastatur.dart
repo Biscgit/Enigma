@@ -26,7 +26,7 @@ class TastaturState extends State<Tastatur> {
     Cookie.setReactor("set_focus_keyboard", setFordFocus);
   }
 
-  void setFordFocus() {
+  void setFordFocus([Map<dynamic, dynamic> params = const {}]) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
@@ -50,9 +50,8 @@ class TastaturState extends State<Tastatur> {
         await keyboardLock.synchronized(() async {
           final encryptedLetter = await sendPressedKeyToRotors(char);
 
-          widget.keyHistory.addKey(char, encryptedLetter);
           Cookie.trigger("update");
-
+          Cookie.trigger("update_history", {"clear": char, "encrypted": encryptedLetter});
           inQueue--;
         });
       }
@@ -153,8 +152,8 @@ class SquareButton extends StatelessWidget {
         onPressed: () async {
           final letter = label;
           final encryptedLetter = await sendPressedKeyToRotors(letter);
-          keyHistory.addKey(letter, encryptedLetter);
           Cookie.trigger("update");
+          Cookie.trigger("update_history", {"clear": letter, "encrypted": encryptedLetter});
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: returnColor(context), // background color lol

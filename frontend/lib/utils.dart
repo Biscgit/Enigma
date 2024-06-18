@@ -7,7 +7,7 @@ import 'dart:convert';
 
 class Cookie {
   static const _storage = FlutterSecureStorage();
-  static Map<String, List<Function()>> reactors = {};
+  static Map<String, List<Function([Map<dynamic, dynamic>])>> reactors = {};
 
   static Future<String> read(String key) async {
     String value = await _storage.read(key: key) ?? "";
@@ -26,12 +26,12 @@ class Cookie {
     return Cookie.read('token').then((token) => token != "");
   }
 
-  static void setReactor(String trigger, Function() reactor) {
+  static void setReactor(String trigger, Function([Map<dynamic, dynamic>]) reactor) {
     (reactors[trigger] ??= []).add(reactor);
   }
 
-  static void trigger(String trigger) {
-    reactors[trigger]?.forEach((reactor) => reactor());
+  static void trigger(String trigger, [Map<dynamic, dynamic> params = const {}]) {
+    reactors[trigger]?.forEach((reactor) => reactor(params));
     }
 
   static void clearReactors(String trigger) {

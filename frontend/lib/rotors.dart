@@ -89,7 +89,7 @@ class RotorWidgetState extends State<RotorWidget> {
     });
   }
 
-  Future<void> _initialize() async {
+  Future<void> _initialize([Map<dynamic, dynamic> params = const {}]) async {
     numberRotors = widget.rotorIds.length;
 
     var rotor = json.decode((await APICaller.get("get-rotor-by-place", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
