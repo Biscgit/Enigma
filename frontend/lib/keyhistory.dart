@@ -3,20 +3,11 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class KeyHistoryList extends StatefulWidget {
-  final GlobalKey<KeyHistoryState> keyHistoryKey;
-
-  const KeyHistoryList({super.key, required this.keyHistoryKey});
+  const KeyHistoryList({super.key});
 
   @override
   State<KeyHistoryList> createState() => KeyHistoryState();
 
-  void addKey(String clear, String encrypted) {
-    keyHistoryKey.currentState!.addKey(
-      {"clear": clear.toUpperCase(),
-      "encrypted": encrypted.toUpperCase(),
-      }
-    );
-  }
 }
 
 class KeyHistoryState extends State<KeyHistoryList> {

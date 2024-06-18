@@ -713,7 +713,7 @@ class Database:
     async def get_machine(self, username: str, machine_id: int):
         plugboard = (
             await self.get_plugboards(username, machine_id)
-            if self.is_plugboard_enabled(username, machine_id)
+            if await self.is_plugboard_enabled(username, machine_id)
             else []
         )
         reflector = await self.get_reflector(username, machine_id)

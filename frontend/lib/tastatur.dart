@@ -1,12 +1,9 @@
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:enigma/keyhistory.dart';
 import 'package:synchronized/synchronized.dart';
 
 class Tastatur extends StatefulWidget {
-  final KeyHistoryList keyHistory;
-
-  const Tastatur({super.key, required this.keyHistory});
+  const Tastatur({super.key});
 
   @override
   State<Tastatur> createState() => TastaturState();
@@ -60,7 +57,6 @@ class TastaturState extends State<Tastatur> {
 
   @override
   Widget build(BuildContext context) {
-    final history = widget.keyHistory;
 
     return KeyboardListener(
       focusNode: _focusNode,
@@ -74,44 +70,44 @@ class TastaturState extends State<Tastatur> {
               children: [
                 //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
 
-                SquareButton(label: 'Q', keyHistory: history),
-                SquareButton(label: 'W', keyHistory: history),
-                SquareButton(label: 'E', keyHistory: history),
-                SquareButton(label: 'R', keyHistory: history),
-                SquareButton(label: 'T', keyHistory: history),
-                SquareButton(label: 'Z', keyHistory: history),
-                SquareButton(label: 'U', keyHistory: history),
-                SquareButton(label: 'I', keyHistory: history),
-                SquareButton(label: 'O', keyHistory: history),
-                SquareButton(label: 'P', keyHistory: history),
+                SquareButton(label: 'Q'),
+                SquareButton(label: 'W'),
+                SquareButton(label: 'E'),
+                SquareButton(label: 'R'),
+                SquareButton(label: 'T'),
+                SquareButton(label: 'Z'),
+                SquareButton(label: 'U'),
+                SquareButton(label: 'I'),
+                SquareButton(label: 'O'),
+                SquareButton(label: 'P'),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'A', keyHistory: history),
-                SquareButton(label: 'S', keyHistory: history),
-                SquareButton(label: 'D', keyHistory: history),
-                SquareButton(label: 'F', keyHistory: history),
-                SquareButton(label: 'G', keyHistory: history),
-                SquareButton(label: 'H', keyHistory: history),
-                SquareButton(label: 'J', keyHistory: history),
-                SquareButton(label: 'K', keyHistory: history),
-                SquareButton(label: 'L', keyHistory: history),
+                SquareButton(label: 'A'),
+                SquareButton(label: 'S'),
+                SquareButton(label: 'D'),
+                SquareButton(label: 'F'),
+                SquareButton(label: 'G'),
+                SquareButton(label: 'H'),
+                SquareButton(label: 'J'),
+                SquareButton(label: 'K'),
+                SquareButton(label: 'L'),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'Y', keyHistory: history),
-                SquareButton(label: 'X', keyHistory: history),
-                SquareButton(label: 'C', keyHistory: history),
-                SquareButton(label: 'V', keyHistory: history),
-                SquareButton(label: 'B', keyHistory: history),
-                SquareButton(label: 'N', keyHistory: history),
-                SquareButton(label: 'M', keyHistory: history)
+                SquareButton(label: 'Y'),
+                SquareButton(label: 'X'),
+                SquareButton(label: 'C'),
+                SquareButton(label: 'V'),
+                SquareButton(label: 'B'),
+                SquareButton(label: 'N'),
+                SquareButton(label: 'M')
               ],
             ),
           ],
@@ -126,12 +122,10 @@ class SquareButton extends StatelessWidget {
   final Color colorLightMode = Colors.black;
   final Color colorDarkMode = Colors.grey.shade600;
   final String label;
-  final KeyHistoryList keyHistory;
 
   SquareButton({
     super.key,
     required this.label,
-    required this.keyHistory,
   });
 
   Color? returnColor(BuildContext context) {
