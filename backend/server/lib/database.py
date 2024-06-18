@@ -519,7 +519,7 @@ class Database:
 
             results = await conn.fetch(
                 """
-                SELECT id, machine_id, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate
+                SELECT *
 
                 FROM rotors
                 WHERE username = $1 AND machine_id = $2
@@ -739,6 +739,19 @@ class Database:
                 )
             ]
         return plugboard, reflector, rotors
+
+    async def add_machine(self, username: str, name: str, machine_type: int) -> None:
+        reflector = await self.get_reflector(username, machine_type)
+        await self.create_machine(machine_type, username, machine_type, name, reflector)
+        rotors = await self.get_rotors(username, machine_type)
+        new_machine_id = 1
+        for rotor in rotors:
+            rotor["machine_id"] = 0
+            rotor["machine_type"] = new_machine_id
+            await self.set_rotor(rotor)
+
+    async def delete_machine(self, username: str, machine_id: int) -> None:
+        pass
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
