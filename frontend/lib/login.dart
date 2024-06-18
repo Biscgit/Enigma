@@ -8,7 +8,7 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key});
 
-    // bool hasShowed = false;
+  // bool hasShowed = false;
   Future<bool> _checkServerOn() async {
     // check server accessible
     try {
@@ -20,8 +20,12 @@ class LoginPage extends StatelessWidget {
   }
 
   Future<bool> _isAuthenticated() async {
-    final response = await APICaller.get("is_authenticated");
-    return (response.statusCode == 200 && jsonDecode(response.body) == true);
+    try {
+      final response = await APICaller.get("is_authenticated");
+      return (response.statusCode == 200 && jsonDecode(response.body) == true);
+    } catch (_) {
+      return false;
+    }
   }
 
   void _showSnackbar(BuildContext context, String message, Color color) {
@@ -39,24 +43,21 @@ class LoginPage extends StatelessWidget {
     // }
   }
 
-
-
   void _login(BuildContext context) {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-
-    APICaller.post("login", body: { "username": username, "password": password })
-    .then((response) {
+    APICaller.post("login", body: {"username": username, "password": password})
+        .then((response) {
       return Cookie.save("current_machine", "1")
-      .then((_) => Cookie.save("name", "Enigma I"))
-      .then((_) {
+          .then((_) => Cookie.save("name", "Enigma I"))
+          .then((_) => Cookie.save("username", username))
+          .then((_) {
         if (response.statusCode == 200) {
           final token = json.decode(response.body)["token"];
           return Cookie.save('token', token)
               .then((_) => Navigator.of(context).pushNamed('/home'));
-        }
-        else {
+        } else {
           showDialog(
             context: context,
             builder: (BuildContext context) {

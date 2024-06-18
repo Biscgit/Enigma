@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   String _selectedItem = 'Enigma I';
+  String _username = '';
   final GlobalKey<KeyHistoryState> _keyHistoryKey =
       GlobalKey<KeyHistoryState>();
 
@@ -22,6 +23,7 @@ class HomePageState extends State<HomePage> {
 
   void _initialize() async {
     _selectedItem = await Cookie.read("name");
+    _username = await Cookie.read("username");
     setState(() {});
   }
 
@@ -91,8 +93,9 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: const SideBar(
-        key: Key('enigma_sidebar'),
+      drawer: SideBar(
+        key: const Key('enigma_sidebar'),
+        username: _username,
       ),
       body: Row(
         children: [

@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
 
 class SideBar extends StatelessWidget {
+  final String username;
 
-  const SideBar({super.key});
+  const SideBar({super.key, required this.username});
 
-  final DrawerHeader header = const DrawerHeader(
-    decoration: BoxDecoration(
-      color: Colors.blue,
-    ),
-    child: Text('Wähle deine Enigma'),
-  );
+  Widget getHeader() {
+    return DrawerHeader(
+      decoration: const BoxDecoration(
+        color: Colors.blue,
+      ),
+      child: Column(
+        children: [
+          Text(
+            "Hallo $username!",
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const Text('Wähle deine Enigma')
+        ],
+      ),
+    );
+  }
 
   ListTile addMachine(BuildContext context) => ListTile(
       title: const Text('Neue Enigma'),
@@ -25,7 +36,7 @@ class SideBar extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          header,
+          getHeader(),
           const Machine(name: 'Enigma I', id: 1),
           const Machine(name: 'Norway Enigma', id: 2),
           const Machine(name: 'Enigma M3', id: 3),
@@ -36,7 +47,7 @@ class SideBar extends StatelessWidget {
   }
 }
 
-class Machine extends StatelessWidget{
+class Machine extends StatelessWidget {
   final String name;
   final int id;
 
@@ -45,14 +56,13 @@ class Machine extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(name),
-      onTap: () {
-        Cookie.save("name", name)
-        .then((_) => Cookie.save("current_machine", "$id"))
-        .then((_) => Cookie.clearReactors("update"))
-        .then((_) => Navigator.pop(context))
-        .then((_) => Navigator.pushReplacementNamed(context, '/home'));
-      }
-    );
+        title: Text(name),
+        onTap: () {
+          Cookie.save("name", name)
+              .then((_) => Cookie.save("current_machine", "$id"))
+              .then((_) => Cookie.clearReactors("update"))
+              .then((_) => Navigator.pop(context))
+              .then((_) => Navigator.pushReplacementNamed(context, '/home'));
+        });
   }
 }
