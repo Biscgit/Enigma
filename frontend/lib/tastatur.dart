@@ -15,7 +15,9 @@ class Tastatur extends StatefulWidget {
 class TastaturState extends State<Tastatur> {
   final double seizedBoxHeight = 10;
   final FocusNode _focusNode = FocusNode();
+
   var keyboardLock = Lock();
+  int inQueue = 0;
 
   @override
   void initState() {
@@ -35,12 +37,18 @@ class TastaturState extends State<Tastatur> {
     if (event.character != null) {
       String char = event.character!;
       if (char.compareTo('a') >= 0 && char.compareTo('z') <= 0) {
+        // limit keyboard speed
+        if (inQueue > 3) return;
+        inQueue++;
+
         // ensure synchronized access
         await keyboardLock.synchronized(() async {
           final encryptedLetter = await sendPressedKeyToRotors(char);
 
           widget.keyHistory.addKey(char, encryptedLetter);
           Cookie.trigger("update");
+
+          inQueue--;
         });
       }
     }
