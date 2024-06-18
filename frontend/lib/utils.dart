@@ -2,7 +2,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:enigma/lampenfeld.dart';
 import 'dart:convert';
 
 class Cookie {
@@ -55,7 +54,8 @@ Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   Map<String, dynamic> respBody = jsonDecode(response.body);
   String encKey = respBody['key'];
 
-  Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
+ // Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
+  Cookie.trigger("update_lampenfield", {"encKey": encKey.toUpperCase()});
 
   return encKey;
 }

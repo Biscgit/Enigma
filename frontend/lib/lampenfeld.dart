@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:enigma/utils.dart';
 
 class Lampfield extends StatefulWidget {
-  static final GlobalKey<LampfieldState> lampFieldKey =
-      GlobalKey<LampfieldState>();
 
   const Lampfield({super.key});
 
@@ -18,9 +17,15 @@ class LampfieldState extends State<Lampfield> {
   final List<GlobalKey<CircularTextBoxState>> listOfGlobalKeys =
       List.generate(26, (index) => GlobalKey<CircularTextBoxState>());
 
+  @override
+  void initState() {
+    super.initState();
+    Cookie.setReactor("update_lampenfield", lightUpLetter);
+  }
   // final TextEditingController _controller = TextEditingController();
 
-  String lightUpLetter(String characterToLightUp) {
+  String lightUpLetter([Map<dynamic, dynamic> params = const {"encKey": "O"}]) {
+    var characterToLightUp = params["encKey"];
     //This method converts all inputs to uppercase, looks at only the first character and then subtracts the 65 that are added to every index due to ASCII indeces
     //(Example: A is "0th" letter of the alphabet -> ASCII value is 65)
     //Then, the respective key is accessed to change the background of the corresponding letter to the specified highlightColor.
@@ -37,14 +42,14 @@ class LampfieldState extends State<Lampfield> {
   Future<void> sendTextInputToLampfieldAsync(String input) async {
     //API to send textinputs as async calls
     for (int i = 0; i < input.length; i++) {
-      lightUpLetter(input[i]);
+      lightUpLetter({"encKey": input[i]});
     }
   }
 
   void sendTextInputToLampfield(String input) {
     //API to send textinputs without utilising async calls
     for (int i = 0; i < input.length; i++) {
-      lightUpLetter(input[i]);
+      lightUpLetter({"encKey": input[i]});
     }
   }
 
