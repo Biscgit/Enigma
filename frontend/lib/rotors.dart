@@ -58,7 +58,7 @@ class RotorWidget extends StatefulWidget {
 class RotorWidgetState extends State<RotorWidget> {
   int selectedRotor = 1;
   int rotorPosition = 0;
-  int notch = 0;
+  String notch = "a";
   int numberRotors = 5;
   int id = 1;
 
@@ -97,7 +97,7 @@ class RotorWidgetState extends State<RotorWidget> {
 
     setState(() {
       rotorPosition = rotor["rotor_position"].codeUnitAt(0) - 97;
-      notch = rotor["letter_shift"].codeUnitAt(0) - 97;
+      notch = rotor["letter_shift"];
     });
   }
 
@@ -112,13 +112,13 @@ class RotorWidgetState extends State<RotorWidget> {
     rotor["machine_id"] = widget.machineId;
     rotor["number"] = value;
 
-      final response = await APICaller.post("switch-rotor", body: rotor);
-      assert(response.statusCode == 200);
-      var getRotor = jsonDecode(response.body);
+    final response = await APICaller.post("switch-rotor", body: rotor);
+    assert(response.statusCode == 200);
+    var getRotor = jsonDecode(response.body);
 
     setState(() {
-      notch = (getRotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
       rotorPosition = (getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97;
+      notch = getRotor["letter_shift"] as String? ?? "a";
     });
 
     Cookie.trigger("set_focus_keyboard");
@@ -135,7 +135,7 @@ class RotorWidgetState extends State<RotorWidget> {
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = String.fromCharCode(97 + notch);
+    rotor["letter_shift"] = notch;
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
@@ -144,12 +144,12 @@ class RotorWidgetState extends State<RotorWidget> {
   void _changeLetterPosition(int change) async {
     setState(() {
       rotorPosition = (rotorPosition + change + 26) % 26;
-      notch = (notch + change + 26) % 26;
+      notch = String.fromCharCodes(notch.toLowerCase().split('').map((pos) => 97 + ((pos.codeUnitAt(0) -  97) + change + 26) % 26));
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = String.fromCharCode(97 + notch);
+    rotor["letter_shift"] = notch;
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
@@ -232,7 +232,7 @@ class RotorWidgetState extends State<RotorWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(String.fromCharCode(65 + notch),
+              Text(notch.toUpperCase(),
                 style: const TextStyle(fontSize: 16),
                 key: ValueKey("Notch.${widget.rotorNumber}")),
             ],
