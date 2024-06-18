@@ -63,6 +63,7 @@ class Machine extends StatelessWidget {
               .then((_) => Cookie.clearReactors("update"))
               .then((_) => Cookie.clearReactors("set_focus_keyboard"))
               .then((_) => Cookie.clearReactors("update_history"))
+              .then((_) => Cookie.clearReactors("update_lampenfield"))
               .then((_) => Navigator.pop(context))
               .then((_) => Navigator.pushReplacementNamed(context, '/home'));
         });
