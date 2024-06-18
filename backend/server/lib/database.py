@@ -112,7 +112,7 @@ class Database:
 
         logging.info("Successfully loaded users from file")
 
-    async def _get_users(self) -> list[list[str]]:
+    async def _get_users(self) -> list[str]:
         """Returns a list of usernames"""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -213,6 +213,7 @@ class Database:
                     """
                         INSERT INTO machines(id, username, name, machine_type, reflector, character_pointer, character_history, plugboard_enabled, plugboard_config)
                         VALUES ($1, $2, $3, $4, $5::JSON, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
+                        ON CONFLICT DO NOTHING 
                     """,
                     machine_id,
                     username,
