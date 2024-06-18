@@ -589,7 +589,7 @@ class Database:
                 place,
             )
 
-            logging.info(f"Fetched rotor for {number}: {str(result)}")
+            logging.debug(f"Fetched rotor for {number}: {str(result)}")
             return dict(result) if result else None
 
     async def update_rotors(self, username: str, rotors: list) -> None:

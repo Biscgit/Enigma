@@ -58,7 +58,7 @@ class RotorWidget extends StatefulWidget {
 class RotorWidgetState extends State<RotorWidget> {
   int selectedRotor = 1;
   int rotorPosition = 0;
-  String notch = "a";
+  int notch = 0;
   int numberRotors = 5;
   int id = 1;
 
@@ -97,7 +97,7 @@ class RotorWidgetState extends State<RotorWidget> {
 
     setState(() {
       rotorPosition = rotor["rotor_position"].codeUnitAt(0) - 97;
-      notch = rotor["letter_shift"];
+      notch = rotor["letter_shift"].codeUnitAt(0) - 97;
     });
   }
 
@@ -117,7 +117,7 @@ class RotorWidgetState extends State<RotorWidget> {
       var getRotor = jsonDecode(response.body);
 
     setState(() {
-      notch = getRotor["letter_shift"] as String? ?? "a";
+      notch = (getRotor["letter_shift"] as String? ?? "a").codeUnitAt(0) - 97;
       rotorPosition = (getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97;
     });
 
@@ -135,10 +135,25 @@ class RotorWidgetState extends State<RotorWidget> {
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = notch;
+    rotor["letter_shift"] = String.fromCharCode(97 + notch);
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
+  }
+
+  void _changeLetterPosition(int change) async {
+    setState(() {
+      rotorPosition = (rotorPosition + change + 26) % 26;
+      notch = (notch + change + 26) % 26;
+    });
+    var rotor =
+        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
+    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
+    rotor["letter_shift"] = String.fromCharCode(97 + notch);
+    rotor["id"] = id;
+    rotor["number"] = selectedRotor;
+    APICaller.post("update-rotor", body: rotor);
+
   }
 
   @override
@@ -177,7 +192,7 @@ class RotorWidgetState extends State<RotorWidget> {
               IconButton(
                 icon: const Icon(Icons.remove),
                 onPressed: () => _changeRotorPosition(-1),
-                key: ValueKey("Change.${widget.rotorNumber}.minus")
+                key: ValueKey("ChangeRotor.${widget.rotorNumber}.minus")
               ),
               Container(
                 alignment: Alignment.center,
@@ -191,7 +206,24 @@ class RotorWidgetState extends State<RotorWidget> {
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () => _changeRotorPosition(1),
-                key: ValueKey("Change.${widget.rotorNumber}.plus")
+                key: ValueKey("ChangeRotor.${widget.rotorNumber}.plus")
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const Text('Buchstaben drehen', style: TextStyle(fontSize: 12)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: () => _changeLetterPosition(-1),
+                key: ValueKey("ChangeLetter.${widget.rotorNumber}.minus")
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => _changeLetterPosition(1),
+                key: ValueKey("ChangeLetter.${widget.rotorNumber}.plus")
               ),
             ],
           ),
@@ -200,7 +232,7 @@ class RotorWidgetState extends State<RotorWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(notch.toUpperCase(),
+              Text(String.fromCharCode(65 + notch),
                 style: const TextStyle(fontSize: 16),
                 key: ValueKey("Notch.${widget.rotorNumber}")),
             ],
