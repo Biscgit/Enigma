@@ -1,7 +1,6 @@
 import 'package:enigma/keyhistory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:enigma/utils.dart';
 
 class Lampfield extends StatefulWidget {
   static final GlobalKey<LampfieldState> lampFieldKey =
@@ -26,7 +25,7 @@ class LampfieldState extends State<Lampfield> {
   final List<GlobalKey<CircularTextBoxState>> listOfGlobalKeys =
       List.generate(26, (index) => GlobalKey<CircularTextBoxState>());
 
-  final TextEditingController _controller = TextEditingController();
+  // final TextEditingController _controller = TextEditingController();
 
   String lightUpLetter(String characterToLightUp) {
     //This method converts all inputs to uppercase, looks at only the first character and then subtracts the 65 that are added to every index due to ASCII indeces
@@ -62,6 +61,7 @@ class LampfieldState extends State<Lampfield> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -106,29 +106,29 @@ class LampfieldState extends State<Lampfield> {
               CircularTextBox(key: listOfGlobalKeys[12], text: 'M', context: context)
             ],
           ),
-          SizedBox(
-            //ONLY FOR MANUAL TEXT INPUTS!!!!! TO BE REMOVED LATER!!
-            width: 300,
-            child: TextField(
-              key: const ValueKey('keyInput'),
-              controller: _controller,
-              onChanged: (String value) async {
-                if (value.isNotEmpty) {
-                  final letter = value.substring(value.length - 1);
-                  final encryptedLetter = await sendPressedKeyToRotors(
-                      value.substring(value.length - 1));
-                  Cookie.trigger("update");
-                  widget.sendToHistory(letter, encryptedLetter);
-                }
-              },
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zr]')),
-                // Allow only letters and space
-                UpperCaseTextInputFormatter(),
-                // Convert all letters to uppercase
-              ],
-            ),
-          ),
+          // SizedBox(
+          //   //ONLY FOR MANUAL TEXT INPUTS!!!!! TO BE REMOVED LATER!!
+          //   width: 300,
+          //   child: TextField(
+          //     key: const ValueKey('keyInput'),
+          //     controller: _controller,
+          //     onChanged: (String value) async {
+          //       if (value.isNotEmpty) {
+          //         final letter = value.substring(value.length - 1);
+          //         final encryptedLetter = await sendPressedKeyToRotors(
+          //             value.substring(value.length - 1));
+          //         Cookie.trigger("update");
+          //         widget.sendToHistory(letter, encryptedLetter);
+          //       }
+          //     },
+          //     inputFormatters: [
+          //       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zr]')),
+          //       // Allow only letters and space
+          //       UpperCaseTextInputFormatter(),
+          //       // Convert all letters to uppercase
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

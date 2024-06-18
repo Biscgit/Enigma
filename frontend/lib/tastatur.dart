@@ -35,7 +35,7 @@ class TastaturState extends State<Tastatur> {
 
   void _handleKeyEvent(KeyEvent event) async {
     if (event.character != null) {
-      String char = event.character!;
+      String char = event.character!.toLowerCase();
       if (char.compareTo('a') >= 0 && char.compareTo('z') <= 0) {
         // limit keyboard speed
         if (inQueue > 3) return;
