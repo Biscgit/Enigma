@@ -698,7 +698,6 @@ class Database:
             return await self.get_rotor(username, new_id)
 
         before_rotor = await self.get_rotor(username, id)
-        print(before_rotor)
         actual_rotor_id = before_rotor["id"]
         before_rotor["username"] = username
         before_rotor["id"] = (
