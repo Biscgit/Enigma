@@ -12,15 +12,33 @@ class Tastatur extends StatefulWidget {
 class TastaturState extends State<Tastatur> {
   final double seizedBoxHeight = 10;
   final FocusNode _focusNode = FocusNode();
+  final List<GlobalKey<SquareButtonState>> listOfGlobalKeys =
+      List.generate(26, (index) => GlobalKey<SquareButtonState>());
 
   var keyboardLock = Lock();
   int inQueue = 0;
+
+  String lightUpLetter([Map<dynamic, dynamic> params = const {"encKey": "O"}]) {
+    var characterToLightUp = params["encKey"];
+    //This method converts all inputs to uppercase, looks at only the first character and then subtracts the 65 that are added to every index due to ASCII indeces
+    //(Example: A is "0th" letter of the alphabet -> ASCII value is 65)
+    //Then, the respective key is accessed to change the background of the corresponding letter to the specified highlightColor.
+
+    int letter = characterToLightUp.toUpperCase().codeUnitAt(0) - 65;
+    for (int i = 0; i < 26; i++) {
+      setState(() {
+        listOfGlobalKeys[i].currentState?.changeColor(letter == i);
+      });
+    }
+    return characterToLightUp;
+  }
 
   @override
   void initState() {
     super.initState();
     setFordFocus();
     Cookie.setReactor("set_focus_keyboard", setFordFocus);
+    Cookie.setReactor("update_keyboard", lightUpLetter);
   }
 
   void setFordFocus([Map<dynamic, dynamic> params = const {}]) {
@@ -70,44 +88,44 @@ class TastaturState extends State<Tastatur> {
               children: [
                 //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
 
-                SquareButton(label: 'Q'),
-                SquareButton(label: 'W'),
-                SquareButton(label: 'E'),
-                SquareButton(label: 'R'),
-                SquareButton(label: 'T'),
-                SquareButton(label: 'Z'),
-                SquareButton(label: 'U'),
-                SquareButton(label: 'I'),
-                SquareButton(label: 'O'),
-                SquareButton(label: 'P'),
+                SquareButton(label: 'Q', key: listOfGlobalKeys[16], context: context),
+                SquareButton(label: 'W', key: listOfGlobalKeys[22], context: context),
+                SquareButton(label: 'E', key: listOfGlobalKeys[4], context: context),
+                SquareButton(label: 'R', key: listOfGlobalKeys[17], context: context),
+                SquareButton(label: 'T', key: listOfGlobalKeys[19], context: context),
+                SquareButton(label: 'Z', key: listOfGlobalKeys[25], context: context),
+                SquareButton(label: 'U', key: listOfGlobalKeys[20], context: context),
+                SquareButton(label: 'I', key: listOfGlobalKeys[8], context: context),
+                SquareButton(label: 'O', key: listOfGlobalKeys[14], context: context),
+                SquareButton(label: 'P', key: listOfGlobalKeys[15], context: context),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'A'),
-                SquareButton(label: 'S'),
-                SquareButton(label: 'D'),
-                SquareButton(label: 'F'),
-                SquareButton(label: 'G'),
-                SquareButton(label: 'H'),
-                SquareButton(label: 'J'),
-                SquareButton(label: 'K'),
-                SquareButton(label: 'L'),
+                SquareButton(label: 'A', key: listOfGlobalKeys[0], context: context),
+                SquareButton(label: 'S', key: listOfGlobalKeys[18], context: context),
+                SquareButton(label: 'D', key: listOfGlobalKeys[3], context: context),
+                SquareButton(label: 'F', key: listOfGlobalKeys[5], context: context),
+                SquareButton(label: 'G', key: listOfGlobalKeys[6], context: context),
+                SquareButton(label: 'H', key: listOfGlobalKeys[7], context: context),
+                SquareButton(label: 'J', key: listOfGlobalKeys[9], context: context),
+                SquareButton(label: 'K', key: listOfGlobalKeys[10], context: context),
+                SquareButton(label: 'L', key: listOfGlobalKeys[11], context: context),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'Y'),
-                SquareButton(label: 'X'),
-                SquareButton(label: 'C'),
-                SquareButton(label: 'V'),
-                SquareButton(label: 'B'),
-                SquareButton(label: 'N'),
-                SquareButton(label: 'M')
+                SquareButton(label: 'Y', key: listOfGlobalKeys[24], context: context),
+                SquareButton(label: 'X', key: listOfGlobalKeys[23], context: context),
+                SquareButton(label: 'C', key: listOfGlobalKeys[2], context: context),
+                SquareButton(label: 'V', key: listOfGlobalKeys[21], context: context),
+                SquareButton(label: 'B', key: listOfGlobalKeys[1], context: context),
+                SquareButton(label: 'N', key: listOfGlobalKeys[13], context: context),
+                SquareButton(label: 'M', key: listOfGlobalKeys[12], context: context)
               ],
             ),
           ],
@@ -117,18 +135,21 @@ class TastaturState extends State<Tastatur> {
   }
 }
 
-class SquareButton extends StatelessWidget {
+class SquareButton extends StatefulWidget {
   final double size = 50;
   final Color colorLightMode = Colors.black;
   final Color colorDarkMode = Colors.grey.shade600;
+  final Color colorHighlighted = Colors.yellow;
   final String label;
+  final BuildContext context;
 
   SquareButton({
     super.key,
     required this.label,
+    required this.context,
   });
 
-  Color? returnColor(BuildContext context) {
+  Color returnColor(BuildContext context) {
     if (Theme.of(context).brightness == Brightness.light) {
       return colorLightMode;
     } else {
@@ -137,20 +158,68 @@ class SquareButton extends StatelessWidget {
   }
 
   @override
+  SquareButtonState createState() => SquareButtonState();
+
+}
+
+class SquareButtonState extends State<SquareButton> {
+
+  late Color colorBox;
+  late String label;
+
+  @override
+    void initState() {
+      super.initState();
+      label = widget.label;
+      //colorBox == widget.defaultColorBox;
+      // if (text == "O") {
+      //   //For testing; remove once backend communicates to frontend
+      //   colorBox = widget.highlightedColor;
+      //   highlighted = 1;
+      // } else {
+      //     if(Theme.of(widget.context).brightness == Brightness.light) {
+      //       colorBox = widget.defaultColorBoxLightMode;
+      //     }
+      //     else {
+      //       colorBox = widget.defaultColorBoxDarkMode;
+      //     }
+      // }
+
+      //colorBox = widget.returnColor(context)!;
+      colorBox = widget.returnColor(context);
+    }
+
+  void changeColor(bool color) {
+    setState(() {
+      if (color) {
+        colorBox = widget.colorHighlighted;
+      } else {
+        if(Theme.of(widget.context).brightness == Brightness.light) {
+          colorBox = widget.colorLightMode;
+        }
+        else {
+          colorBox = widget.colorDarkMode;
+        }
+      }
+    });
+  }
+
+@override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       key: ValueKey("Tastatur-Button-$label"),
       child: ElevatedButton(
         onPressed: () async {
+          changeColor(true);
           final letter = label;
           final encryptedLetter = await sendPressedKeyToRotors(letter);
           Cookie.trigger("update");
           Cookie.trigger("update_history", {"clear": letter, "encrypted": encryptedLetter});
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: returnColor(context), // background color lol
+          backgroundColor: this.colorBox, // background color lol
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // rounded corners
           ),
