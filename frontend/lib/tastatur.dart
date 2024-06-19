@@ -1,5 +1,6 @@
 import 'package:enigma/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:synchronized/synchronized.dart';
 
 class Tastatur extends StatefulWidget {
@@ -54,6 +55,11 @@ class TastaturState extends State<Tastatur> {
   }
 
   void _handleKeyEvent(KeyEvent event) async {
+    // filter unwanted events
+    if (HardwareKeyboard.instance.isAltPressed ||
+        HardwareKeyboard.instance.isControlPressed ||
+        HardwareKeyboard.instance.isMetaPressed) return;
+
     if (event.character != null) {
       String char = event.character!.toLowerCase();
       if (char.compareTo('a') >= 0 && char.compareTo('z') <= 0) {
@@ -66,7 +72,8 @@ class TastaturState extends State<Tastatur> {
           final encryptedLetter = await sendPressedKeyToRotors(char);
 
           Cookie.trigger("update");
-          Cookie.trigger("update_history", {"clear": char, "encrypted": encryptedLetter});
+          Cookie.trigger(
+              "update_history", {"clear": char, "encrypted": encryptedLetter});
           inQueue--;
         });
       }
@@ -75,7 +82,6 @@ class TastaturState extends State<Tastatur> {
 
   @override
   Widget build(BuildContext context) {
-
     return KeyboardListener(
       focusNode: _focusNode,
       onKeyEvent: _handleKeyEvent,
@@ -216,7 +222,8 @@ class SquareButtonState extends State<SquareButton> {
           final letter = label;
           final encryptedLetter = await sendPressedKeyToRotors(letter);
           Cookie.trigger("update");
-          Cookie.trigger("update_history", {"clear": letter, "encrypted": encryptedLetter});
+          Cookie.trigger("update_history",
+              {"clear": letter, "encrypted": encryptedLetter});
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: this.colorBox, // background color lol
