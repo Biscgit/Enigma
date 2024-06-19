@@ -55,6 +55,7 @@ Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
   String encKey = respBody['key'];
 
  // Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
+  Cookie.trigger("update_keyboard", {"encKey": s});
   Cookie.trigger("update_lampenfield", {"encKey": encKey.toUpperCase()});
 
   return encKey;
