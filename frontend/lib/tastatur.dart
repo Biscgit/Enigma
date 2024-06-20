@@ -233,7 +233,7 @@ class SquareButtonState extends State<SquareButton> {
               {"clear": letter, "encrypted": encryptedLetter});
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: this.colorBox, // background color lol
+          backgroundColor: colorBox, // background color lol
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // rounded corners
           ),
