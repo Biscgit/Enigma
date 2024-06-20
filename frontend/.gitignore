@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# flutter build
+windows/
+linux/
+web/
+android/
+ios/
+macos/
+
+# flutter
+.metadata
+README.md
+analysis_options.yaml
+test/widget_test.dart
