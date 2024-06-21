@@ -38,29 +38,62 @@ void login(FlutterDriver? driver) async {
   );
 }
 
+Future<String> findSquareButtonKey(FlutterDriver? driver, String baseKey) async {
+  final notHighlightedKey = 'Tastatur-Key-$baseKey-0';
+  final highlightedKey = 'Tastatur-Key-$baseKey-1';
+
+  try {
+    await driver?.waitFor(find.byValueKey(notHighlightedKey), timeout: Duration(milliseconds: 500));
+    return notHighlightedKey;
+  } catch (e) {
+    // Do nothing, just try the next key
+  }
+
+  try {
+    await driver?.waitFor(find.byValueKey(highlightedKey), timeout: Duration(milliseconds: 500));
+    return highlightedKey;
+  } catch (e) {
+    // If both fail, rethrow the last exception
+    throw Exception('Widget with key $baseKey not found');
+  }
+}
+
 Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String expectedResult) async {
-  // print("Check for input: $keyInput, expecting result: $expectedResult.");
+  print("Check for input: $keyInput, expecting result: $expectedResult.");
+
+  keyInput = keyInput.toUpperCase();
+  expectedResult = expectedResult.toUpperCase();
 
   Health? health = await driver?.checkHealth();
   assert(health?.status == HealthStatus.ok);
       //Template for how keyboard ValueKeys work:
-      //    Tastatur-Button-$label
+      //    Tastatur-Key-$label
       //Template for how lamppanel ValueKeys work:
-      //    Lamppanel-Key-$text-$highlighted
-
-  dynamic key = find.byValueKey("Tastatur-Button-${keyInput.toUpperCase()}"); //.toUpperCase() just to be safe
+      //    Lamppanel-Key-$text-$highlighted^
+  String key_name = await findSquareButtonKey(driver, keyInput);
+  dynamic key = find.byValueKey(key_name);
   await driver?.tap(key);
   //await driver?.waitFor(find.byValueKey("ResultKey"), timeout: const Duration(seconds: 3)); //In Testing State
 
   int expectedResultDecoded = expectedResult.codeUnitAt(0) - 65;
+  int keyInputDecoded = keyInput.codeUnitAt(0) - 65;
 
   for(int i = 0; i < 26; i++) {
     String letter = String.fromCharCode(i + 65);
-    if(i != expectedResultDecoded) { //Exclude case for letter "I"
+    if(i != expectedResultDecoded) { //Exclude case for expected letter
       await driver?.waitFor(find.byValueKey("Lamppanel-Key-$letter-0"), timeout: const Duration(seconds: 3));
     }
     else {
       await driver?.waitFor(find.byValueKey("Lamppanel-Key-$expectedResult-1"), timeout: const Duration(seconds: 3));
+    }
+  }
+  for(int i = 0; i < 26; i++) {
+    String letter = String.fromCharCode(i + 65);
+    if(i != keyInputDecoded) { //Exclude case for pressed letter
+      await driver?.waitFor(find.byValueKey("Tastatur-Key-$letter-0"), timeout: const Duration(seconds: 3));
+    }
+    else {
+      await driver?.waitFor(find.byValueKey("Tastatur-Key-$keyInput-1"), timeout: const Duration(seconds: 3));
     }
   }
 }
@@ -71,7 +104,7 @@ void main() async {
 
     // Connect to the Flutter app before running the tests.
     setUp(() async => {
-      driver = await FlutterDriver.connect()
+      driver = await FlutterDriver.connect(timeout: const Duration(minutes: 3))
     });
 
     // Close the connection to the Flutter app after tests are done.
@@ -106,5 +139,5 @@ void main() async {
       await checkForKeyInput(driver, "L", "X"); //Change result to: A
       await checkForKeyInput(driver, "D", "A"); //Change result to: Z
       // print("Done!");
-    });
+    }, timeout: Timeout(const Duration(minutes: 3)));
 }

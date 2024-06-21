@@ -172,6 +172,7 @@ class SquareButtonState extends State<SquareButton> {
 
   late Color colorBox;
   late String label;
+  int highlighted = 0;
 
   @override
     void initState() {
@@ -190,15 +191,20 @@ class SquareButtonState extends State<SquareButton> {
       //       colorBox = widget.defaultColorBoxDarkMode;
       //     }
       // }
-
-      //colorBox = widget.returnColor(context)!;
-      colorBox = widget.returnColor(context);
+      //colorBox = widget.returnColor(context);
     }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    colorBox = widget.returnColor(context);
+  }
 
   void changeColor(bool color) {
     setState(() {
       if (color) {
         colorBox = widget.colorHighlighted;
+        highlighted = 1;
       } else {
         if(Theme.of(widget.context).brightness == Brightness.light) {
           colorBox = widget.colorLightMode;
@@ -206,6 +212,7 @@ class SquareButtonState extends State<SquareButton> {
         else {
           colorBox = widget.colorDarkMode;
         }
+        highlighted = 0;
       }
     });
   }
@@ -215,10 +222,10 @@ class SquareButtonState extends State<SquareButton> {
     return SizedBox(
       width: widget.size,
       height: widget.size,
-      key: ValueKey("Tastatur-Button-$label"),
+      key: ValueKey("Tastatur-Key-$label-$highlighted"),
       child: ElevatedButton(
         onPressed: () async {
-          changeColor(true);
+          //changeColor(true);
           final letter = label;
           final encryptedLetter = await sendPressedKeyToRotors(letter);
           Cookie.trigger("update");
@@ -249,7 +256,7 @@ class SquareButtonState extends State<SquareButton> {
     return SizedBox(
       width: size,
       height: size,
-      key: ValueKey("Tastatur-Button-$label"),
+      key: ValueKey("Tastatur-Key-$label"),
       child: ElevatedButton(
         onPressed: () {
           showDialog<String>(
