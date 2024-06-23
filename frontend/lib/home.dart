@@ -67,6 +67,7 @@ class HomePageState extends State<HomePage> {
             key: const ValueKey('logoutButton'),
             onPressed: () async {
               await _logout(context);
+              Cookie.nukeReactors();
               if (!context.mounted) return;
 
               showDialog(
