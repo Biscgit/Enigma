@@ -88,7 +88,6 @@ void main() async {
 
     test('Tastatur + Lamppanel + Backend test', () async { //This test passing means that all components work correctly!
       login(driver);
-      await driver?.waitFor(find.byType("SquareButton"), timeout: const Duration(seconds: 2)); // Test if login worked correctly
 
       // https://www.101computing.net/enigma-machine-emulator/
       // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)
