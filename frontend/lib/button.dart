@@ -30,6 +30,7 @@ class SettingsPageState extends State<SettingsPage> {
                 // Logic to reset settings to default
                 Cookie.read("current_machine")
                 .then((machineId) => APICaller.post("revert-machine", query: {"machine_id": machineId}))
+                .then((_) => Cookie.nukeReactors())
                 .then((_) => Navigator.of(context).pop())
                 .then((_) => Navigator.pushReplacementNamed(context, '/home'));
               },
