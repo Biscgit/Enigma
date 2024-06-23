@@ -579,7 +579,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate, id
+                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate, id, machine_id
                 FROM rotors
                 WHERE number = $1 AND username = $2 AND machine_type = $3 AND machine_id = 0 AND place = $4
                 """,
@@ -757,7 +757,10 @@ class Database:
                     """
                     UPDATE machines
                     SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[]
-                    """
+                    WHERE id = $1 AND username = $2
+                    """,
+                    machine_id,
+                    username,
                 )
 
 

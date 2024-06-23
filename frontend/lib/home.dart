@@ -5,6 +5,7 @@ import 'package:enigma/sidebar.dart';
 import 'package:enigma/utils.dart';
 import 'package:enigma/steckerbrett.dart';
 import 'package:enigma/keyhistory.dart';
+import 'package:enigma/button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,6 +35,7 @@ class HomePageState extends State<HomePage> {
   Future<void> _logout(BuildContext context) async {
     await APICaller.delete("logout");
     await Cookie.delete('token');
+    Cookie.nukeReactors();
 
     if (!context.mounted) return;
     Navigator.pushReplacementNamed(context, '/login');
@@ -67,7 +69,6 @@ class HomePageState extends State<HomePage> {
             key: const ValueKey('logoutButton'),
             onPressed: () async {
               await _logout(context);
-              Cookie.nukeReactors();
               if (!context.mounted) return;
 
               showDialog(
@@ -106,7 +107,13 @@ class HomePageState extends State<HomePage> {
       ),
       body: Row(
         children: [
+          const Expanded(
+              child: Column(
+            children: [
           rotorWidget,
+          SettingsPage(key: Key('revert_button')),
+          ],
+          )),
           Expanded(
               child: Stack(
             children: [

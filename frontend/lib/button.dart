@@ -1,43 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:enigma/utils.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SettingsPage(),
-    );
-  }
-}
 
 class SettingsPage extends StatefulWidget {
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  SettingsPageState createState() => SettingsPageState();
+
+  const SettingsPage({super.key});
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPageState extends State<SettingsPage> {
   void resetSettings() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirm Reset"),
-          content: Text("Are you sure you want to reset settings to default?"),
+          title: const Text("Confirm Reset"),
+          content: const Text("Are you sure you want to reset settings to default?"),
           actions: [
             TextButton(
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Confirm"),
+              child: const Text("Confirm"),
               onPressed: () {
                 // Logic to reset settings to default
-                Navigator.of(context).pop();
+                Cookie.read("current_machine")
+                .then((machineId) => APICaller.post("revert-machine", query: {"machine_id": machineId}))
+                .then((_) => Navigator.of(context).pop())
+                .then((_) => Navigator.pushReplacementNamed(context, '/home'));
               },
             ),
           ],
@@ -48,21 +42,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Settings"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
+    return ElevatedButton(
               onPressed: resetSettings,
-              child: Text("Reset to Default"),
-            ),
-          ],
-        ),
-      ),
-    );
+              child: const Text("Reset to Default"),
+            );
   }
 }
