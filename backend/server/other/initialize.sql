@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS rotors (
     machine_type INTEGER,
     letter_shift TEXT,
     rotor_position TEXT,
+    offset_value INTEGER,
 
     place INTEGER,
     number INTEGER,

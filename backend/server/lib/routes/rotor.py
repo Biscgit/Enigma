@@ -25,6 +25,7 @@ async def update_rotor(
                 "place": rotor.place,
                 "number": rotor.number,
                 "is_rotate": rotor.is_rotate,
+                "offset_value": rotor.offset_value,
             }
         )
     except Exception as e:

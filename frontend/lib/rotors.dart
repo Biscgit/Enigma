@@ -61,6 +61,7 @@ class RotorWidgetState extends State<RotorWidget> {
   String notch = "a";
   int numberRotors = 5;
   int id = 1;
+  int offset = 0;
 
   @override
   void initState() {
@@ -94,10 +95,11 @@ class RotorWidgetState extends State<RotorWidget> {
 
     var rotor = json.decode((await APICaller.get("get-rotor-by-place", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
     id = rotor["id"];
+    offset = (rotor["offset_value"] as int? ?? 0);
 
     setState(() {
-      rotorPosition = rotor["rotor_position"].codeUnitAt(0) - 97;
-      notch = rotor["letter_shift"];
+      rotorPosition = (rotor["rotor_position"].codeUnitAt(0) - 97 + offset + 26) % 26;
+      notch = changeString(rotor["letter_shift"], offset);
     });
   }
 
@@ -115,10 +117,10 @@ class RotorWidgetState extends State<RotorWidget> {
     final response = await APICaller.post("switch-rotor", body: rotor);
     assert(response.statusCode == 200);
     var getRotor = jsonDecode(response.body);
-
+    offset = (getRotor["offset_value"] as int? ?? 0);
     setState(() {
-      rotorPosition = (getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97;
-      notch = getRotor["letter_shift"] as String? ?? "a";
+      rotorPosition = ((getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97 + offset + 26) % 26;
+      notch = changeString((getRotor["letter_shift"] as String? ?? "a"), offset);
     });
 
     Cookie.trigger("set_focus_keyboard");
@@ -134,8 +136,7 @@ class RotorWidgetState extends State<RotorWidget> {
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = notch;
+    rotor["rotor_position"] = String.fromCharCode(97 + (rotorPosition - offset + 26) % 26);
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
@@ -144,17 +145,22 @@ class RotorWidgetState extends State<RotorWidget> {
   void _changeLetterPosition(int change) async {
     setState(() {
       rotorPosition = (rotorPosition + change + 26) % 26;
-      notch = String.fromCharCodes(notch.toLowerCase().split('').map((pos) => 97 + ((pos.codeUnitAt(0) -  97) + change + 26) % 26));
+      notch = changeString(notch, change);
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = notch;
+    offset =  (offset + change + 26) % 26;
+    rotor["letter_shift"] = changeString(notch, -offset);
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
+    rotor["offset_value"] = offset;
     APICaller.post("update-rotor", body: rotor);
 
   }
+
+  String changeString(String base, int change) {
+      return String.fromCharCodes(base.toLowerCase().split('').map((pos) => 97 + ((pos.codeUnitAt(0) - 97) + change + 26) % 26));
+    }
 
   @override
   Widget build(BuildContext context) {

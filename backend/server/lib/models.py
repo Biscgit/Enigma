@@ -47,6 +47,7 @@ class Rotor(MinRotor):
     rotor_position: str
     scramble_alphabet: str
     template_id: Optional[str] = None
+    offset_value: int
 
     @validator("scramble_alphabet")
     def check_alphabet(cls, value):
