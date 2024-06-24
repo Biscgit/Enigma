@@ -14,33 +14,34 @@ class RotorPage extends StatelessWidget {
 
   Future<Data> _initialize() async {
     var machineId = await Cookie.read("current_machine");
-    var rotorIds = json.decode((await APICaller.get("get-rotor-ids", {"machine_id": machineId})).body);
-    return Data(
-      machineId: machineId,
-      rotorIds: rotorIds
-    );
+    var rotorIds = json.decode(
+        (await APICaller.get("get-rotor-ids", {"machine_id": machineId})).body);
+    return Data(machineId: machineId, rotorIds: rotorIds);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Data>(
-      future: _initialize(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [CircularProgressIndicator()],
-          );
-        } else {
-          final data = snapshot.data!;
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-            numberRotors, (index) => RotorWidget(rotorNumber: index + 1, machineId: data.machineId, rotorIds: data.rotorIds)),
-          );
-        }
-      }
-    );
+        future: _initialize(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [CircularProgressIndicator()],
+            );
+          } else {
+            final data = snapshot.data!;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                  numberRotors,
+                  (index) => RotorWidget(
+                      rotorNumber: index + 1,
+                      machineId: data.machineId,
+                      rotorIds: data.rotorIds)),
+            );
+          }
+        });
   }
 }
 
@@ -49,7 +50,11 @@ class RotorWidget extends StatefulWidget {
   final String machineId;
   final List<dynamic> rotorIds;
 
-  const RotorWidget({super.key, required this.rotorNumber, required this.machineId, required this.rotorIds});
+  const RotorWidget(
+      {super.key,
+      required this.rotorNumber,
+      required this.machineId,
+      required this.rotorIds});
 
   @override
   RotorWidgetState createState() => RotorWidgetState();
@@ -66,9 +71,7 @@ class RotorWidgetState extends State<RotorWidget> {
   @override
   void initState() {
     super.initState();
-    _getRotorNumber()
-      .then((_) => apiCall())
-      .then((_) => _initialize());
+    _getRotorNumber().then((_) => apiCall()).then((_) => _initialize());
     Cookie.setReactor("update", _initialize);
   }
 
@@ -80,11 +83,12 @@ class RotorWidgetState extends State<RotorWidget> {
       "place": widget.rotorNumber,
       "number": selectedRotor,
     });
-
   }
 
   Future<void> _getRotorNumber() async {
-    var rotorNumber = json.decode((await APICaller.get("get-rotor-number", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
+    var rotorNumber = json.decode((await APICaller.get("get-rotor-number",
+            {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"}))
+        .body);
     setState(() {
       selectedRotor = rotorNumber["number"];
     });
@@ -93,12 +97,15 @@ class RotorWidgetState extends State<RotorWidget> {
   Future<void> _initialize([Map<dynamic, dynamic> params = const {}]) async {
     numberRotors = widget.rotorIds.length;
 
-    var rotor = json.decode((await APICaller.get("get-rotor-by-place", {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"})).body);
+    var rotor = json.decode((await APICaller.get("get-rotor-by-place",
+            {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"}))
+        .body);
     id = rotor["id"];
     offset = (rotor["offset_value"] as int? ?? 0);
 
     setState(() {
-      rotorPosition = (rotor["rotor_position"].codeUnitAt(0) - 97 + offset + 26) % 26;
+      rotorPosition =
+          (rotor["rotor_position"].codeUnitAt(0) - 97 + offset + 26) % 26;
       notch = changeString(rotor["letter_shift"], offset);
     });
   }
@@ -119,8 +126,14 @@ class RotorWidgetState extends State<RotorWidget> {
     var getRotor = jsonDecode(response.body);
     offset = (getRotor["offset_value"] as int? ?? 0);
     setState(() {
-      rotorPosition = ((getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97 + offset + 26) % 26;
-      notch = changeString((getRotor["letter_shift"] as String? ?? "a"), offset);
+      rotorPosition =
+          ((getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) -
+                  97 +
+                  offset +
+                  26) %
+              26;
+      notch =
+          changeString((getRotor["letter_shift"] as String? ?? "a"), offset);
     });
 
     Cookie.trigger("set_focus_keyboard");
@@ -136,7 +149,8 @@ class RotorWidgetState extends State<RotorWidget> {
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_position"] = String.fromCharCode(97 + (rotorPosition - offset + 26) % 26);
+    rotor["rotor_position"] =
+        String.fromCharCode(97 + (rotorPosition - offset + 26) % 26);
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
@@ -149,18 +163,20 @@ class RotorWidgetState extends State<RotorWidget> {
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    offset =  (offset + change + 26) % 26;
+    offset = (offset + change + 26) % 26;
     rotor["letter_shift"] = changeString(notch, -offset);
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     rotor["offset_value"] = offset;
     APICaller.post("update-rotor", body: rotor);
-
   }
 
   String changeString(String base, int change) {
-      return String.fromCharCodes(base.toLowerCase().split('').map((pos) => 97 + ((pos.codeUnitAt(0) - 97) + change + 26) % 26));
-    }
+    return String.fromCharCodes(base
+        .toLowerCase()
+        .split('')
+        .map((pos) => 97 + ((pos.codeUnitAt(0) - 97) + change + 26) % 26));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,20 +190,23 @@ class RotorWidgetState extends State<RotorWidget> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Rotor ${widget.rotorNumber}',
+          Text(
+            'Rotor ${widget.rotorNumber}',
             style: const TextStyle(fontSize: 16),
           ),
           DropdownButton<int>(
             value: selectedRotor,
             items: List.generate(
-              numberRotors,
-              (index) => DropdownMenuItem(
-                value: index + 1,
-                key:  ValueKey("DropDown.${widget.rotorNumber}"),
-                child: Text('Rotor ${index + 1}',
-                  key: ValueKey("Item.${widget.rotorNumber}.$selectedRotor"),
-                ),
-              )),
+                numberRotors,
+                (index) => DropdownMenuItem(
+                      value: index + 1,
+                      key: ValueKey("DropDown.${widget.rotorNumber}"),
+                      child: Text(
+                        'Rotor ${index + 1}',
+                        key: ValueKey(
+                            "Item.${widget.rotorNumber}.$selectedRotor"),
+                      ),
+                    )),
             onChanged: _changeRotorSetting,
           ),
           const SizedBox(height: 10),
@@ -196,10 +215,9 @@ class RotorWidgetState extends State<RotorWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () => _changeRotorPosition(-1),
-                key: ValueKey("ChangeRotor.${widget.rotorNumber}.minus")
-              ),
+                  icon: const Icon(Icons.remove),
+                  onPressed: () => _changeRotorPosition(-1),
+                  key: ValueKey("ChangeRotor.${widget.rotorNumber}.minus")),
               Container(
                 alignment: Alignment.center,
                 width: 16,
@@ -210,10 +228,9 @@ class RotorWidgetState extends State<RotorWidget> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => _changeRotorPosition(1),
-                key: ValueKey("ChangeRotor.${widget.rotorNumber}.plus")
-              ),
+                  icon: const Icon(Icons.add),
+                  onPressed: () => _changeRotorPosition(1),
+                  key: ValueKey("ChangeRotor.${widget.rotorNumber}.plus")),
             ],
           ),
           const SizedBox(height: 10),
@@ -222,15 +239,13 @@ class RotorWidgetState extends State<RotorWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () => _changeLetterPosition(-1),
-                key: ValueKey("ChangeLetter.${widget.rotorNumber}.minus")
-              ),
+                  icon: const Icon(Icons.remove),
+                  onPressed: () => _changeLetterPosition(-1),
+                  key: ValueKey("ChangeLetter.${widget.rotorNumber}.minus")),
               IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () => _changeLetterPosition(1),
-                key: ValueKey("ChangeLetter.${widget.rotorNumber}.plus")
-              ),
+                  icon: const Icon(Icons.add),
+                  onPressed: () => _changeLetterPosition(1),
+                  key: ValueKey("ChangeLetter.${widget.rotorNumber}.plus")),
             ],
           ),
           const SizedBox(height: 10),
@@ -239,8 +254,8 @@ class RotorWidgetState extends State<RotorWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(notch.toUpperCase(),
-                style: const TextStyle(fontSize: 16),
-                key: ValueKey("Notch.${widget.rotorNumber}")),
+                  style: const TextStyle(fontSize: 16),
+                  key: ValueKey("Notch.${widget.rotorNumber}")),
             ],
           ),
         ],

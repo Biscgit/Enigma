@@ -268,7 +268,6 @@ class CustomKeyboardState extends State<CustomKeyboard> {
     );
   }
 
-
   // Tastatur im ABC-Layout
   @override
   Widget build(BuildContext context) {

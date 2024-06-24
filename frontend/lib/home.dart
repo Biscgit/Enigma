@@ -107,13 +107,14 @@ class HomePageState extends State<HomePage> {
       ),
       body: Row(
         children: [
-          const Expanded(
+          const Flexible(
+              fit: FlexFit.loose,
               child: Column(
-            children: [
-          rotorWidget,
-          SettingsPage(key: Key('revert_button')),
-          ],
-          )),
+                children: [
+                  rotorWidget,
+                  SettingsPage(key: Key('revert_button')),
+                ],
+              )),
           Expanded(
               child: Stack(
             children: [
