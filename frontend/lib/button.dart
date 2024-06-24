@@ -3,6 +3,8 @@ import 'package:enigma/utils.dart';
 
 
 class SettingsPage extends StatefulWidget {
+
+
   @override
   SettingsPageState createState() => SettingsPageState();
 
@@ -10,7 +12,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  void resetSettings() {
+  void resetSettings(ButtonStyle buttonStyle) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -19,12 +21,16 @@ class SettingsPageState extends State<SettingsPage> {
           content: const Text("Are you sure you want to reset settings to default?"),
           actions: [
             TextButton(
+              key: const Key("Cancel_revert"),
+              style: buttonStyle,
               child: const Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
+              key: const Key("Confirm_revert"),
+              style: buttonStyle,
               child: const Text("Confirm"),
               onPressed: () {
                 // Logic to reset settings to default
@@ -43,8 +49,17 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final buttonStyle = ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
     return ElevatedButton(
-              onPressed: resetSettings,
+              style: buttonStyle,
+              onPressed: () => resetSettings(buttonStyle),
               child: const Text("Reset to Default"),
             );
   }
