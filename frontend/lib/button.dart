@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
 
-
 class SettingsPage extends StatefulWidget {
-
-
   @override
   SettingsPageState createState() => SettingsPageState();
 
@@ -18,10 +15,11 @@ class SettingsPageState extends State<SettingsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Confirm Reset"),
-          content: const Text("Are you sure you want to reset settings to default?"),
+          content:
+              const Text("Are you sure you want to reset settings to default?"),
           actions: [
             TextButton(
-              key: const Key("Cancel_revert"),
+              key: const ValueKey("Cancel_revert"),
               style: buttonStyle,
               child: const Text("Cancel"),
               onPressed: () {
@@ -29,16 +27,18 @@ class SettingsPageState extends State<SettingsPage> {
               },
             ),
             TextButton(
-              key: const Key("Confirm_revert"),
+              key: const ValueKey("Confirm_revert"),
               style: buttonStyle,
               child: const Text("Confirm"),
               onPressed: () {
                 // Logic to reset settings to default
                 Cookie.read("current_machine")
-                .then((machineId) => APICaller.post("revert-machine", query: {"machine_id": machineId}))
-                .then((_) => Cookie.nukeReactors())
-                .then((_) => Navigator.of(context).pop())
-                .then((_) => Navigator.pushReplacementNamed(context, '/home'));
+                    .then((machineId) => APICaller.post("revert-machine",
+                        query: {"machine_id": machineId}))
+                    .then((_) => Cookie.nukeReactors())
+                    .then((_) => Navigator.of(context).pop())
+                    .then((_) =>
+                        Navigator.pushReplacementNamed(context, '/home'));
               },
             ),
           ],
@@ -58,9 +58,10 @@ class SettingsPageState extends State<SettingsPage> {
       ),
     );
     return ElevatedButton(
-              style: buttonStyle,
-              onPressed: () => resetSettings(buttonStyle),
-              child: const Text("Reset to Default"),
-            );
+      style: buttonStyle,
+      key: const ValueKey("Reset_button"),
+      onPressed: () => resetSettings(buttonStyle),
+      child: const Text("Reset to Default"),
+    );
   }
 }
