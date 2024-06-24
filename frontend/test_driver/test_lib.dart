@@ -23,6 +23,23 @@ Future<void> login(FlutterDriver? driver,
   await Future.delayed(const Duration(seconds: 1));
 }
 
+Future<void> logout(FlutterDriver? driver) async {
+  final logoutButton = find.byValueKey("logoutButton");
+  await driver?.tap(logoutButton);
+
+  await driver?.waitFor(
+    find.byValueKey('logoutDialog'),
+    timeout: const Duration(seconds: 5),
+  );
+
+  await driver?.tap(find.text("OK"));
+
+  await driver?.waitForAbsent(
+    find.byValueKey('logoutDialog'),
+    timeout: const Duration(seconds: 5),
+  );
+}
+
 Future<void> resetSelectedMachine(FlutterDriver? driver) async {
   final resetButton = find.byValueKey("Reset_button");
   await driver?.tap(resetButton);
@@ -37,4 +54,9 @@ Future<void> resetSelectedMachine(FlutterDriver? driver) async {
     timeout: const Duration(seconds: 10),
   );
   await Future.delayed(const Duration(seconds: 1));
+}
+
+Future<void> writeChar(String char, FlutterDriver? driver) async {
+  assert(char.length == 1);
+  await driver?.tap(find.byValueKey("Tastatur-Button-${char.toUpperCase()}"));
 }
