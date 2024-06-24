@@ -132,17 +132,19 @@ class Database:
         alphabet = string.ascii_lowercase
         for username in await self._get_users():
             for machine in content:
-                reflector = {}
-                for i, j in zip(machine["reflector"], alphabet):
-                    reflector[i.lower()] = j.lower()
-                    reflector[j.lower()] = i.lower()
+                reflectors = {}
+                for k, reflector in enumerate(machine["reflector"]):
+                    reflectors[k] = {}
+                    for i, j in zip(reflector, alphabet):
+                        reflectors[k][i.lower()] = j.lower()
+                        reflectors[k][j.lower()] = i.lower()
                 try:
                     await self.create_machine(
                         machine["machine_type"],
                         username,
                         machine["machine_type"],
                         machine["name"],
-                        reflector,
+                        reflectors,
                         ignore_exist=True,
                     )
                 except asyncpg.PostgresError:
@@ -214,8 +216,8 @@ class Database:
             async with conn.transaction():
                 await conn.execute(
                     f"""
-                        INSERT INTO machines(id, username, name, machine_type, reflector, character_pointer, character_history, plugboard_enabled, plugboard_config)
-                        VALUES ($1, $2, $3, $4, $5::JSON, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
+                        INSERT INTO machines(id, username, name, machine_type, reflector, reflector_id, character_pointer, character_history, plugboard_enabled, plugboard_config)
+                        VALUES ($1, $2, $3, $4, $5::JSON, 0, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
                         {'ON CONFLICT DO NOTHING' if ignore_exist else ''}
                     """,
                     machine_id,
@@ -454,7 +456,7 @@ class Database:
             return bool(result)
 
     async def get_reflector(self, username: str, machine: int) -> list:
-        """returns return rotor configurations for a machine"""
+        """returns reflector configurations for a machine"""
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
 
@@ -469,7 +471,46 @@ class Database:
             )
 
             logging.debug(f"Fetched reflector for {username}.{machine}: {str(result)}")
+            print(result)
+            return dict(result) if result else None
+
+    async def get_reflector_id(self, username: str, machine_id: int) -> list:
+        """returns refelector id for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                SELECT reflector_id
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username,
+                machine_id,
+            )
+
+            logging.debug(
+                f"Fetched reflector_id for {username}.{machine_id}: {str(result)}"
+            )
             return result
+
+    async def update_reflector_id(
+        self, username: str, machine_id: int, reflector_id: int
+    ) -> None:
+        """returns return rotor configurations for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            conn.execute(
+                """
+                UPDATE machines
+                SET reflector_id = $3
+                WHERE username = $1 AND id = $2
+                """,
+                username,
+                machine_id,
+                reflector_id,
+            )
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -727,6 +768,12 @@ class Database:
             else []
         )
         reflector = await self.get_reflector(username, machine_id)
+        print(reflector)
+        reflector_id = f"{await self.get_reflector_id(username, machine_id)}"
+        print(reflector_id)
+        print(type(reflector))
+        print(reflector[reflector_id])
+
         rotors = []
         for rotor in await self.get_rotors(username, machine_id):
             rotors += [

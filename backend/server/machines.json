@@ -2,21 +2,29 @@
     {
         "name": "Not for use",
         "machine_type": 0,
-        "reflector": "EJMZALYXVBWFCRQUONTSPIKHGD"
+        "reflector": [
+            "EJMZALYXVBWFCRQUONTSPIKHGD"
+        ]
     },
     {
         "name": "Enigma 1",
         "machine_type": 1,
-        "reflector": "EJMZALYXVBWFCRQUONTSPIKHGD"
+        "reflector": ["EJMZALYXVBWFCRQUONTSPIKHGD",
+            "YRUHQSLDPXNGOKMIEBFZCWVJAT",
+            "FVPJIAOYEDRZXWGCTKUQSBNMHL",
+            "FOWULAQYSRTEZVBXGJIKDNCPHM"
+            ]
     },
     {
         "name": "Norway Enigma",
         "machine_type": 2,
-        "reflector": "MOWJYPUXNDSRAIBFVLKZGQCHET"
+        "reflector": ["MOWJYPUXNDSRAIBFVLKZGQCHET"]
     },
     {
         "name": "Enigma M3",
         "machine_type": 3,
-        "reflector": "YRUHQSLDPXNGOKMIEBFZCWVJAT"
+        "reflector": ["YRUHQSLDPXNGOKMIEBFZCWVJAT",
+            "FVPJIAOYEDRZXWGCTKUQSBNMHL"
+        ]
     }
 ]
