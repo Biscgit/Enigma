@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
@@ -10,6 +9,20 @@ takeScreenshot(FlutterDriver driver, String path) async {
   final List<int> pixels = await driver.screenshot();
   final File file = File("screenshots/$path");
   await file.writeAsBytes(pixels);
+}
+
+Future<void> login(FlutterDriver? driver) async {
+  final usernameField = find.byValueKey('username');
+  final passwordField = find.byValueKey('password');
+  final button = find.text('Login');
+
+  await driver?.tap(usernameField);
+  await driver?.enterText("user1");
+
+  await driver?.tap(passwordField);
+  await driver?.enterText("pass1");
+
+  await driver?.tap(button);
 }
 
 void main() {
@@ -210,46 +223,41 @@ void main() {
       }
     });
 
-    test('KeyHistory e2e test', timeout: const Timeout(Duration(minutes: 2)),
+    test('KeyHistory e2e test', timeout: const Timeout(Duration(minutes: 3)),
         () async {
-      // login
-      final usernameField = find.byValueKey('username');
-      final passwordField = find.byValueKey('password');
-      final button = find.text('Login');
-
-      await driver?.tap(usernameField);
-      await driver?.enterText("user1");
-
-      await driver?.tap(passwordField);
-      await driver?.enterText("pass1");
-
-      await driver?.tap(button);
+      // ToDo: reset machine before running
+      await login(driver);
 
       // Find button fields
-      final inputFieldFinder = find.byValueKey('keyInput');
+      // final inputFieldFinder = find.byValueKey('keyInput');
       // final addButtonFinder = find.byValueKey('addButton');
 
       // Add keys to the history
-      List<String> clearTexts = ['A', 'B', 'C'];
-      // List<String> encryptedTexts = ['EncryptedA', 'EncryptedB', 'EncryptedC'];
-
-      await driver?.tap(inputFieldFinder);
-      for (int i = 0; i < clearTexts.length; i++) {
-        await driver?.enterText(clearTexts[i]);
-        // ToDo: adjust test later for correct returned character
-        await driver?.waitFor(find.text('${clearTexts[i]} → O'));
-      }
+      final clearChars = "loremipsumdolorsitametconsetetursadipscingelitrseddia"
+              "mnonumyeirmodtemporinviduntutlaboreetdoloremagnaaliquyameratsedd"
+              "iamvoluptuaatveroeosetaccusametjustoduodolores"
+          .split("");
+      final enCryChars = "azjkkvhkcqgvgkvdrgqsnplvtaymcllaywojjaajfuryxqvxbubho"
+              "iqcwiggdzbddczufdxnedjrzlcohlevqnkhqojmbxpxbdfrrdsmtgethfblqkxim"
+              "ubeizoyxswpvdlafmdhlszdzhwxnxsatlnveaeezgkcnpf"
+          .split("");
 
       // Add many keys to test the history
       List<String> keyPairs = [];
-      await driver?.tap(inputFieldFinder);
-      for (int i = 0; i <= 150; i++) {
-        String randomLetter = String.fromCharCode(Random().nextInt(26) + 65);
-        await driver?.enterText(randomLetter);
+      for (int i = 0; i < clearChars.length; i++) {
+        // press on keyboard
+        await driver?.tap(
+            find.byValueKey("Tastatur-Button-${clearChars[i].toUpperCase()}"));
 
-        final combo = '$randomLetter → O';
+        final combo =
+            '${clearChars[i].toUpperCase()} → ${enCryChars[i].toUpperCase()}';
+
+        print("adding $combo ($i/${clearChars.length - 1})");
         keyPairs.insert(0, combo);
-        await driver?.waitFor(find.text(combo));
+        await driver?.waitFor(
+          find.text(combo),
+          timeout: const Duration(seconds: 3),
+        );
       }
 
       // All of the following tests work!!
@@ -257,7 +265,7 @@ void main() {
       // pipeline. This issue could not be solved and was never seen before on
       // the web.
 
-          // await driver?.scrollUntilVisible(
+      // await driver?.scrollUntilVisible(
       //   find.byValueKey("keyHistoryList"),
       //   find.text(keyPairs[139]),
       //   dyScroll: -100000,
@@ -297,6 +305,23 @@ void main() {
       //   find.text(keyPairs[141]),
       //   timeout: const Duration(seconds: 1),
       // );
+    });
+
+    test('KeyHistory loading test', () async {
+      await login(driver);
+
+      // check if previous typed history gets loaded correctly
+      final clearChars = "dolores".split("").reversed.toList();
+      final enCryChars = "zgkcnpf".split("").reversed.toList();
+
+      for (int i = 0; i < clearChars.length; i++) {
+        final combo =
+            '${clearChars[i].toUpperCase()} → ${enCryChars[i].toUpperCase()}';
+        await driver?.waitFor(
+          find.text(combo),
+          timeout: const Duration(seconds: 3),
+        );
+      }
     });
   });
 }
