@@ -133,7 +133,7 @@ class Database:
         for username in await self._get_users():
             for machine in content:
                 reflectors = {}
-                for k, reflector in enumerate(machine["reflector"]):
+                for k, reflector in machine["reflector"].items():
                     reflectors[k] = {}
                     for i, j in zip(reflector, alphabet):
                         reflectors[k][i.lower()] = j.lower()
@@ -145,6 +145,7 @@ class Database:
                         machine["machine_type"],
                         machine["name"],
                         reflectors,
+                        list(machine["reflector"].keys())[0],
                         ignore_exist=True,
                     )
                 except asyncpg.PostgresError:
@@ -208,6 +209,7 @@ class Database:
         machine_type: int,
         name: str,
         reflector: dict,
+        reflector_id: str,
         ignore_exist: bool = False,
     ) -> None:
         """creates a new machine for a user if it does not exist"""
@@ -217,7 +219,7 @@ class Database:
                 await conn.execute(
                     f"""
                         INSERT INTO machines(id, username, name, machine_type, reflector, reflector_id, character_pointer, character_history, plugboard_enabled, plugboard_config)
-                        VALUES ($1, $2, $3, $4, $5::JSON, 0, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
+                        VALUES ($1, $2, $3, $4, $5::JSON, $6, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
                         {'ON CONFLICT DO NOTHING' if ignore_exist else ''}
                     """,
                     machine_id,
@@ -225,6 +227,7 @@ class Database:
                     name,
                     machine_type,
                     json.dumps(reflector),
+                    reflector_id,
                 )
 
                 logging.debug(
@@ -471,7 +474,6 @@ class Database:
             )
 
             logging.debug(f"Fetched reflector for {username}.{machine}: {str(result)}")
-            print(1, type(result))
             return json.loads(result) if result else None
 
     async def get_reflector_id(self, username: str, machine_id: int) -> list:
@@ -492,7 +494,6 @@ class Database:
             logging.debug(
                 f"Fetched reflector_id for {username}.{machine_id}: {str(result)}"
             )
-            print(type(result))
             return result
 
     async def update_reflector_id(
@@ -502,7 +503,7 @@ class Database:
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
 
-            conn.execute(
+            await conn.execute(
                 """
                 UPDATE machines
                 SET reflector_id = $3
@@ -768,7 +769,7 @@ class Database:
             if await self.is_plugboard_enabled(username, machine_id)
             else []
         )
-        reflector_id = f"{await self.get_reflector_id(username, machine_id)}"
+        reflector_id = await self.get_reflector_id(username, machine_id)
         reflector = (await self.get_reflector(username, machine_id))[reflector_id]
 
         rotors = []

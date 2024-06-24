@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from server.lib.database import get_database, Database
 from server.lib.plugboard import reflect_letter, to_dict
 from .authentication import check_auth
@@ -40,13 +40,16 @@ async def encrypt_key(
 ) -> dict:
     """Endpoint for logging key presses. Takes token, key and machine id. Returns the switched key"""
 
-    # ToDo: implement encryption here and store it to `encrypted_key`
-    # ToDo: implement check if machine exists
     # ToDo: add unit + integration tests when completed
-    encrypted_key: str = await encrypt(username, machine, db_conn, key)
+    try:
+        encrypted_key: str = await encrypt(username, machine, db_conn, key)
 
-    # Save to history and return the switched key
-    await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)
+        # Save to history and return the switched key
+        await db_conn.save_keyboard_pair(username, machine, key, encrypted_key)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't encrypt")
+
     return {"key": encrypted_key}
 
 

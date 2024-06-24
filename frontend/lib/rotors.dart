@@ -263,3 +263,68 @@ class RotorWidgetState extends State<RotorWidget> {
     );
   }
 }
+
+class Reflector extends StatefulWidget {
+  const Reflector({super.key});
+
+  @override
+  ReflectorState createState() => ReflectorState();
+}
+
+class ReflectorState extends State<Reflector> {
+  String machineId = "1";
+  String item = "UKW";
+  bool initialized = false;
+  List<String> items = [];
+
+  Future<List<String>> _initialize() async {
+    if (initialized) return items;
+    machineId = await Cookie.read("current_machine");
+    items = json.decode(
+        (await APICaller.get("get-reflector-ids", {"machine_id": machineId}))
+            .body);
+    initialized = true;
+    item = json.decode(
+        (await APICaller.get("get-reflector-id", {"machine_id": machineId}))
+            .body);
+    return items;
+  }
+
+  void changeReflector(String? value) async {
+    await APICaller.post("update-reflector",
+        query: {"machine_id": machineId, "reflector_id": value ?? "UKW"});
+    setState(() {
+      item = value!;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<String>>(
+        future: _initialize(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [CircularProgressIndicator()],
+            );
+          } else {
+            final data = snapshot.data!;
+            return DropdownButton<String>(
+              value: item,
+              items: List.generate(
+                  data.length,
+                  (index) => DropdownMenuItem(
+                        value: data[index],
+                        key: const ValueKey("DropDownReflector"),
+                        child: Text(
+                          data[index],
+                          key: ValueKey("Item.${data[index]}"),
+                        ),
+                      )),
+              onChanged: changeReflector,
+            );
+          }
+        });
+  }
+}

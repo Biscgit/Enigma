@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS machines (
     machine_type INTEGER,
 
     reflector JSON,
-    reflector_id int,
+    reflector_id TEXT,
 
     character_pointer INTEGER,
     character_history JSON ARRAY[140],
