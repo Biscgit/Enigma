@@ -1,29 +1,8 @@
 import 'dart:io';
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
-
-// import 'package:flutter_test/flutter_test.dart' as tester;
 import 'tastatur_test.dart' as tastatur_test;
-
-takeScreenshot(FlutterDriver driver, String path) async {
-  final List<int> pixels = await driver.screenshot();
-  final File file = File("screenshots/$path");
-  await file.writeAsBytes(pixels);
-}
-
-Future<void> login(FlutterDriver? driver) async {
-  final usernameField = find.byValueKey('username');
-  final passwordField = find.byValueKey('password');
-  final button = find.text('Login');
-
-  await driver?.tap(usernameField);
-  await driver?.enterText("user1");
-
-  await driver?.tap(passwordField);
-  await driver?.enterText("pass1");
-
-  await driver?.tap(button);
-}
+import 'test_lib.dart';
 
 void main() {
   group('Credentials Tests', () {
@@ -225,8 +204,22 @@ void main() {
 
     test('KeyHistory e2e test', timeout: const Timeout(Duration(minutes: 3)),
         () async {
-      // ToDo: reset machine before running
       await login(driver);
+      await resetSelectedMachine(driver);
+
+      // reset machine
+      final resetButton = find.byValueKey("Reset_button");
+      await driver?.tap(resetButton);
+      await driver?.waitFor(
+        find.byValueKey("Confirm_revert"),
+        timeout: const Duration(seconds: 3),
+      );
+      await driver?.tap(find.byValueKey("Confirm_revert"));
+      await driver?.waitFor(
+        find.byValueKey("keyHistoryList"),
+        timeout: const Duration(seconds: 10),
+      );
+      await Future.delayed(const Duration(seconds: 2));
 
       // Find button fields
       // final inputFieldFinder = find.byValueKey('keyInput');
@@ -251,9 +244,8 @@ void main() {
 
         final combo =
             '${clearChars[i].toUpperCase()} → ${enCryChars[i].toUpperCase()}';
-
-        print("adding $combo ($i/${clearChars.length - 1})");
         keyPairs.insert(0, combo);
+
         await driver?.waitFor(
           find.text(combo),
           timeout: const Duration(seconds: 3),
