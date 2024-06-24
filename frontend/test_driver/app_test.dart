@@ -343,4 +343,51 @@ void main() {
       }
     });
   });
+
+  group('Plugboard Group', () {
+    FlutterDriver? driver;
+
+    setUp(() async {
+      driver = await FlutterDriver.connect();
+      driver?.checkHealth();
+    });
+
+    tearDown(() async {
+      if (driver != null) {
+        driver?.close();
+      }
+    });
+
+    test("Test persistent plugboard toggle",
+        timeout: const Timeout(Duration(seconds: 60)), () async {
+      await login(driver);
+      await resetSelectedMachine(driver);
+
+      // check closed plugboard
+      await driver?.waitForAbsent(
+        find.byValueKey("plugboard_container"),
+        timeout: const Duration(seconds: 3),
+      );
+
+      final toggle = find.byValueKey("plugboard_switch");
+      await driver?.tap(toggle);
+
+      // check open plugboard
+      await driver?.waitFor(find.byValueKey("plugboard_container"));
+
+      // check different user
+      await logout(driver);
+      await login(driver, username: "user2", password: "pass2");
+      await driver?.waitForAbsent(
+        find.byValueKey("plugboard_container"),
+        timeout: const Duration(seconds: 3),
+      );
+      await logout(driver);
+
+      // check if persistent after logging in again
+      await login(driver);
+      await driver?.waitFor(find.byValueKey("plugboard_container"));
+      await logout(driver);
+    });
+  });
 }
