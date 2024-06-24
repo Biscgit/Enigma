@@ -302,11 +302,14 @@ void main() {
     test("Keyhistory multiuser loading test",
         timeout: const Timeout(Duration(seconds: 60)), () async {
       await login(driver, username: "user2", password: "pass2");
+      await resetSelectedMachine(driver);
+
+      // emulate different user typing
       for (final char in "WeLoveWoelfl".split("")) {
         await writeChar(char, driver);
       }
 
-      takeScreenshot(driver!, "muser_history.png");
+      // test a few keys
       await driver?.waitFor(find.text("L → S"),
           timeout: const Duration(seconds: 3));
       await driver?.waitFor(find.text("F → B"),
