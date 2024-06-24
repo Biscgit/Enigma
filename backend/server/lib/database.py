@@ -455,7 +455,7 @@ class Database:
             logging.info(f"Plugboard enabled for {username}.{machine}: {result}")
             return bool(result)
 
-    async def get_reflector(self, username: str, machine: int) -> list:
+    async def get_reflector(self, username: str, machine: int) -> dict:
         """returns reflector configurations for a machine"""
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
@@ -471,8 +471,8 @@ class Database:
             )
 
             logging.debug(f"Fetched reflector for {username}.{machine}: {str(result)}")
-            print(result)
-            return dict(result) if result else None
+            print(1, type(result))
+            return json.loads(result) if result else None
 
     async def get_reflector_id(self, username: str, machine_id: int) -> list:
         """returns refelector id for a machine"""
@@ -492,6 +492,7 @@ class Database:
             logging.debug(
                 f"Fetched reflector_id for {username}.{machine_id}: {str(result)}"
             )
+            print(type(result))
             return result
 
     async def update_reflector_id(
@@ -767,12 +768,8 @@ class Database:
             if await self.is_plugboard_enabled(username, machine_id)
             else []
         )
-        reflector = await self.get_reflector(username, machine_id)
-        print(reflector)
         reflector_id = f"{await self.get_reflector_id(username, machine_id)}"
-        print(reflector_id)
-        print(type(reflector))
-        print(reflector[reflector_id])
+        reflector = (await self.get_reflector(username, machine_id))[reflector_id]
 
         rotors = []
         for rotor in await self.get_rotors(username, machine_id):

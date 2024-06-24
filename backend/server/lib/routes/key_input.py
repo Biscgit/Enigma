@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 from server.lib.database import get_database, Database
 from server.lib.plugboard import reflect_letter, to_dict
 from .authentication import check_auth
-import json
 
 router = APIRouter()
 
@@ -21,7 +20,7 @@ async def encrypt(username: str, machine_id: int, db_conn: Database, char: chr) 
     for i in range(len(rotors)):
         notch, char = rotors[i].rotate_offset_scramble(char, notch, False)
 
-    char = reflect_letter(char, json.loads(reflector))
+    char = reflect_letter(char, reflector)
     notch = False
 
     for i in range(len(rotors) - 1, -1, -1):
@@ -34,9 +33,10 @@ async def encrypt(username: str, machine_id: int, db_conn: Database, char: chr) 
 
 @router.get("/key_press")
 async def encrypt_key(
-        key: str, machine: int,
-        username: str = Depends(check_auth),
-        db_conn: "Database" = Depends(get_database)
+    key: str,
+    machine: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
 ) -> dict:
     """Endpoint for logging key presses. Takes token, key and machine id. Returns the switched key"""
 
@@ -52,9 +52,9 @@ async def encrypt_key(
 
 @router.get("/load_key_history")
 async def load_key_history(
-        machine: int,
-        username: str = Depends(check_auth),
-        db_conn: "Database" = Depends(get_database)
+    machine: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
 ) -> list[list[str]]:
     """Endpoint for loading key history. Takes token and machine id. Returns history of keys pressed"""
     return await db_conn.get_key_pairs(username, machine)
