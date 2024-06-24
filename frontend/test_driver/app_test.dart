@@ -299,8 +299,35 @@ void main() {
       // );
     });
 
-    test('KeyHistory loading test', () async {
-      await login(driver);
+    test("Keyhistory multiuser loading test",
+        timeout: const Timeout(Duration(seconds: 60)), () async {
+      await login(driver, username: "user2", password: "pass2");
+      for (final char in "WeLoveWoelfl".split("")) {
+        await writeChar(char, driver);
+      }
+
+      takeScreenshot(driver!, "muser_history.png");
+      await driver?.waitFor(find.text("L → S"),
+          timeout: const Duration(seconds: 3));
+      await driver?.waitFor(find.text("F → B"),
+          timeout: const Duration(seconds: 3));
+      await driver?.waitFor(find.text("L → E"),
+          timeout: const Duration(seconds: 3));
+      await driver?.waitFor(find.text("E → J"),
+          timeout: const Duration(seconds: 3));
+      await driver?.waitFor(find.text("O → L"),
+          timeout: const Duration(seconds: 3));
+      await driver?.waitFor(find.text("W → B"),
+          timeout: const Duration(seconds: 3));
+      await logout(driver);
+
+      await login(driver, username: "user1", password: "pass1");
+      await driver?.waitForAbsent(find.text("L → S"),
+          timeout: const Duration(seconds: 3));
+      await driver?.waitForAbsent(find.text("F → B"),
+          timeout: const Duration(seconds: 3));
+      await driver?.waitForAbsent(find.text("L → E"),
+          timeout: const Duration(seconds: 3));
 
       // check if previous typed history gets loaded correctly
       final clearChars = "dolores".split("").reversed.toList();
