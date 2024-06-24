@@ -40,9 +40,14 @@ async def get_rotor(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str | int | None]:
-    rotor = await db_conn.get_rotor(username, rotor)
-    if rotor is None:
-        raise HTTPException(status_code=404, detail="Rotor not found")
+    try:
+        rotor = await db_conn.get_rotor(username, rotor)
+        if rotor is None:
+            raise HTTPException(status_code=404, detail="Rotor not found")
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get Rotor")
+
     return rotor
 
 
@@ -52,12 +57,16 @@ async def get_rotors(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, Dict[str, str | int | None]]:
-    rotors = await db_conn.get_rotors(username, machine_id)
-    if rotors == []:
-        raise HTTPException(status_code=404, detail="Rotors not found")
-    result = {}
-    for i, rotor in enumerate(rotors):
-        result[f"Rotor {i}"] = rotor
+    try:
+        rotors = await db_conn.get_rotors(username, machine_id)
+        if rotors == []:
+            raise HTTPException(status_code=404, detail="Rotors not found")
+        result = {}
+        for i, rotor in enumerate(rotors):
+            result[f"Rotor {i}"] = rotor
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get Rotors")
     return result
 
 
@@ -67,7 +76,12 @@ async def get_rotor_ids(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> list[Dict[str, int]]:
-    rotor_ids = await db_conn.get_rotor_ids(username, machine_id)
+    try:
+        rotor_ids = await db_conn.get_rotor_ids(username, machine_id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get Rotor ids")
+
     return rotor_ids
 
 
@@ -78,7 +92,12 @@ async def get_rotor_by_place(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str | int | None] | None:
-    rotor = await db_conn.get_rotor_by_place(username, machine_id, place)
+    try:
+        rotor = await db_conn.get_rotor_by_place(username, machine_id, place)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get Rotor by place")
+
     return rotor
 
 
@@ -89,7 +108,11 @@ async def get_rotor_number(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, int]:
-    rotor_number = await db_conn.get_rotor_number(username, place, machine_id)
+    try:
+        rotor_number = await db_conn.get_rotor_number(username, place, machine_id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get Rotor number")
     return rotor_number
 
 
@@ -111,3 +134,17 @@ async def add_rotor(
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't switch Rotor")
     return rotor
+
+
+@router.post("/revert-machine")
+async def revert_machine(
+    machine_id: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> Dict[str, str]:
+    try:
+        await db_conn.revert_machine(username, machine_id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't revert Machine")
+    return {"Status": "OK"}
