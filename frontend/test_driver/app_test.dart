@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
@@ -10,6 +9,20 @@ takeScreenshot(FlutterDriver driver, String path) async {
   final List<int> pixels = await driver.screenshot();
   final File file = File("screenshots/$path");
   await file.writeAsBytes(pixels);
+}
+
+Future<void> login(FlutterDriver? driver) async {
+  final usernameField = find.byValueKey('username');
+  final passwordField = find.byValueKey('password');
+  final button = find.text('Login');
+
+  await driver?.tap(usernameField);
+  await driver?.enterText("user1");
+
+  await driver?.tap(passwordField);
+  await driver?.enterText("pass1");
+
+  await driver?.tap(button);
 }
 
 void main() {
@@ -212,19 +225,8 @@ void main() {
 
     test('KeyHistory e2e test', timeout: const Timeout(Duration(minutes: 3)),
         () async {
-      // login
-      final usernameField = find.byValueKey('username');
-      final passwordField = find.byValueKey('password');
-      final button = find.text('Login');
-
-      await driver?.tap(usernameField);
-      await driver?.enterText("user1");
-
-      await driver?.tap(passwordField);
-      await driver?.enterText("pass1");
-
-      await driver?.tap(button);
       // ToDo: reset machine before running
+      await login(driver);
 
       // Find button fields
       // final inputFieldFinder = find.byValueKey('keyInput');
@@ -303,6 +305,23 @@ void main() {
       //   find.text(keyPairs[141]),
       //   timeout: const Duration(seconds: 1),
       // );
+    });
+
+    test('KeyHistory loading test', () async {
+      await login(driver);
+
+      // check if previous typed history gets loaded correctly
+      final clearChars = "dolores".split("").reversed.toList();
+      final enCryChars = "zgkcnpf".split("").reversed.toList();
+
+      for (int i = 0; i < clearChars.length; i++) {
+        final combo =
+            '${clearChars[i].toUpperCase()} → ${enCryChars[i].toUpperCase()}';
+        await driver?.waitFor(
+          find.text(combo),
+          timeout: const Duration(seconds: 3),
+        );
+      }
     });
   });
 }
