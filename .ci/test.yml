@@ -71,8 +71,10 @@ e2e-test-driver:
     - env | grep "IP_FASTAPI" > flutter.env
     - flutter create --platforms web .
     - flutter pub get
+    - sudo apt install -y dbus-x11
   script:
-    - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release --headless --web-browser-flag="--disable-gpu --headless --window-size=1920,1080 --disable-infobars --disable-dev-shm-usage --no-sandbox --no-first-run"'
+    - dbus-launch
+    - sh -c 'chromedriver --port=4444 & flutter driver --target=test_driver/app.dart -d web-server --release --headless --web-browser-flag="--disable-gpu --headless --window-size=3840,2160 --disable-infobars --disable-dev-shm-usage --no-sandbox --no-first-run"'
   rules:
     - exists:
       - frontend/test_driver/*
