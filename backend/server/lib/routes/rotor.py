@@ -175,6 +175,7 @@ async def get_machines(
 ) -> list:
     try:
         machines = await db_conn.get_machines(username)
+        del machines[0]
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't get Machines")

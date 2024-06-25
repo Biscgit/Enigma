@@ -238,6 +238,7 @@ class Database:
                     SELECT id, name, number_rotors
                     FROM machines
                     WHERE username = $1
+                    SORT BY id
                     """,
                     username,
                 )

@@ -17,12 +17,14 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   String? _selectedItem;
   String _username = '';
+  late String numberRotors = '3';
 
   String? get selectedItem => _selectedItem;
 
   void _initialize() async {
     _selectedItem = await Cookie.read("name");
     _username = await Cookie.read("username");
+    numberRotors = await Cookie.read("numberRotors");
     setState(() {});
   }
 
@@ -54,7 +56,7 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _deleteMachine(BuildContext context) async {
     String currentID = await Cookie.read("current_machine");
-    await APICaller.delete("delete-machine", query:{'machine_id': currentID});
+    await APICaller.delete("delete-machine", query: {'machine_id': currentID});
     //if(!context.mounted) return;
     //Navigator.pop(context);
     //Navigator.pushReplacementNamed(context, '/home');
@@ -63,7 +65,8 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     const keyHistory = KeyHistoryList();
-    const rotorWidget = RotorPage(numberRotors: 3);
+    var I = numberRotors.codeUnitAt(0) - '0'.codeUnitAt(0);
+    var rotorWidget = RotorPage(numberRotors: I);
 
     ScaffoldMessenger.of(context).clearSnackBars();
 
@@ -72,80 +75,79 @@ class HomePageState extends State<HomePage> {
         title: Text(selectedItem ?? "Create new machine"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete),
-            tooltip: "Delete",
-            key: const ValueKey("deleteButton"),
-            onPressed: () async {
-              //_deleteMachine(context);
-              //if (!context.mounted) return;
+              icon: const Icon(Icons.delete),
+              tooltip: "Delete",
+              key: const ValueKey("deleteButton"),
+              onPressed: () async {
+                //_deleteMachine(context);
+                //if (!context.mounted) return;
 
-              showDialog(
-                context: context,
-                builder: (BuildContext dialogContext) {
-                  return AlertDialog(
-                    title: const Text('Löschen bestätigen'),
-                    content: const Text('Möchten Sie wirklich diese Maschine löschen?'),
-                    key: const ValueKey('deletionDialog'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(dialogContext).pop();
-                          // Navigator.pushReplacementNamed(context, '/login');
-                        },
-                        child: const Text(
-                          'Nein',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600,
+                showDialog(
+                  context: context,
+                  builder: (BuildContext dialogContext) {
+                    return AlertDialog(
+                      title: const Text('Löschen bestätigen'),
+                      content: const Text(
+                          'Möchten Sie wirklich diese Maschine löschen?'),
+                      key: const ValueKey('deletionDialog'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop();
+                            // Navigator.pushReplacementNamed(context, '/login');
+                          },
+                          child: const Text(
+                            'Nein',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          _deleteMachine(context);
-                          if (!context.mounted) return;
+                        TextButton(
+                            onPressed: () async {
+                              _deleteMachine(context);
+                              if (!context.mounted) return;
 
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext dialogContext) {
-                              return AlertDialog(
-                                title: const Text('Löschen Bestätigung'),
-                                content: const Text('Maschine erfolgreich gelöscht.'),
-                                key: const ValueKey('deletionConfirmed'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(dialogContext).pop();
-                                      Navigator.pushReplacementNamed(context, '/home');
-                                    },
-                                    child: const Text(
-                                      'OK',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext dialogContext) {
+                                  return AlertDialog(
+                                    title: const Text('Löschen Bestätigung'),
+                                    content: const Text(
+                                        'Maschine erfolgreich gelöscht.'),
+                                    key: const ValueKey('deletionConfirmed'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(dialogContext).pop();
+                                          Navigator.pushReplacementNamed(
+                                              context, '/home');
+                                        },
+                                        child: const Text(
+                                          'OK',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
+                                    ],
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                        child: const Text(
-                          'Ja',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600,
-                          )
-                        )
-                      )
-                    ],
-                  );
-                },
-              );
-            }
-          ),
+                            child: const Text('Ja',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w600,
+                                )))
+                      ],
+                    );
+                  },
+                );
+              }),
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             tooltip: 'Logout',
@@ -182,7 +184,6 @@ class HomePageState extends State<HomePage> {
               );
             },
           ),
-          
         ],
       ),
       drawer: SideBar(
@@ -191,11 +192,11 @@ class HomePageState extends State<HomePage> {
       ),
       body: Row(
         children: [
-          const Expanded(
+          Expanded(
               child: Column(
             children: [
               rotorWidget,
-              SettingsPage(key: Key('revert_button')),
+              const SettingsPage(key: Key('revert_button')),
             ],
           )),
           Expanded(
