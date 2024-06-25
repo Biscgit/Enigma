@@ -579,7 +579,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate, id
+                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate, id, machine_id
                 FROM rotors
                 WHERE number = $1 AND username = $2 AND machine_type = $3 AND machine_id = 0 AND place = $4
                 """,
@@ -752,6 +752,29 @@ class Database:
 
     async def delete_machine(self, username: str, machine_id: int) -> None:
         pass
+
+    async def revert_machine(self, username, machine_id) -> None:
+        rotors = await self.get_rotors(username, machine_id)
+        revert_rotor = await self.get_rotor_by_number(username, 0, machine_id, 0)
+        revert_rotor["number"] = 1
+        for rotor in rotors:
+            revert_rotor["place"] = rotor["place"]
+            revert_rotor["id"] = rotor["id"]
+            await self.update_rotor(revert_rotor)  # Needs some more doing
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                await conn.execute(
+                    """
+                    UPDATE machines
+                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[]
+                    WHERE id = $1 AND username = $2
+                    """,
+                    machine_id,
+                    username,
+                )
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -1,3 +1,4 @@
+import 'package:enigma/custom_machine.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
 
@@ -24,11 +25,12 @@ class SideBar extends StatelessWidget {
   }
 
   ListTile addMachine(BuildContext context) => ListTile(
-    title: const Text('Neue Enigma'),
-    onTap: () {
-       Navigator.pop(context);
-    }
-  );
+      title: const Text('Neue Enigma'),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => SelectionPage()),
+        );
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -56,19 +58,13 @@ class Machine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(name),
-      onTap: () {
-        Cookie.save("name", name)
-          .then((_) => Cookie.save("current_machine", "$id"))
-          .then((_) => Cookie.clearReactors("update"))
-          .then((_) => Cookie.clearReactors("set_focus_keyboard"))
-          .then((_) => Cookie.clearReactors("update_history"))
-          .then((_) => Cookie.clearReactors("update_lampenfield"))
-          .then((_) => Cookie.clearReactors("update_keyboard"))
-          .then((_) => Navigator.pop(context))
-          .then((_) => Navigator.pushReplacementNamed(context, '/home')
-        );
-      }
-    );
+        title: Text(name),
+        onTap: () {
+          Cookie.save("name", name)
+              .then((_) => Cookie.save("current_machine", "$id"))
+              .then((_) => Cookie.nukeReactors())
+              .then((_) => Navigator.pop(context))
+              .then((_) => Navigator.pushReplacementNamed(context, '/home'));
+        });
   }
 }

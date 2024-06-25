@@ -12,7 +12,7 @@ class Cookie {
     String value = await _storage.read(key: key) ?? "";
     return value;
   }
-  
+
   static Future<void> save(String key, String value) async {
     await _storage.write(key: key, value: value);
   }
@@ -25,36 +25,40 @@ class Cookie {
     return Cookie.read('token').then((token) => token != "");
   }
 
-  static void setReactor(String trigger, Function([Map<dynamic, dynamic>]) reactor) {
+  // 100% environmental friendly energy
+  static void setReactor(
+      String trigger, Function([Map<dynamic, dynamic>]) reactor) {
     (reactors[trigger] ??= []).add(reactor);
   }
 
-  static void trigger(String trigger, [Map<dynamic, dynamic> params = const {}]) {
+  static void trigger(String trigger,
+      [Map<dynamic, dynamic> params = const {}]) {
     reactors[trigger]?.forEach((reactor) => reactor(params));
-    }
+  }
 
   static void clearReactors(String trigger) {
     reactors[trigger] = [];
   }
+
+  // 100% environmental friendly energy
+  static void nukeReactors() {
+    reactors.clear();
+  }
 }
 
-
-Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
+Future<String> sendPressedKeyToRotors(String s) async {
+  //Doesnt work?
   String machineID = await Cookie.read('current_machine');
-  Map<String, String> query = {
-    'key': s,
-    'machine': machineID
-  };
+  Map<String, String> query = {'key': s, 'machine': machineID};
   http.Response response = await APICaller.get("key_press", query);
 
-  if(response.statusCode != 200) {
+  if (response.statusCode != 200) {
     return "?";
   }
 
   Map<String, dynamic> respBody = jsonDecode(response.body);
   String encKey = respBody['key'];
 
- // Lampfield.lampFieldKey.currentState?.lightUpLetter(encKey.toUpperCase());
   Cookie.trigger("update_keyboard", {"encKey": s});
   Cookie.trigger("update_lampenfield", {"encKey": encKey.toUpperCase()});
 
@@ -63,56 +67,60 @@ Future<String> sendPressedKeyToRotors(String s) async { //Doesnt work?
 
 class APICaller {
   static final _api = 'http://${dotenv.env['IP_FASTAPI']}:8001/';
+
   static Future<Map<String, String>> getHeader() async {
     var token = await Cookie.read("token");
     return {
-        'Content-Type': 'application/json',
-        'Authorization': 'Token $token',
+      'Content-Type': 'application/json',
+      'Authorization': 'Token $token',
     };
   }
 
-  static Future<http.Response> post(String site, {Map<String, String> query = const {}, Map<String, dynamic> body = const {}}) async {
+  static Future<http.Response> post(String site,
+      {Map<String, String> query = const {},
+      Map<String, dynamic> body = const {}}) async {
     try {
       return await http.post(
-        Uri.parse("$_api$site").replace(queryParameters: query),
-        headers: await APICaller.getHeader(),
-        body: jsonEncode(body)
-      );
+          Uri.parse("$_api$site").replace(queryParameters: query),
+          headers: await APICaller.getHeader(),
+          body: jsonEncode(body));
     } catch (e) {
       rethrow;
     }
   }
 
-  static Future<http.Response> put(String site, {Map<String, String> query = const {}, Map<String, dynamic> body = const {}}) async {
+  static Future<http.Response> put(String site,
+      {Map<String, String> query = const {},
+      Map<String, dynamic> body = const {}}) async {
     try {
       return await http.put(
-        Uri.parse("$_api$site").replace(queryParameters: query),
-        headers: await APICaller.getHeader(),
-        body: jsonEncode(body)
-      );
+          Uri.parse("$_api$site").replace(queryParameters: query),
+          headers: await APICaller.getHeader(),
+          body: jsonEncode(body));
     } catch (e) {
       rethrow;
     }
   }
 
-  static Future<http.Response> get(String site, [Map<String, String> query = const {}]) async {
+  static Future<http.Response> get(String site,
+      [Map<String, String> query = const {}]) async {
     try {
       return await http.get(
-        Uri.parse("$_api$site").replace(queryParameters: query),
-        headers: await APICaller.getHeader()
-      );
+          Uri.parse("$_api$site").replace(queryParameters: query),
+          headers: await APICaller.getHeader());
     } catch (e) {
       rethrow;
     }
   }
 
-  static Future<http.Response> delete(String site, {Map<String, String> query = const {}, Map<String, dynamic> body = const {}}) async {
+  static Future<http.Response> delete(String site,
+      {Map<String, String> query = const {},
+      Map<String, dynamic> body = const {}}) async {
     try {
       return await http.delete(
-        Uri.parse("$_api$site").replace(queryParameters: query),
-        headers: await APICaller.getHeader(),
-        body: jsonEncode(body)
-      );
+          Uri.parse("$_api$site").replace(queryParameters: query),
+          headers: await APICaller.getHeader(),
+          body: jsonEncode(body));
     } catch (e) {
       rethrow;
     }
