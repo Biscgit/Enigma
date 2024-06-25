@@ -138,11 +138,12 @@ class Database:
                     reflector[j.lower()] = i.lower()
                 try:
                     await self.create_machine(
-                        machine["machine_type"],
                         username,
-                        machine["machine_type"],
+                        # machine["machine_type"],
                         machine["name"],
                         reflector,
+                        True,
+                        3,
                         ignore_exist=True,
                     )
                 except asyncpg.PostgresError:
@@ -200,33 +201,48 @@ class Database:
 
     async def create_machine(
         self,
-        machine_id: int,
         username: str,
-        machine_type: int,
         name: str,
         reflector: dict,
+        plugboard: bool,
+        number_rotors: int,
         ignore_exist: bool = False,
-    ) -> None:
+    ) -> int:
         """creates a new machine for a user if it does not exist"""
-
+        id = len(await self.get_machines(username))
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
                     f"""
-                        INSERT INTO machines(id, username, name, machine_type, reflector, character_pointer, character_history, plugboard_enabled, plugboard_config)
-                        VALUES ($1, $2, $3, $4, $5::JSON, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
+                        INSERT INTO machines(id, username, name, reflector, character_pointer, character_history, plugboard_enabled, plugboard_config, number_rotors)
+                        VALUES ($1, $2, $3, $4::JSON, -1, ARRAY[]::JSON[], $5, ARRAY[]::JSON[], $6)
                         {'ON CONFLICT DO NOTHING' if ignore_exist else ''}
                     """,
-                    machine_id,
+                    id,
                     username,
                     name,
-                    machine_type,
                     json.dumps(reflector),
+                    plugboard,
+                    number_rotors,
                 )
+                logging.debug(f"Created machine {username}.{id} of type")
+        return id
 
-                logging.debug(
-                    f"Created machine {username}.{machine_id} of type {machine_type}"
+    async def get_machines(self, username: str) -> list:
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                result = await conn.fetch(
+                    """
+                    SELECT id, name, number_rotors
+                    FROM machines
+                    WHERE username = $1
+                    """,
+                    username,
                 )
+                logging.debug(f"Get machines for {username}: {result}")
+            return [dict(record) for record in result if record is not None]
 
     async def save_keyboard_pair(
         self, username: str, machine: int, clear: str, encrypted: str
@@ -512,6 +528,24 @@ class Database:
             )
             return dict(result[0]) if result else {"number": 1}
 
+    async def get_rotor_templates(self, username: str, machine_id: int):
+        """returns all rotor ids for a machine type"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetch(
+                """
+                SELECT *
+                FROM rotors
+                WHERE username = $1 AND machine_type = $2 AND machine_id = 0 AND number = 0
+                """,
+                username,
+                machine_id,
+            )
+
+            logging.debug(f"Fetched rotors for {username}.{machine_id}: {str(result)}")
+            return [dict(record) for record in result if record is not None]
+
     async def get_rotors(self, username: str, machine: int) -> list[dict]:
         """returns all rotors configurations for a machine"""
         async with self.pool.acquire() as conn:
@@ -740,18 +774,53 @@ class Database:
             ]
         return plugboard, reflector, rotors
 
-    async def add_machine(self, username: str, name: str, machine_type: int) -> None:
+    async def add_machine(
+        self,
+        username: str,
+        name: str,
+        machine_type: int,
+        plugboard: bool,
+        number_rotors: int,
+    ) -> None:
         reflector = await self.get_reflector(username, machine_type)
-        await self.create_machine(machine_type, username, machine_type, name, reflector)
-        rotors = await self.get_rotors(username, machine_type)
-        new_machine_id = 1
+        new_machine_id = await self.create_machine(
+            username, name, reflector, plugboard, number_rotors
+        )
+        rotors = await self.get_rotor_templates(username, machine_type)
         for rotor in rotors:
             rotor["machine_id"] = 0
             rotor["machine_type"] = new_machine_id
+            rotor["number"] = 0
             await self.set_rotor(rotor)
 
     async def delete_machine(self, username: str, machine_id: int) -> None:
-        pass
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                await conn.execute(
+                    """
+                    DELETE FROM machines
+                    WHERE id = $1
+                    """,
+                    machine_id,
+                )
+                await conn.execute(
+                    """
+                    DELETE FROM rotors
+                    WHERE machine_id = $1 AND username = $2
+                    """,
+                    machine_id,
+                    username,
+                )
+                await conn.execute(
+                    """
+                    DELETE FROM rotors
+                    WHERE username = $1 AND machine_type = $2 AND machine_id = 0
+                    """,
+                    username,
+                    machine_id,
+                )
 
     async def revert_machine(self, username, machine_id) -> None:
         rotors = await self.get_rotors(username, machine_id)

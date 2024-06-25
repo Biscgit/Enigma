@@ -139,10 +139,19 @@ async def add_rotor(
 async def add_machine(
     name: str,
     machine_type: int,
+    plugboard: bool,
+    number_rotors: int,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> None:
-    await db_conn.add_machine(username, name, machine_type)
+    try:
+        await db_conn.add_machine(
+            username, name, machine_type, plugboard, number_rotors
+        )
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't add Machine")
+    return {"Status": "OK"}
 
 
 @router.delete("/delete-machine")
@@ -151,7 +160,25 @@ async def delete_machine(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> None:
-    await db_conn.delete_machine(username, machine_id)
+    try:
+        await db_conn.delete_machine(username, machine_id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't delete Machine")
+    return {"Status": "OK"}
+
+
+@router.get("/get-machines")
+async def get_machines(
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> list:
+    try:
+        machines = await db_conn.get_machines(username)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get Machines")
+    return machines
 
 
 @router.post("/revert-machine")

@@ -11,8 +11,9 @@ CREATE TABLE IF NOT EXISTS machines (
     id SERIAL,
     username TEXT,
     name TEXT,
-    machine_type INTEGER,
+   -- machine_type INTEGER,
     reflector JSON,
+    number_rotors INTEGER,
 
     character_pointer INTEGER,
     character_history JSON ARRAY[140],
