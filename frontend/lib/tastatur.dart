@@ -1,7 +1,8 @@
 import 'package:enigma/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:synchronized/synchronized.dart';
+import 'queue.dart';
 
 class Tastatur extends StatefulWidget {
   const Tastatur({super.key});
@@ -16,8 +17,8 @@ class TastaturState extends State<Tastatur> {
   final List<GlobalKey<SquareButtonState>> listOfGlobalKeys =
       List.generate(26, (index) => GlobalKey<SquareButtonState>());
 
-  var keyboardLock = Lock();
-  int inQueue = 0;
+  var keyPressQueue = TaskQueue();
+  bool barShown = false;
 
   String lightUpLetter([Map<dynamic, dynamic> params = const {"encKey": "O"}]) {
     var characterToLightUp = params["encKey"];
@@ -62,20 +63,45 @@ class TastaturState extends State<Tastatur> {
 
     if (event.character != null) {
       String char = event.character!.toLowerCase();
-      if (char.compareTo('a') >= 0 && char.compareTo('z') <= 0) {
-        // limit keyboard speed
-        if (inQueue > 3) return;
-        inQueue++;
+      await sendKeyInput(char);
+    }
+  }
 
-        // ensure synchronized access
-        await keyboardLock.synchronized(() async {
-          final encryptedLetter = await sendPressedKeyToRotors(char);
+  Future<void> sendKeyInput(String char) async {
+    char = char.toLowerCase();
+    if (char.compareTo('a') >= 0 && char.compareTo('z') <= 0) {
+      assert(char.length == 1);
 
-          Cookie.trigger("update");
-          Cookie.trigger(
-              "update_history", {"clear": char, "encrypted": encryptedLetter});
-          inQueue--;
-        });
+      final startTime = DateTime.now();
+      await keyPressQueue.addTask(() async {
+        // message on too fast typing instead of skipping inputs
+        if (keyPressQueue.getLength() > 5 && !barShown) {
+          barShown = true;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text("You are typing too fast!"),
+                backgroundColor: Colors.deepOrange,
+                duration: Duration(hours: 24)),
+          );
+        } else if (barShown && keyPressQueue.getLength() < 3) {
+          barShown = false;
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
+
+        final encryptedLetter = await sendPressedKeyToRotors(char);
+
+        Cookie.trigger("update");
+        Cookie.trigger(
+          "update_history",
+          {"clear": char, "encrypted": encryptedLetter},
+        );
+      });
+
+      // check performance in debug mode
+      if (kDebugMode) {
+        final endTime = DateTime.now();
+        final executionTime = endTime.difference(startTime);
+        print('Full keypress execution: ${executionTime.inMilliseconds}ms');
       }
     }
   }
@@ -94,44 +120,70 @@ class TastaturState extends State<Tastatur> {
               children: [
                 //Initialises 26 buttons that make up a QWERTZ keyboard layout, just like for the lamp panel.
 
-                SquareButton(label: 'Q', key: listOfGlobalKeys[16], context: context),
-                SquareButton(label: 'W', key: listOfGlobalKeys[22], context: context),
-                SquareButton(label: 'E', key: listOfGlobalKeys[4], context: context),
-                SquareButton(label: 'R', key: listOfGlobalKeys[17], context: context),
-                SquareButton(label: 'T', key: listOfGlobalKeys[19], context: context),
-                SquareButton(label: 'Z', key: listOfGlobalKeys[25], context: context),
-                SquareButton(label: 'U', key: listOfGlobalKeys[20], context: context),
-                SquareButton(label: 'I', key: listOfGlobalKeys[8], context: context),
-                SquareButton(label: 'O', key: listOfGlobalKeys[14], context: context),
-                SquareButton(label: 'P', key: listOfGlobalKeys[15], context: context),
+                SquareButton(
+                    label: 'Q', key: listOfGlobalKeys[16], tastaturState: this),
+                SquareButton(
+                    label: 'W', key: listOfGlobalKeys[22], tastaturState: this),
+                SquareButton(
+                    label: 'E', key: listOfGlobalKeys[4], tastaturState: this),
+                SquareButton(
+                    label: 'R', key: listOfGlobalKeys[17], tastaturState: this),
+                SquareButton(
+                    label: 'T', key: listOfGlobalKeys[19], tastaturState: this),
+                SquareButton(
+                    label: 'Z', key: listOfGlobalKeys[25], tastaturState: this),
+                SquareButton(
+                    label: 'U', key: listOfGlobalKeys[20], tastaturState: this),
+                SquareButton(
+                    label: 'I', key: listOfGlobalKeys[8], tastaturState: this),
+                SquareButton(
+                    label: 'O', key: listOfGlobalKeys[14], tastaturState: this),
+                SquareButton(
+                    label: 'P', key: listOfGlobalKeys[15], tastaturState: this),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'A', key: listOfGlobalKeys[0], context: context),
-                SquareButton(label: 'S', key: listOfGlobalKeys[18], context: context),
-                SquareButton(label: 'D', key: listOfGlobalKeys[3], context: context),
-                SquareButton(label: 'F', key: listOfGlobalKeys[5], context: context),
-                SquareButton(label: 'G', key: listOfGlobalKeys[6], context: context),
-                SquareButton(label: 'H', key: listOfGlobalKeys[7], context: context),
-                SquareButton(label: 'J', key: listOfGlobalKeys[9], context: context),
-                SquareButton(label: 'K', key: listOfGlobalKeys[10], context: context),
-                SquareButton(label: 'L', key: listOfGlobalKeys[11], context: context),
+                SquareButton(
+                    label: 'A', key: listOfGlobalKeys[0], tastaturState: this),
+                SquareButton(
+                    label: 'S', key: listOfGlobalKeys[18], tastaturState: this),
+                SquareButton(
+                    label: 'D', key: listOfGlobalKeys[3], tastaturState: this),
+                SquareButton(
+                    label: 'F', key: listOfGlobalKeys[5], tastaturState: this),
+                SquareButton(
+                    label: 'G', key: listOfGlobalKeys[6], tastaturState: this),
+                SquareButton(
+                    label: 'H', key: listOfGlobalKeys[7], tastaturState: this),
+                SquareButton(
+                    label: 'J', key: listOfGlobalKeys[9], tastaturState: this),
+                SquareButton(
+                    label: 'K', key: listOfGlobalKeys[10], tastaturState: this),
+                SquareButton(
+                    label: 'L', key: listOfGlobalKeys[11], tastaturState: this),
               ],
             ),
             SizedBox(height: seizedBoxHeight),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SquareButton(label: 'Y', key: listOfGlobalKeys[24], context: context),
-                SquareButton(label: 'X', key: listOfGlobalKeys[23], context: context),
-                SquareButton(label: 'C', key: listOfGlobalKeys[2], context: context),
-                SquareButton(label: 'V', key: listOfGlobalKeys[21], context: context),
-                SquareButton(label: 'B', key: listOfGlobalKeys[1], context: context),
-                SquareButton(label: 'N', key: listOfGlobalKeys[13], context: context),
-                SquareButton(label: 'M', key: listOfGlobalKeys[12], context: context)
+                SquareButton(
+                    label: 'Y', key: listOfGlobalKeys[24], tastaturState: this),
+                SquareButton(
+                    label: 'X', key: listOfGlobalKeys[23], tastaturState: this),
+                SquareButton(
+                    label: 'C', key: listOfGlobalKeys[2], tastaturState: this),
+                SquareButton(
+                    label: 'V', key: listOfGlobalKeys[21], tastaturState: this),
+                SquareButton(
+                    label: 'B', key: listOfGlobalKeys[1], tastaturState: this),
+                SquareButton(
+                    label: 'N', key: listOfGlobalKeys[13], tastaturState: this),
+                SquareButton(
+                    label: 'M', key: listOfGlobalKeys[12], tastaturState: this)
               ],
             ),
           ],
@@ -147,12 +199,12 @@ class SquareButton extends StatefulWidget {
   final Color colorDarkMode = Colors.grey.shade600;
   final Color colorHighlighted = Colors.yellow;
   final String label;
-  final BuildContext context;
+  final TastaturState tastaturState;
 
   SquareButton({
     super.key,
     required this.label,
-    required this.context,
+    required this.tastaturState,
   });
 
   Color returnColor(BuildContext context) {
@@ -165,34 +217,18 @@ class SquareButton extends StatefulWidget {
 
   @override
   SquareButtonState createState() => SquareButtonState();
-
 }
 
 class SquareButtonState extends State<SquareButton> {
-
   late Color colorBox;
   late String label;
   int highlighted = 0;
 
   @override
-    void initState() {
-      super.initState();
-      label = widget.label;
-      //colorBox == widget.defaultColorBox;
-      // if (text == "O") {
-      //   //For testing; remove once backend communicates to frontend
-      //   colorBox = widget.highlightedColor;
-      //   highlighted = 1;
-      // } else {
-      //     if(Theme.of(widget.context).brightness == Brightness.light) {
-      //       colorBox = widget.defaultColorBoxLightMode;
-      //     }
-      //     else {
-      //       colorBox = widget.defaultColorBoxDarkMode;
-      //     }
-      // }
-      //colorBox = widget.returnColor(context);
-    }
+  void initState() {
+    super.initState();
+    label = widget.label;
+  }
 
   @override
   void didChangeDependencies() {
@@ -206,31 +242,21 @@ class SquareButtonState extends State<SquareButton> {
         colorBox = widget.colorHighlighted;
         highlighted = 1;
       } else {
-        if(Theme.of(widget.context).brightness == Brightness.light) {
-          colorBox = widget.colorLightMode;
-        }
-        else {
-          colorBox = widget.colorDarkMode;
-        }
+        colorBox = widget.colorDarkMode;
         highlighted = 0;
       }
     });
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: widget.size,
       height: widget.size,
       key: ValueKey("Tastatur-Key-$label-$highlighted"),
       child: ElevatedButton(
-        onPressed: () async {
-          //changeColor(true);
-          final letter = label;
-          final encryptedLetter = await sendPressedKeyToRotors(letter);
-          Cookie.trigger("update");
-          Cookie.trigger("update_history",
-              {"clear": letter, "encrypted": encryptedLetter});
+        onPressed: () {
+          widget.tastaturState.sendKeyInput(label);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: colorBox, // background color lol
