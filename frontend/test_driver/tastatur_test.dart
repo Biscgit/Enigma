@@ -66,7 +66,7 @@ Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String exp
   }
 }
 
-void main() async {
+void main() {
   FlutterDriver? driver;
   //ft.WidgetTester tester;
 
