@@ -1,5 +1,7 @@
+import 'package:enigma/custom_machine.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
+import 'custom_machine.dart';
 
 class SideBar extends StatelessWidget {
   final String username;
@@ -26,7 +28,9 @@ class SideBar extends StatelessWidget {
   ListTile addMachine(BuildContext context) => ListTile(
       title: const Text('Neue Enigma'),
       onTap: () {
-        Navigator.pop(context);
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => SelectionPage()),
+        );
       });
 
   @override
