@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 import 'test_lib.dart' as t_lib;
@@ -44,14 +45,14 @@ Future<String> findSquareButtonKey(FlutterDriver? driver, String baseKey) async 
   final highlightedKey = 'Tastatur-Key-$baseKey-1';
 
   try {
-    await driver?.waitFor(find.byValueKey(notHighlightedKey), timeout: Duration(milliseconds: 500));
+    await driver?.waitFor(find.byValueKey(notHighlightedKey), timeout: const Duration(milliseconds: 500));
     return notHighlightedKey;
   } catch (e) {
     // Do nothing, just try the next key
   }
 
   try {
-    await driver?.waitFor(find.byValueKey(highlightedKey), timeout: Duration(milliseconds: 500));
+    await driver?.waitFor(find.byValueKey(highlightedKey), timeout: const Duration(milliseconds: 500));
     return highlightedKey;
   } catch (e) {
     // If both fail, rethrow the last exception
@@ -60,7 +61,7 @@ Future<String> findSquareButtonKey(FlutterDriver? driver, String baseKey) async 
 }
 
 Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String expectedResult) async {
-  print("Check for input: $keyInput, expecting result: $expectedResult.");
+  debugPrint("Check for input: $keyInput, expecting result: $expectedResult.");
 
   keyInput = keyInput.toUpperCase();
   expectedResult = expectedResult.toUpperCase();
@@ -71,8 +72,8 @@ Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String exp
       //    Tastatur-Key-$label
       //Template for how lamppanel ValueKeys work:
       //    Lamppanel-Key-$text-$highlighted^
-  String key_name = await findSquareButtonKey(driver, keyInput);
-  dynamic key = find.byValueKey(key_name);
+  String keyName = await findSquareButtonKey(driver, keyInput);
+  dynamic key = find.byValueKey(keyName);
   await driver?.tap(key);
   //await driver?.waitFor(find.byValueKey("ResultKey"), timeout: const Duration(seconds: 3)); //In Testing State
 
@@ -140,5 +141,5 @@ void main() async {
       await checkForKeyInput(driver, "L", "X"); //Change result to: A
       await checkForKeyInput(driver, "D", "A"); //Change result to: Z
       // print("Done!");
-    }, timeout: Timeout(const Duration(minutes: 3)));
+    }, timeout: const Timeout(Duration(minutes: 3)));
 }
