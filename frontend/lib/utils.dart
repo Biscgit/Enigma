@@ -33,7 +33,7 @@ class Cookie {
 
   static void trigger(String trigger,
       [Map<dynamic, dynamic> params = const {}]) {
-    reactors[trigger]?.forEach((reactor) => reactor(params));
+    reactors[trigger]?.forEach((reactor) async => await reactor(params));
   }
 
   static void clearReactors(String trigger) {
