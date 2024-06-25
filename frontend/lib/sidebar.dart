@@ -1,7 +1,6 @@
 import 'package:enigma/custom_machine.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
-import 'custom_machine.dart';
 
 class SideBar extends StatelessWidget {
   final String username;
