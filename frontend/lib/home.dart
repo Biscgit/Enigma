@@ -52,6 +52,14 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _deleteMachine(BuildContext context) async {
+    String currentID = await Cookie.read("current_machine");
+    await APICaller.delete("delete-machine", query:{'machine_id': currentID});
+    //if(!context.mounted) return;
+    //Navigator.pop(context);
+    //Navigator.pushReplacementNamed(context, '/home');
+  }
+
   @override
   Widget build(BuildContext context) {
     const keyHistory = KeyHistoryList();
@@ -99,6 +107,82 @@ class HomePageState extends State<HomePage> {
               );
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            tooltip: "Delete",
+            key: const ValueKey("deleteButton"),
+            onPressed: () async {
+              //_deleteMachine(context);
+              //if (!context.mounted) return;
+
+              showDialog(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: const Text('Löschen bestätigen'),
+                    content: const Text('Möchten Sie wirklich diese Maschine löschen?'),
+                    key: const ValueKey('deletionDialog'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          // Navigator.pushReplacementNamed(context, '/login');
+                        },
+                        child: const Text(
+                          'Nein',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          _deleteMachine(context);
+                          if (!context.mounted) return;
+
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext dialogContext) {
+                              return AlertDialog(
+                                title: const Text('Löschen Bestätigung'),
+                                content: const Text('Maschine erfolgreich gelöscht.'),
+                                key: const ValueKey('deletionConfirmed'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(dialogContext).pop();
+                                      Navigator.pushReplacementNamed(context, '/home');
+                                    },
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: const Text(
+                          'Ja',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                          )
+                        )
+                      )
+                    ],
+                  );
+                },
+              );
+            }
+
+          )
         ],
       ),
       drawer: SideBar(
