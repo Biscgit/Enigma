@@ -1,5 +1,6 @@
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
+import 'test_lib.dart' as t_lib;
 
 /*
 class FakeTesterApp extends StatelessWidget {
@@ -99,7 +100,7 @@ Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String exp
 }
 
 void main() async {
-  FlutterDriver? driver; 
+  FlutterDriver? driver;
   //ft.WidgetTester tester;
 
     // Connect to the Flutter app before running the tests.
@@ -120,8 +121,8 @@ void main() async {
     });
 
     test('Tastatur + Lamppanel + Backend test', () async { //This test passing means that all components work correctly!
-      login(driver);
-      await driver?.waitFor(find.byType("SquareButton"), timeout: const Duration(seconds: 2)); // Test if login worked correctly
+      await t_lib.login(driver);
+      await t_lib.resetSelectedMachine(driver);
 
       // https://www.101computing.net/enigma-machine-emulator/
       // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)

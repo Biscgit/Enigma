@@ -218,6 +218,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
         const Color.fromRGBO(134, 182, 136, 0.5); // Standardfarbe
 
     return ElevatedButton(
+      key: ValueKey("plugboard_letter_${value.toLowerCase()}"),
       onPressed: () {
         if (isSelected) {
           _onDeletePressed(value);
@@ -242,6 +243,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
 
   Widget toggleSwitch() {
     return Switch(
+      key: const ValueKey("plugboard_switch"),
       value: _isEnabled,
       onChanged: (value) async {
         final response = await APICaller.post("plugboard/enable", query: {
@@ -296,6 +298,7 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
   Widget build(BuildContext context) {
     return _isEnabled
         ? Container(
+            key: const ValueKey("plugboard_container"),
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               color: Colors.white10,
