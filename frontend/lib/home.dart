@@ -72,42 +72,6 @@ class HomePageState extends State<HomePage> {
         title: Text(selectedItem ?? "Create new machine"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            tooltip: 'Logout',
-            key: const ValueKey('logoutButton'),
-            onPressed: () async {
-              await _logout(context);
-              if (!context.mounted) return;
-
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext dialogContext) {
-                  return AlertDialog(
-                    title: const Text('Logout Confirmation'),
-                    content: const Text('Successfully logged out'),
-                    key: const ValueKey('logoutDialog'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(dialogContext).pop();
-                          // Navigator.pushReplacementNamed(context, '/login');
-                        },
-                        child: const Text(
-                          'OK',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.delete),
             tooltip: "Delete",
             key: const ValueKey("deleteButton"),
@@ -181,8 +145,44 @@ class HomePageState extends State<HomePage> {
                 },
               );
             }
+          ),
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            tooltip: 'Logout',
+            key: const ValueKey('logoutButton'),
+            onPressed: () async {
+              await _logout(context);
+              if (!context.mounted) return;
 
-          )
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: const Text('Logout Confirmation'),
+                    content: const Text('Successfully logged out'),
+                    key: const ValueKey('logoutDialog'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          // Navigator.pushReplacementNamed(context, '/login');
+                        },
+                        child: const Text(
+                          'OK',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          
         ],
       ),
       drawer: SideBar(
