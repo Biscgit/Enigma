@@ -194,9 +194,9 @@ class HomePageState extends State<HomePage> {
           const Expanded(
               child: Column(
             children: [
-          rotorWidget,
-          SettingsPage(key: Key('revert_button')),
-          ],
+              rotorWidget,
+              SettingsPage(key: Key('revert_button')),
+            ],
           )),
           Expanded(
               child: Stack(
