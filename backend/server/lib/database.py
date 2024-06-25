@@ -797,14 +797,6 @@ class Database:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
-
-                await conn.execute(
-                    """
-                    DELETE FROM machines
-                    WHERE id = $1
-                    """,
-                    machine_id,
-                )
                 await conn.execute(
                     """
                     DELETE FROM rotors
@@ -819,6 +811,13 @@ class Database:
                     WHERE username = $1 AND machine_type = $2 AND machine_id = 0
                     """,
                     username,
+                    machine_id,
+                )
+                await conn.execute(
+                    """
+                    DELETE FROM machines
+                    WHERE id = $1
+                    """,
                     machine_id,
                 )
 

@@ -150,7 +150,7 @@ async def add_machine(
         )
     except Exception as e:
         print("Error: ", e)
-        raise HTTPException(status_code=404, detail="Can't add Machine")
+        raise HTTPException(status_code=400, detail="Can't add Machine")
     return {"Status": "OK"}
 
 
