@@ -50,7 +50,7 @@ class Database:
                     port=environ.get("DB_PORT"),
                 )
 
-            except ConnectionRefusedError:
+            except (ConnectionRefusedError, asyncpg.exceptions.CannotConnectNowError):
                 logging.info("Retrying to connect...")
                 await asyncio.sleep(5)
 
