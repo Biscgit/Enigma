@@ -805,11 +805,21 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE machines
-                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[]
+                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[], reflector_id = $3
                     WHERE id = $1 AND username = $2
                     """,
                     machine_id,
                     username,
+                    list((await self.get_reflector(username, machine_id)).keys())[0],
+                )
+
+                await conn.execute(
+                    """
+                    DELETE FROM rotors
+                    WHERE username = $1 AND machine_type = $2 AND machine_id = 0 AND number <> 0
+                    """,
+                    username,
+                    machine_id,
                 )
 
 

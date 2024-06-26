@@ -310,20 +310,25 @@ class ReflectorState extends State<Reflector> {
             );
           } else {
             final data = snapshot.data!;
-            return DropdownButton<String>(
-              value: item,
-              items: List.generate(
-                  data.length,
-                  (index) => DropdownMenuItem(
-                        value: data[index],
-                        key: const ValueKey("DropDownReflector"),
-                        child: Text(
-                          data[index],
-                          key: ValueKey("Item.${data[index]}"),
-                        ),
-                      )),
-              onChanged: changeReflector,
-            );
+            return data.length == 1
+                ? Text(
+                    data[0],
+                    key: const Key("Reflector"),
+                  )
+                : DropdownButton<String>(
+                    value: item,
+                    items: List.generate(
+                        data.length,
+                        (index) => DropdownMenuItem(
+                              value: data[index],
+                              key: const ValueKey("DropDownReflector"),
+                              child: Text(
+                                data[index],
+                                key: ValueKey("Item.${data[index]}"),
+                              ),
+                            )),
+                    onChanged: changeReflector,
+                  );
           }
         });
   }
