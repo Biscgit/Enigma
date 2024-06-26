@@ -218,7 +218,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
         const Color.fromRGBO(134, 182, 136, 0.5); // Standardfarbe
 
     return ElevatedButton(
-      key: ValueKey("plugboard_letter_${value.toLowerCase()}"),
+      key: ValueKey("plugboard_letter_${value.toLowerCase()}_$isSelected"),
       onPressed: () {
         if (isSelected) {
           _onDeletePressed(value);
@@ -264,6 +264,7 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
     return Column(children: [
       const SizedBox(height: 6),
       ElevatedButton(
+        key: const ValueKey("reset_plugboard"),
         onPressed: _resetKeyboard,
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,

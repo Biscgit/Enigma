@@ -6,8 +6,43 @@
 
 ### Infos
 
-- Website can be accessed on `http://localhost:8080` hosted with nginx.
+- Website can be accessed on `http://localhost:8080` hosted with Nginx.
 - Login for GitLab registry builds: `docker login registry.mygit.th-deg.de`
+- Use a screen with resolution of at least 1920x1080 (zoom 100%) for best experience.
+
+### Platforms
+
+##### Linux
+
+- Everything works out of the box
+
+##### Windows
+
+- Go to `frontend/flutter.env` and change `IP_FASTAPI=` to `localhost`
+
+##### MacOS
+
+- Ask Apple support
+
+### Run Enigma
+
+- `docker compose up`
+
+### Run Enigma without GitLab
+
+- `docker compose -f docker-compose.fullylocal.yml up --build` (Note: Fully local building can take a
+  long time!)
+
+### Project Commands
+
+- **Run** GitLab: `docker compose up --build -d`
+- **Run** Locally (for development): `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building takes **3 to 8
+  Minutes!**)
+- **Stop** Compose: `docker compose down`
+- **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!
+  **)
+- **Restart**
+  clean: `docker compose -f docker-compose.local.yml down --rmi all --volumes && docker compose -f docker-compose.local.yml up --build -d`
 
 ### Flutter commands
 
@@ -15,9 +50,11 @@ go to `/frontend` directory
 
 - **Run** Linter: `flutter analyze`
 - **Run** Flutter (with hot reload, compose needs to run in addition!): `flutter run -d chrome`
-- **Run** Flutter tests (visible): `flutter driver --target=test_driver/app.dart -d chrome --no-headless`
-- **Run** Flutter tests (headless): 
-- `flutter driver --target=test_driver/app.dart -d web-server --release --web-browser-flag="--disable-gpu --headless --window-size=1920,1080 --disable-infobars --disable-dev-shm-usage"`
+- **Run** Flutter tests (visible, not working with
+  all): `flutter driver --target=test_driver/app.dart -d chrome --no-headless`
+- **Run** Flutter tests (headless, simple): `flutter --target=test_driver/app.dart -d web-server --release`
+- **Run** Flutter tests (headless,
+  pipeline): `flutter driver --target=test_driver/app.dart -d web-server --release --web-browser-flag="--disable-gpu --headless --window-size=1920,1080 --disable-infobars --disable-dev-shm-usage"`
 - **Start** Chrome driver (before tests): `chromedriver --port=4444`
 
 ### Backend commands
@@ -26,13 +63,3 @@ go to `/backend` directory
 
 - **Run** Backend tests: `pytest --cov`
 - **Run** Linter: `ruff check`
-
-### Project Commands
-
-- **Run** GitLab: `docker compose up --build -d`
-- **Run** Locally: `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building takes **3 to 8
-  Minutes!**)
-- **Stop** Compose: `docker compose down`
-- **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!
-  **)
-- **Restart** clean: `docker compose -f docker-compose.local.yml down --rmi all --volumes && docker compose -f docker-compose.local.yml up --build -d`

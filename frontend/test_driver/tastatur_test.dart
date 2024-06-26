@@ -66,7 +66,7 @@ Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String exp
   }
 }
 
-void main() async {
+void main() {
   FlutterDriver? driver;
   //ft.WidgetTester tester;
 
@@ -108,4 +108,25 @@ void main() async {
       await checkForKeyInput(driver, "D", "A"); //Change result to: Z
       // print("Done!");
     });
+
+
+  test("Keyboard Spamming", timeout: const Timeout(Duration(minutes: 2)),
+      () async {
+    await t_lib.login(driver, username: "user2", password: "pass2");
+    await t_lib.resetSelectedMachine(driver);
+
+    for (int i = 0; i < 100; i++) {
+      t_lib.writeChar("A", driver);
+    }
+    await driver?.waitUntilNoTransientCallbacks();
+
+    // check correct order
+    await driver?.waitFor(find.text("A → V"));
+    await driver?.waitFor(find.text("A → D"));
+    await driver?.waitFor(find.text("A → D"));
+    await driver?.waitFor(find.text("A → N"));
+    await driver?.waitFor(find.text("A → Q"));
+
+    await t_lib.logout(driver);
+  });
 }
