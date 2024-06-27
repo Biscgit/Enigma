@@ -277,18 +277,21 @@ class ReflectorState extends State<Reflector> {
   String machineId = "1";
   String item = "UKW";
   bool initialized = false;
-  List<String> items = [];
+  List<dynamic> items = [];
 
-  Future<List<String>> _initialize() async {
+  Future<List<dynamic>> _initialize() async {
     if (initialized) return items;
     machineId = await Cookie.read("current_machine");
-    items = json.decode(
-        (await APICaller.get("get-reflector-ids", {"machine_id": machineId}))
-            .body);
+    var response =
+        await APICaller.get("get-reflector-ids", {"machine_id": machineId});
+    assert(response.statusCode == 200);
     initialized = true;
-    item = json.decode(
-        (await APICaller.get("get-reflector-id", {"machine_id": machineId}))
-            .body);
+    var choosedItem =
+        await APICaller.get("get-reflector-id", {"machine_id": machineId});
+    setState(() {
+      item = json.decode(choosedItem.body);
+      items = json.decode(response.body);
+    });
     return items;
   }
 
@@ -302,7 +305,7 @@ class ReflectorState extends State<Reflector> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<List<dynamic>>(
         future: _initialize(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

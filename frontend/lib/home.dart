@@ -22,9 +22,15 @@ class HomePageState extends State<HomePage> {
   String? get selectedItem => _selectedItem;
 
   void _initialize() async {
-    _selectedItem = await Cookie.read("name");
-    _username = await Cookie.read("username");
-    numberRotors = await Cookie.read("numberRotors");
+    Cookie.read("name").then((value) {
+      _selectedItem = value;
+      return Cookie.read("username");
+    }).then((value) {
+      _username = value;
+      return Cookie.read("numberRotors");
+    }).then((value) {
+      numberRotors = value;
+    });
     setState(() {});
   }
 
