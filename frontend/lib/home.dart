@@ -68,6 +68,7 @@ class HomePageState extends State<HomePage> {
   Future<void> _deleteMachine(BuildContext context) async {
     String currentID = await Cookie.read("current_machine");
     await APICaller.delete("delete-machine", query: {'machine_id': currentID});
+    await Cookie.save("current_machine", "1");
     //if(!context.mounted) return;
     //Navigator.pop(context);
     //Navigator.pushReplacementNamed(context, '/home');
