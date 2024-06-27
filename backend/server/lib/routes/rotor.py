@@ -141,7 +141,6 @@ async def add_rotor(
 @router.post("/add-machine")
 async def add_machine(
     name: str,
-    machine_type: int,
     plugboard: bool,
     number_rotors: int,
     rotors: List[int],
@@ -151,7 +150,7 @@ async def add_machine(
 ) -> Dict[str, str]:
     try:
         await db_conn.add_machine(
-            username, name, machine_type, plugboard, number_rotors, rotors, reflectors
+            username, name, plugboard, number_rotors, rotors, reflectors
         )
     except Exception as e:
         print("Error: ", e)
