@@ -17,6 +17,16 @@ void main() {
     }
   });
 
-  //tests
+  test("Rotor exists", timeout: const Timeout(Duration(seconds: 60)),
+          () async {
+        await login(driver);
+        await resetSelectedMachine(driver);
 
+        final rotor1 = find.text('Rotor 1');
+        final rotor2 = find.text('Rotor 2');
+        final rotor3 = find.text('Rotor 3');
+        await driver?.waitFor(rotor1);
+        await driver?.waitFor(rotor2);
+        await driver?.waitFor(rotor3);
+      });
 }
