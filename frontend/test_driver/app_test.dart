@@ -3,6 +3,7 @@ import 'tastatur_test.dart' as tastatur_test;
 import 'keyhistory_test.dart' as keyhistory_test;
 import 'plugboard_test.dart' as plugboard_test;
 import 'authentication_test.dart' as authentication_test;
+import 'rotor_test.dart' as rotor_test;
 
 void main() {
   group('Authentication:', () {
@@ -19,5 +20,9 @@ void main() {
 
   group('Plugboard:', () {
     plugboard_test.main();
+  });
+
+  group('Rotors:', () {
+    rotor_test.main();
   });
 }
