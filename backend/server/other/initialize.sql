@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS machines (
     username TEXT,
     name TEXT,
     machine_type INTEGER,
+
     reflector JSON,
+    reflector_id TEXT,
 
     character_pointer INTEGER,
     character_history JSON ARRAY[140],
@@ -36,6 +38,7 @@ CREATE TABLE IF NOT EXISTS rotors (
     machine_type INTEGER,
     letter_shift TEXT,
     rotor_position TEXT,
+    offset_value INTEGER,
 
     place INTEGER,
     number INTEGER,

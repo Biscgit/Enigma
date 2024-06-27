@@ -55,6 +55,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     const keyHistory = KeyHistoryList();
+    const reflector = Reflector();
     const rotorWidget = RotorPage(numberRotors: 3);
 
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -107,13 +108,15 @@ class HomePageState extends State<HomePage> {
       ),
       body: Row(
         children: [
-          const Expanded(
+          const Flexible(
+              fit: FlexFit.loose,
               child: Column(
-            children: [
-          rotorWidget,
-          SettingsPage(key: Key('revert_button')),
-          ],
-          )),
+                children: [
+                  reflector,
+                  rotorWidget,
+                  SettingsPage(key: Key('revert_button')),
+                ],
+              )),
           Expanded(
               child: Stack(
             children: [

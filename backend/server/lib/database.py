@@ -132,17 +132,20 @@ class Database:
         alphabet = string.ascii_lowercase
         for username in await self._get_users():
             for machine in content:
-                reflector = {}
-                for i, j in zip(machine["reflector"], alphabet):
-                    reflector[i.lower()] = j.lower()
-                    reflector[j.lower()] = i.lower()
+                reflectors = {}
+                for k, reflector in machine["reflector"].items():
+                    reflectors[k] = {}
+                    for i, j in zip(reflector, alphabet):
+                        reflectors[k][i.lower()] = j.lower()
+                        reflectors[k][j.lower()] = i.lower()
                 try:
                     await self.create_machine(
                         machine["machine_type"],
                         username,
                         machine["machine_type"],
                         machine["name"],
-                        reflector,
+                        reflectors,
+                        list(machine["reflector"].keys())[0],
                         ignore_exist=True,
                     )
                 except asyncpg.PostgresError:
@@ -162,6 +165,7 @@ class Database:
                 rotor["place"] = 0
                 rotor["number"] = 0
                 rotor["is_rotate"] = True
+                rotor["offset_value"] = 0
                 try:
                     await self.set_rotor(rotor)
                 except asyncpg.PostgresError:
@@ -205,6 +209,7 @@ class Database:
         machine_type: int,
         name: str,
         reflector: dict,
+        reflector_id: str,
         ignore_exist: bool = False,
     ) -> None:
         """creates a new machine for a user if it does not exist"""
@@ -213,8 +218,8 @@ class Database:
             async with conn.transaction():
                 await conn.execute(
                     f"""
-                        INSERT INTO machines(id, username, name, machine_type, reflector, character_pointer, character_history, plugboard_enabled, plugboard_config)
-                        VALUES ($1, $2, $3, $4, $5::JSON, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
+                        INSERT INTO machines(id, username, name, machine_type, reflector, reflector_id, character_pointer, character_history, plugboard_enabled, plugboard_config)
+                        VALUES ($1, $2, $3, $4, $5::JSON, $6, -1, ARRAY[]::JSON[], FALSE, ARRAY[]::JSON[])
                         {'ON CONFLICT DO NOTHING' if ignore_exist else ''}
                     """,
                     machine_id,
@@ -222,6 +227,7 @@ class Database:
                     name,
                     machine_type,
                     json.dumps(reflector),
+                    reflector_id,
                 )
 
                 logging.debug(
@@ -452,8 +458,8 @@ class Database:
             logging.info(f"Plugboard enabled for {username}.{machine}: {result}")
             return bool(result)
 
-    async def get_reflector(self, username: str, machine: int) -> list:
-        """returns return rotor configurations for a machine"""
+    async def get_reflector(self, username: str, machine: int) -> dict:
+        """returns reflector configurations for a machine"""
         async with self.pool.acquire() as conn:
             conn: asyncpg.Connection
 
@@ -468,7 +474,45 @@ class Database:
             )
 
             logging.debug(f"Fetched reflector for {username}.{machine}: {str(result)}")
+            return json.loads(result) if result else None
+
+    async def get_reflector_id(self, username: str, machine_id: int) -> list:
+        """returns refelector id for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            result = await conn.fetchval(
+                """
+                SELECT reflector_id
+                FROM machines
+                WHERE username = $1 AND id = $2
+                """,
+                username,
+                machine_id,
+            )
+
+            logging.debug(
+                f"Fetched reflector_id for {username}.{machine_id}: {str(result)}"
+            )
             return result
+
+    async def update_reflector_id(
+        self, username: str, machine_id: int, reflector_id: int
+    ) -> None:
+        """returns return rotor configurations for a machine"""
+        async with self.pool.acquire() as conn:
+            conn: asyncpg.Connection
+
+            await conn.execute(
+                """
+                UPDATE machines
+                SET reflector_id = $3
+                WHERE username = $1 AND id = $2
+                """,
+                username,
+                machine_id,
+                reflector_id,
+            )
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -519,7 +563,7 @@ class Database:
 
             results = await conn.fetch(
                 """
-                SELECT id, machine_id, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate
+                SELECT *
 
                 FROM rotors
                 WHERE username = $1 AND machine_id = $2
@@ -539,7 +583,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number, is_rotate
+                SELECT *
                 FROM rotors
                 WHERE id = $1
                 """,
@@ -557,7 +601,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT machine_id, machine_type, letter_shift, rotor_position, scramble_alphabet, id, place, number, is_rotate
+                SELECT *
                 FROM rotors
                 WHERE username = $1 AND machine_id = $2 AND place = $3
                 """,
@@ -579,7 +623,7 @@ class Database:
 
             result = await conn.fetchrow(
                 """
-                SELECT username, letter_shift, rotor_position, scramble_alphabet, place, number, is_rotate, id, machine_id
+                SELECT *
                 FROM rotors
                 WHERE number = $1 AND username = $2 AND machine_type = $3 AND machine_id = 0 AND place = $4
                 """,
@@ -620,7 +664,7 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE rotors
-                    SET place = $3, rotor_position = $4, letter_shift = $5, scramble_alphabet = $6, machine_id = $7, number = $8, is_rotate = $9
+                    SET place = $3, rotor_position = $4, letter_shift = $5, scramble_alphabet = $6, machine_id = $7, number = $8, is_rotate = $9, offset_value = $10
                     WHERE username = $1 AND id = $2
                     """,
                     data["username"],
@@ -632,6 +676,7 @@ class Database:
                     data["machine_id"],
                     data["number"],
                     data["is_rotate"],
+                    data["offset_value"],
                 )
         logging.debug(f"Updated rotor for {data['username']} with {data}")
 
@@ -639,8 +684,8 @@ class Database:
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(
-                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position, place, number, is_rotate)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+                    """INSERT INTO rotors(username, scramble_alphabet, machine_type, machine_id, letter_shift, rotor_position, place, number, is_rotate, offset_value)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
                     """,
                     data["username"],
                     data["scramble_alphabet"].lower(),
@@ -651,6 +696,7 @@ class Database:
                     data["place"],
                     data["number"],
                     data["is_rotate"],
+                    data["offset_value"],
                 )
                 result = (
                     await conn.fetchval(
@@ -723,7 +769,9 @@ class Database:
             if await self.is_plugboard_enabled(username, machine_id)
             else []
         )
-        reflector = await self.get_reflector(username, machine_id)
+        reflector_id = await self.get_reflector_id(username, machine_id)
+        reflector = (await self.get_reflector(username, machine_id))[reflector_id]
+
         rotors = []
         for rotor in await self.get_rotors(username, machine_id):
             rotors += [
@@ -736,6 +784,7 @@ class Database:
                     rotor["place"],
                     rotor["number"],
                     rotor["is_rotate"],
+                    rotor["offset_value"],
                 )
             ]
         return plugboard, reflector, rotors
@@ -756,11 +805,21 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE machines
-                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[]
+                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[], reflector_id = $3
                     WHERE id = $1 AND username = $2
                     """,
                     machine_id,
                     username,
+                    list((await self.get_reflector(username, machine_id)).keys())[0],
+                )
+
+                await conn.execute(
+                    """
+                    DELETE FROM rotors
+                    WHERE username = $1 AND machine_type = $2 AND machine_id = 0 AND number <> 0
+                    """,
+                    username,
+                    machine_id,
                 )
 
 

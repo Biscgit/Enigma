@@ -7,7 +7,6 @@ class KeyHistoryList extends StatefulWidget {
 
   @override
   State<KeyHistoryList> createState() => KeyHistoryState();
-
 }
 
 class KeyHistoryState extends State<KeyHistoryList> {
@@ -24,6 +23,7 @@ class KeyHistoryState extends State<KeyHistoryList> {
 
   void loadKeyHistory() async {
     var machineId = await Cookie.read("current_machine");
+
     /// Loads pressed keys from server
     final response = await APICaller.get("load_key_history", {
       "machine": machineId,
@@ -54,9 +54,11 @@ class KeyHistoryState extends State<KeyHistoryList> {
     });
   }*/
 
-  void addKey([Map<dynamic, dynamic> params = const {"clear": "O", "encrypted": "O"}]) {
+  void addKey(
+      [Map<dynamic, dynamic> params = const {"clear": "O", "encrypted": "O"}]) {
     var clear = params["clear"].toString().toUpperCase();
     var encrypted = params["encrypted"].toString().toUpperCase();
+
     /// Add the key to the key history
     setState(() {
       _keyHistory.insert(0, MapEntry(clear, encrypted));

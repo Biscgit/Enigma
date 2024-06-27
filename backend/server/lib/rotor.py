@@ -16,6 +16,7 @@ class Rotor:
         place: int,
         number: int,
         is_rotate: bool,
+        offset: int,
     ):
         """
         Initialize the Rotor with a given alphabet, rotor_positioning position, and letter_shift positions.
@@ -27,7 +28,7 @@ class Rotor:
         self.scramble_alphabet = alphabet.lower()
 
         def get_ord_false(x):
-            return (self.get_ord(x, False) - 7) % 26
+            return (self.get_ord(x, False) - 7 + offset) % 26
 
         self.rotor_position = self.get_ord(rotor_position, False)
         self.letter_shift = list(map(get_ord_false, letter_shift))
@@ -36,6 +37,7 @@ class Rotor:
         self.place = place
         self.number = number
         self.is_rotate = is_rotate
+        self.offset_value = offset
 
     def scramble(self, char: chr) -> chr:
         """
@@ -134,5 +136,8 @@ class Rotor:
         :return: A string where each character represents the notch position in the Rotor's alphabet.
         """
         return "".join(
-            [Rotor.alphabet[(notch + 7) % 26] for notch in self.letter_shift]
+            [
+                Rotor.alphabet[(notch + 7 - self.offset_value) % 26]
+                for notch in self.letter_shift
+            ]
         )
