@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_driver/flutter_driver.dart';
 
 takeScreenshot(FlutterDriver driver, String path) async {
+  await driver.waitUntilNoTransientCallbacks();
   final List<int> pixels = await driver.screenshot();
   final File file = File("screenshots/$path");
   await file.writeAsBytes(pixels);

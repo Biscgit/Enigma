@@ -22,27 +22,24 @@ class RotorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Data>(
-        future: _initialize(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [CircularProgressIndicator()],
-            );
-          } else {
-            final data = snapshot.data!;
-            return Wrap(
-              spacing: 8.0, // Horizontal spacing between children
+      future: _initialize(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [CircularProgressIndicator()],
+          );
+        } else {
+          final data = snapshot.data!;
+          return Wrap(
+             spacing: 8.0, // Horizontal spacing between children
               runSpacing: 8.0,
               children: List.generate(
-                  numberRotors,
-                  (index) => RotorWidget(
-                      rotorNumber: index + 1,
-                      machineId: data.machineId,
-                      rotorIds: data.rotorIds)),
-            );
-          }
-        });
+            numberRotors, (index) => RotorWidget(rotorNumber: index + 1, machineId: data.machineId, rotorIds: data.rotorIds)),
+          );
+        }
+      }
+    );
   }
 }
 
@@ -67,6 +64,7 @@ class RotorWidgetState extends State<RotorWidget> {
   String notch = "a";
   int numberRotors = 5;
   int id = 1;
+  int offset = 0;
 
   @override
   void initState() {
@@ -101,10 +99,12 @@ class RotorWidgetState extends State<RotorWidget> {
             {"machine_id": widget.machineId, "place": "${widget.rotorNumber}"}))
         .body);
     id = rotor["id"];
+    offset = (rotor["offset_value"] as int? ?? 0);
 
     setState(() {
-      rotorPosition = rotor["rotor_position"].codeUnitAt(0) - 97;
-      notch = rotor["letter_shift"];
+      rotorPosition =
+          (rotor["rotor_position"].codeUnitAt(0) - 97 + offset + 26) % 26;
+      notch = changeString(rotor["letter_shift"], offset);
     });
   }
 
@@ -122,11 +122,16 @@ class RotorWidgetState extends State<RotorWidget> {
     final response = await APICaller.post("switch-rotor", body: rotor);
     assert(response.statusCode == 200);
     var getRotor = jsonDecode(response.body);
-
+    offset = (getRotor["offset_value"] as int? ?? 0);
     setState(() {
       rotorPosition =
-          (getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) - 97;
-      notch = getRotor["letter_shift"] as String? ?? "a";
+          ((getRotor["rotor_position"] as String? ?? "a").codeUnitAt(0) -
+                  97 +
+                  offset +
+                  26) %
+              26;
+      notch =
+          changeString((getRotor["letter_shift"] as String? ?? "a"), offset);
     });
 
     Cookie.trigger("set_focus_keyboard");
@@ -142,8 +147,8 @@ class RotorWidgetState extends State<RotorWidget> {
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = notch;
+    rotor["rotor_position"] =
+        String.fromCharCode(97 + (rotorPosition - offset + 26) % 26);
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
     APICaller.post("update-rotor", body: rotor);
@@ -152,18 +157,23 @@ class RotorWidgetState extends State<RotorWidget> {
   void _changeLetterPosition(int change) async {
     setState(() {
       rotorPosition = (rotorPosition + change + 26) % 26;
-      notch = String.fromCharCodes(notch
-          .toLowerCase()
-          .split('')
-          .map((pos) => 97 + ((pos.codeUnitAt(0) - 97) + change + 26) % 26));
+      notch = changeString(notch, change);
     });
     var rotor =
         json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_position"] = String.fromCharCode(97 + rotorPosition);
-    rotor["letter_shift"] = notch;
+    offset = (offset + change + 26) % 26;
+    rotor["letter_shift"] = changeString(notch, -offset);
     rotor["id"] = id;
     rotor["number"] = selectedRotor;
+    rotor["offset_value"] = offset;
     APICaller.post("update-rotor", body: rotor);
+  }
+
+  String changeString(String base, int change) {
+    return String.fromCharCodes(base
+        .toLowerCase()
+        .split('')
+        .map((pos) => 97 + ((pos.codeUnitAt(0) - 97) + change + 26) % 26));
   }
 
   @override
@@ -250,5 +260,75 @@ class RotorWidgetState extends State<RotorWidget> {
         ],
       ),
     );
+  }
+}
+
+class Reflector extends StatefulWidget {
+  const Reflector({super.key});
+
+  @override
+  ReflectorState createState() => ReflectorState();
+}
+
+class ReflectorState extends State<Reflector> {
+  String machineId = "1";
+  String item = "UKW";
+  bool initialized = false;
+  List<String> items = [];
+
+  Future<List<String>> _initialize() async {
+    if (initialized) return items;
+    machineId = await Cookie.read("current_machine");
+    items = json.decode(
+        (await APICaller.get("get-reflector-ids", {"machine_id": machineId}))
+            .body);
+    initialized = true;
+    item = json.decode(
+        (await APICaller.get("get-reflector-id", {"machine_id": machineId}))
+            .body);
+    return items;
+  }
+
+  void changeReflector(String? value) async {
+    await APICaller.post("update-reflector",
+        query: {"machine_id": machineId, "reflector_id": value ?? "UKW"});
+    setState(() {
+      item = value!;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<String>>(
+        future: _initialize(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [CircularProgressIndicator()],
+            );
+          } else {
+            final data = snapshot.data!;
+            return data.length == 1
+                ? Text(
+                    data[0],
+                    key: const Key("Reflector"),
+                  )
+                : DropdownButton<String>(
+                    value: item,
+                    items: List.generate(
+                        data.length,
+                        (index) => DropdownMenuItem(
+                              value: data[index],
+                              key: const ValueKey("DropDownReflector"),
+                              child: Text(
+                                data[index],
+                                key: ValueKey("Item.${data[index]}"),
+                              ),
+                            )),
+                    onChanged: changeReflector,
+                  );
+          }
+        });
   }
 }

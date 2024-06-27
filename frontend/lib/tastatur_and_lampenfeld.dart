@@ -3,7 +3,6 @@ import 'lampenfeld.dart';
 import 'tastatur.dart';
 
 class MainScreen extends StatelessWidget {
-
   const MainScreen({super.key});
 
   @override
@@ -16,7 +15,8 @@ class MainScreen extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: align,
-          child: const Lampfield(),),
+          child: const Lampfield(),
+        ),
         Positioned(
           top: align,
           left: 0,

@@ -65,6 +65,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     const keyHistory = KeyHistoryList();
+    const reflector = Reflector();
     var I = numberRotors.codeUnitAt(0) - '0'.codeUnitAt(0);
     var rotorWidget = RotorPage(numberRotors: I);
 
@@ -192,13 +193,15 @@ class HomePageState extends State<HomePage> {
       ),
       body: Row(
         children: [
-          Expanded(
+          Flexible(
+              fit: FlexFit.loose,
               child: Column(
-            children: [
-              rotorWidget,
-              const SettingsPage(key: Key('revert_button')),
-            ],
-          )),
+                children: [
+                  reflector,
+                  rotorWidget,
+                  const SettingsPage(key: Key('revert_button')),
+                ],
+              )),
           Expanded(
               child: Stack(
             children: [

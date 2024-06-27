@@ -1,0 +1,46 @@
+services:
+    database:
+        image: postgres:16-alpine
+        environment:
+            LANG: de_DE.utf8
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+
+        networks:
+            enigma-network:
+                ipv4_address: ${IP_POSTGRES}
+
+    webserver:
+        build:
+            context: ./backend
+            dockerfile: DockerfileLocal
+        ports:
+            - 8001:8001
+        networks:
+            enigma-network:
+                ipv4_address: ${IP_FASTAPI}
+
+        env_file:
+            - .env
+
+    website:
+        build:
+            context: ./frontend
+            dockerfile: DockerfileLocal
+        ports:
+            - 8080:8080
+        networks:
+            enigma-network:
+                ipv4_address: ${IP_FLUTTER}
+
+networks:
+    enigma-network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16
+                  gateway: 172.20.0.1
+
+volumes:
+    database-storage:

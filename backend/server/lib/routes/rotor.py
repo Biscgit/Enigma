@@ -25,6 +25,7 @@ async def update_rotor(
                 "place": rotor.place,
                 "number": rotor.number,
                 "is_rotate": rotor.is_rotate,
+                "offset_value": rotor.offset_value,
             }
         )
     except Exception as e:
@@ -193,4 +194,47 @@ async def revert_machine(
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't revert Machine")
+    return {"Status": "OK"}
+
+
+@router.get("/get-reflector-ids")
+async def get_reflector_ids(
+    machine_id: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> list:
+    try:
+        ids = list((await db_conn.get_reflector(username, machine_id)).keys())
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get reflector ids")
+    return ids
+
+
+@router.get("/get-reflector-id")
+async def get_reflector_id(
+    machine_id: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> str:
+    try:
+        ids = await db_conn.get_reflector_id(username, machine_id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get reflector id")
+    return ids
+
+
+@router.post("/update-reflector")
+async def update_reflector(
+    reflector_id: str,
+    machine_id: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> Dict[str, str]:
+    try:
+        await db_conn.update_reflector_id(username, machine_id, reflector_id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't update reflector Id")
     return {"Status": "OK"}
