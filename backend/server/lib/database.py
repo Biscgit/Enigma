@@ -715,6 +715,21 @@ class Database:
                 )
         logging.debug(f"Updated rotor for {data['username']} with {data}")
 
+    async def update_base_rotor(self, data: dict) -> None:
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+                await conn.execute(
+                    """
+                    UPDATE rotors
+                    SET rotor_position = $2, offset_value = $3
+                    WHERE id = $1
+                    """,
+                    data["id"],
+                    data["rotor_position"],
+                    data["offset_value"],
+                )
+
     async def set_rotor(self, data: dict) -> int:
         async with self.pool.acquire() as conn:
             async with conn.transaction():

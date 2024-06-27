@@ -22,24 +22,27 @@ class RotorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Data>(
-      future: _initialize(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [CircularProgressIndicator()],
-          );
-        } else {
-          final data = snapshot.data!;
-          return Wrap(
-             spacing: 8.0, // Horizontal spacing between children
+        future: _initialize(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [CircularProgressIndicator()],
+            );
+          } else {
+            final data = snapshot.data!;
+            return Wrap(
+              spacing: 8.0, // Horizontal spacing between children
               runSpacing: 8.0,
               children: List.generate(
-            numberRotors, (index) => RotorWidget(rotorNumber: index + 1, machineId: data.machineId, rotorIds: data.rotorIds)),
-          );
-        }
-      }
-    );
+                  numberRotors,
+                  (index) => RotorWidget(
+                      rotorNumber: index + 1,
+                      machineId: data.machineId,
+                      rotorIds: data.rotorIds)),
+            );
+          }
+        });
   }
 }
 
@@ -145,12 +148,12 @@ class RotorWidgetState extends State<RotorWidget> {
     setState(() {
       rotorPosition = (rotorPosition + change + 26) % 26;
     });
-    var rotor =
-        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_position"] =
-        String.fromCharCode(97 + (rotorPosition - offset + 26) % 26);
-    rotor["id"] = id;
-    rotor["number"] = selectedRotor;
+    var rotor = {
+      "id": id,
+      "rotor_position":
+          String.fromCharCode(97 + (rotorPosition - offset + 26) % 26),
+      "offset_value": offset
+    };
     APICaller.post("update-rotor", body: rotor);
   }
 
@@ -159,13 +162,13 @@ class RotorWidgetState extends State<RotorWidget> {
       rotorPosition = (rotorPosition + change + 26) % 26;
       notch = changeString(notch, change);
     });
-    var rotor =
-        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     offset = (offset + change + 26) % 26;
-    rotor["letter_shift"] = changeString(notch, -offset);
-    rotor["id"] = id;
-    rotor["number"] = selectedRotor;
-    rotor["offset_value"] = offset;
+    var rotor = {
+      "id": id,
+      "rotor_position":
+          String.fromCharCode(97 + (rotorPosition - offset + 26) % 26),
+      "offset_value": offset
+    };
     APICaller.post("update-rotor", body: rotor);
   }
 

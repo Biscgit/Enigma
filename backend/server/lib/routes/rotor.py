@@ -2,29 +2,22 @@ from fastapi import APIRouter, Depends, HTTPException
 from .authentication import check_auth
 from server.lib.database import get_database, Database
 from typing import Dict
-from server.lib.models import Rotor, MinRotor
+from server.lib.models import UpdateRotor, MinRotor
 
 router = APIRouter()
 
 
 @router.post("/update-rotor")
 async def update_rotor(
-    rotor: Rotor,
+    rotor: UpdateRotor,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str]:
     try:
-        await db_conn.update_rotor(
+        await db_conn.update_base_rotor(
             {
-                "username": username,
                 "id": rotor.id,
                 "rotor_position": rotor.rotor_position,
-                "letter_shift": rotor.letter_shift,
-                "scramble_alphabet": rotor.scramble_alphabet,
-                "machine_id": rotor.machine_id,
-                "place": rotor.place,
-                "number": rotor.number,
-                "is_rotate": rotor.is_rotate,
                 "offset_value": rotor.offset_value,
             }
         )
@@ -98,7 +91,12 @@ async def get_rotor_by_place(
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't get Rotor by place")
 
-    return rotor
+    return {
+        "offset_value": rotor["offset_value"],
+        "rotor_position": rotor["rotor_position"],
+        "letter_shift": rotor["letter_shift"],
+        "id": rotor["id"],
+    }
 
 
 @router.get("/get-rotor-number")
@@ -133,7 +131,11 @@ async def add_rotor(
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't switch Rotor")
-    return rotor
+    return {
+        "offset_value": rotor["offset_value"],
+        "rotor_position": rotor["rotor_position"],
+        "letter_shift": rotor["letter_shift"],
+    }
 
 
 @router.post("/add-machine")
@@ -161,6 +163,8 @@ async def delete_machine(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> None:
+    if machine_id < 3:
+        raise HTTPException(status_code=403, detail="Can't delete Base Machine")
     try:
         await db_conn.delete_machine(username, machine_id)
     except Exception as e:
