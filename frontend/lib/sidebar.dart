@@ -1,3 +1,4 @@
+import 'package:enigma/sidebar_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:enigma/utils.dart';
@@ -58,43 +59,65 @@ class SideBar extends StatelessWidget {
     return widgets;
   }
 
-  ListTile addMachine(BuildContext context) => ListTile(
+  ListTile addMachine(BuildContext context) {
+    return ListTile(
       title: const Text('Neue Enigma'),
       onTap: () {
         Navigator.of(context).pop();
         showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                  title: const Text("Neue Maschine"),
-                  content: SizedBox(
-                    height: 200,
-                    width: 800,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          // Row with Drop-down menus
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                children: [
-                                  const Text("Plugboard erlauben?"),
-                                  StatefulDropdownMenu(
-                                    selectedValue:
-                                        _selectedValuePlugboardToggle,
-                                    onChanged: (value) {
-                                      _selectedValuePlugboardToggle = value;
-                                    },
-                                    items: const ["Ja", "Nein"],
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Text("Anzahl an Rotoren"),
-                                  SizedBox(
+          context: context,
+          builder: (BuildContext context) {
+            return FutureBuilder<List<dynamic>>(
+              future: Future.wait([getRotorIDs(), getUmkehrwalzenIDs()]),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return AlertDialog(
+                    title: const Text("Error"),
+                    content: Text("Error: ${snapshot.error}"),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text("Close"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  var itemsRotorenAuswahl = snapshot.data![0] as List<String>;
+                  var itemsUmkehrwalzen = snapshot.data![1] as List<String>;
+
+                  return AlertDialog(
+                    title: const Text("Neue Maschine"),
+                    content: SizedBox(
+                      height: 200,
+                      width: 800,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            // Row with Drop-down menus
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    const Text("Plugboard erlauben?"),
+                                    StatefulDropdownMenu(
+                                      selectedValue: _selectedValuePlugboardToggle,
+                                      onChanged: (value) {
+                                        _selectedValuePlugboardToggle = value;
+                                      },
+                                      items: const ["Ja", "Nein"],
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Anzahl an Rotoren"),
+                                    SizedBox(
                                       width: 150.0,
                                       height: 50.0,
                                       child: TextField(
@@ -105,70 +128,75 @@ class SideBar extends StatelessWidget {
                                           FilteringTextInputFormatter.allow(
                                               RegExp(r'[0-9]')),
                                         ],
-                                      ))
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Text("Auswählbare Rotoren"),
-                                  StatefulDropdownMenu(
-                                    selectedValue: _selectedValueRotorenAuswahl,
-                                    onChanged: (value) {
-                                      _selectedValueRotorenAuswahl = value;
-                                    },
-                                    items: itemsRotorenAuswahl,
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Text("Auswählbare Umkehrwalzen"),
-                                  StatefulDropdownMenu(
-                                    selectedValue: _selectedValueUmkehrwalzen,
-                                    onChanged: (value) {
-                                      _selectedValueUmkehrwalzen = value;
-                                    },
-                                    items: itemsUmkehrwalzen,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          // Buttons at the bottom right
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("Abbrechen"),
-                              ),
-                              const SizedBox(width: 8),
-                              ElevatedButton(
-                                onPressed: () {
-                                  enableButton()
-                                      ? {
-                                          // Perform some action
-                                          _selectedValuePlugboardToggle = null,
-                                          _selectedValueRotorenAnzahl = null,
-                                          _selectedValueRotorenAuswahl = null,
-                                          _selectedValueUmkehrwalzen = null,
-                                          Navigator.of(context).pop()
-                                        }
-                                      : null;
-                                },
-                                child: const Text("Maschine erstellen"),
-                              ),
-                            ],
-                          ),
-                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Auswählbare Rotoren"),
+                                    StatefulDropdownMenu(
+                                      selectedValue: _selectedValueRotorenAuswahl,
+                                      onChanged: (value) {
+                                        _selectedValueRotorenAuswahl = value;
+                                      },
+                                      items: itemsRotorenAuswahl,
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Auswählbare Umkehrwalzen"),
+                                    StatefulDropdownMenu(
+                                      selectedValue: _selectedValueUmkehrwalzen,
+                                      onChanged: (value) {
+                                        _selectedValueUmkehrwalzen = value;
+                                      },
+                                      items: itemsUmkehrwalzen,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            // Buttons at the bottom right
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text("Abbrechen"),
+                                ),
+                                const SizedBox(width: 8),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if(enableButton()) {
+                                      _selectedValuePlugboardToggle = null;
+                                      _selectedValueRotorenAnzahl = null;
+                                      _selectedValueRotorenAuswahl = null;
+                                      _selectedValueUmkehrwalzen = null;
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                  child: const Text("Maschine erstellen"),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ));
-            });
-      });
+                  );
+                }
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
