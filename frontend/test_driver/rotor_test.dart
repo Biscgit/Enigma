@@ -17,7 +17,7 @@ void main() {
     }
   });
 
-  test("Rotor exists", timeout: const Timeout(Duration(seconds: 60)),
+  test("Rotors exists", timeout: const Timeout(Duration(seconds: 60)),
           () async {
         await login(driver);
         await resetSelectedMachine(driver);
@@ -29,4 +29,44 @@ void main() {
         await driver?.waitFor(rotor2);
         await driver?.waitFor(rotor3);
       });
+
+  test("Plus-Minus-Notch", timeout: const Timeout(Duration(seconds: 60)),
+          () async {
+        await login(driver);
+        await resetSelectedMachine(driver);
+
+        final plusButton = find.byValueKey("ChangeLetter.1.plus");
+        final minusButton = find.byValueKey("ChangeLetter.1.minus");
+        final notchKey = find.byValueKey("Notch.1");
+
+        // Current value
+        Future<String?> getNotchValue() async {
+          return await driver?.getText(notchKey);
+        }
+
+        List<String?> notchValues = [];
+
+        // initial value is Y
+        String? initialNotch = await getNotchValue();
+        notchValues.add('$initialNotch'); // Y
+
+        // Plus button (rom Y to Z)
+        await driver?.tap(plusButton);
+        String? plusNotch = await getNotchValue();
+        notchValues.add('$plusNotch'); // Z
+
+        // Reset notch
+        await driver?.tap(minusButton); // Y
+
+        // Minus Button (From Y to X)
+        await driver?.tap(minusButton);
+        String? minusNotch = await getNotchValue();
+        notchValues.add('$minusNotch'); // X
+      });
+
+  //test("Rotors rotate", timeout: const Timeout(Duration(seconds: 60)),
+  //() async {
+  //});
+
+
 }
