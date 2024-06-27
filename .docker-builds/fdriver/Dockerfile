@@ -27,7 +27,7 @@ RUN sudo apt install -y wget jq
 # in the end, Chrome was the issue... the hours wasted on this must be much over 50...
 # Firefox for the win.
 
-RUN sudo apt install firefox-esr
+RUN sudo apt install -y firefox-esr
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz && \
     tar -xvzf geckodriver* && \
     sudo chmod +x geckodriver && \
