@@ -61,8 +61,14 @@ void main() {
       // await takeScreenshot(driver!, "here.png");
 
       // check if 140 limit is working
-      await driver?.waitFor(find.text(keyPairs[138]));
-      await driver?.waitFor(find.text(keyPairs[139]));
+      await driver?.waitFor(
+        find.text(keyPairs[138]),
+        timeout: const Duration(seconds: 3),
+      );
+      await driver?.waitFor(
+        find.text(keyPairs[139]),
+        timeout: const Duration(seconds: 3),
+      );
 
       await driver?.waitForAbsent(
         find.text(keyPairs[140]),

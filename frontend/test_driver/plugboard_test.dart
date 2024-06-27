@@ -138,7 +138,7 @@ void main() {
 
     // fill with values
     await driver?.tap(find.byValueKey("plugboard_switch"));
-    takeScreenshot(driver!, "plugboard.png");
+    // takeScreenshot(driver!, "plugboard.png");
     for (final char in "qwertzuiopasdfghjklyxcvbnm".split("")) {
       if ("avlhki".contains(char)) {
         await driver?.tap(
