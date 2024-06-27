@@ -33,7 +33,12 @@
 - `docker compose -f docker-compose.fullylocal.yml up --build` (Note: Fully local building can take a
   long time!)
 
-### Project Commands
+
+### Run E2E Tests
+- In `/frontend` run `flutter driver --target=test_driver/app.dart -d web-server --release`
+
+
+### Other Commands
 
 - **Run** GitLab: `docker compose up --build -d`
 - **Run** Locally (for development): `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building takes **3 to 8
@@ -61,5 +66,5 @@ go to `/frontend` directory
 
 go to `/backend` directory
 
-- **Run** Backend tests: `pytest --cov`
+- **Run** Backend unit/integration tests: `pytest --cov` (have all packages from `requirements.testing.txt` installed)
 - **Run** Linter: `ruff check`
