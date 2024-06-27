@@ -145,7 +145,7 @@ class Database:
                         machine["name"],
                         reflectors,
                         True,
-                        3,
+                        machine["number_rotors"],
                         list(machine["reflector"].keys())[0],
                         ignore_exist=True,
                     )
@@ -244,7 +244,7 @@ class Database:
                     SELECT id, name, number_rotors
                     FROM machines
                     WHERE username = $1
-                    SORT BY id
+                    ORDER BY COALESCE(id, 0)
                     """,
                     username,
                 )

@@ -1,7 +1,7 @@
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 import 'test_lib.dart' as t_lib;
-
+import 'package:flutter/material.dart';
 /*
 class FakeTesterApp extends StatelessWidget {
   final Widget child;
@@ -39,19 +39,22 @@ void login(FlutterDriver? driver) async {
   );
 }
 
-Future<String> findSquareButtonKey(FlutterDriver? driver, String baseKey) async {
+Future<String> findSquareButtonKey(
+    FlutterDriver? driver, String baseKey) async {
   final notHighlightedKey = 'Tastatur-Key-$baseKey-0';
   final highlightedKey = 'Tastatur-Key-$baseKey-1';
 
   try {
-    await driver?.waitFor(find.byValueKey(notHighlightedKey), timeout: const Duration(milliseconds: 500));
+    await driver?.waitFor(find.byValueKey(notHighlightedKey),
+        timeout: const Duration(milliseconds: 500));
     return notHighlightedKey;
   } catch (e) {
     // Do nothing, just try the next key
   }
 
   try {
-    await driver?.waitFor(find.byValueKey(highlightedKey), timeout: const Duration(milliseconds: 500));
+    await driver?.waitFor(find.byValueKey(highlightedKey),
+        timeout: const Duration(milliseconds: 500));
     return highlightedKey;
   } catch (e) {
     // If both fail, rethrow the last exception
@@ -59,7 +62,8 @@ Future<String> findSquareButtonKey(FlutterDriver? driver, String baseKey) async 
   }
 }
 
-Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String expectedResult) async {
+Future<void> checkForKeyInput(
+    FlutterDriver? driver, String keyInput, String expectedResult) async {
   debugPrint("Check for input: $keyInput, expecting result: $expectedResult.");
 
   keyInput = keyInput.toUpperCase();
@@ -67,10 +71,10 @@ Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String exp
 
   Health? health = await driver?.checkHealth();
   assert(health?.status == HealthStatus.ok);
-      //Template for how keyboard ValueKeys work:
-      //    Tastatur-Key-$label
-      //Template for how lamppanel ValueKeys work:
-      //    Lamppanel-Key-$text-$highlighted^
+  //Template for how keyboard ValueKeys work:
+  //    Tastatur-Key-$label
+  //Template for how lamppanel ValueKeys work:
+  //    Lamppanel-Key-$text-$highlighted^
   String keyName = await findSquareButtonKey(driver, keyInput);
   dynamic key = find.byValueKey(keyName);
   await driver?.tap(key);
@@ -79,22 +83,26 @@ Future<void> checkForKeyInput(FlutterDriver? driver, String keyInput, String exp
   int expectedResultDecoded = expectedResult.codeUnitAt(0) - 65;
   int keyInputDecoded = keyInput.codeUnitAt(0) - 65;
 
-  for(int i = 0; i < 26; i++) {
+  for (int i = 0; i < 26; i++) {
     String letter = String.fromCharCode(i + 65);
-    if(i != expectedResultDecoded) { //Exclude case for expected letter
-      await driver?.waitFor(find.byValueKey("Lamppanel-Key-$letter-0"), timeout: const Duration(seconds: 3));
-    }
-    else {
-      await driver?.waitFor(find.byValueKey("Lamppanel-Key-$expectedResult-1"), timeout: const Duration(seconds: 3));
+    if (i != expectedResultDecoded) {
+      //Exclude case for expected letter
+      await driver?.waitFor(find.byValueKey("Lamppanel-Key-$letter-0"),
+          timeout: const Duration(seconds: 3));
+    } else {
+      await driver?.waitFor(find.byValueKey("Lamppanel-Key-$expectedResult-1"),
+          timeout: const Duration(seconds: 3));
     }
   }
-  for(int i = 0; i < 26; i++) {
+  for (int i = 0; i < 26; i++) {
     String letter = String.fromCharCode(i + 65);
-    if(i != keyInputDecoded) { //Exclude case for pressed letter
-      await driver?.waitFor(find.byValueKey("Tastatur-Key-$letter-0"), timeout: const Duration(seconds: 3));
-    }
-    else {
-      await driver?.waitFor(find.byValueKey("Tastatur-Key-$keyInput-1"), timeout: const Duration(seconds: 3));
+    if (i != keyInputDecoded) {
+      //Exclude case for pressed letter
+      await driver?.waitFor(find.byValueKey("Tastatur-Key-$letter-0"),
+          timeout: const Duration(seconds: 3));
+    } else {
+      await driver?.waitFor(find.byValueKey("Tastatur-Key-$keyInput-1"),
+          timeout: const Duration(seconds: 3));
     }
   }
 }
@@ -103,45 +111,46 @@ void main() {
   FlutterDriver? driver;
   //ft.WidgetTester tester;
 
-    // Connect to the Flutter app before running the tests.
-    setUp(() async => {
-      driver = await FlutterDriver.connect(timeout: const Duration(minutes: 3))
-    });
+  // Connect to the Flutter app before running the tests.
+  setUp(() async => {
+        driver =
+            await FlutterDriver.connect(timeout: const Duration(minutes: 3))
+      });
 
-    // Close the connection to the Flutter app after tests are done.
-    tearDown(() async {
-      if (driver != null) {
-        driver?.close();
-      }
-    });
+  // Close the connection to the Flutter app after tests are done.
+  tearDown(() async {
+    if (driver != null) {
+      driver?.close();
+    }
+  });
 
-    test('Check Flutter-driver health', () async {
-     Health? health = await driver?.checkHealth();
-      assert(health?.status == HealthStatus.ok);
-    });
+  test('Check Flutter-driver health', () async {
+    Health? health = await driver?.checkHealth();
+    assert(health?.status == HealthStatus.ok);
+  });
 
-    test('Tastatur + Lamppanel + Backend test', () async { //This test passing means that all components work correctly!
-      await t_lib.login(driver);
-      await t_lib.resetSelectedMachine(driver);
+  test('Tastatur + Lamppanel + Backend test', () async {
+    //This test passing means that all components work correctly!
+    await t_lib.login(driver);
+    await t_lib.resetSelectedMachine(driver);
 
-      // https://www.101computing.net/enigma-machine-emulator/
-      // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)
-      // Change the expectedResults once backend runs correctly!
+    // https://www.101computing.net/enigma-machine-emulator/
+    // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)
+    // Change the expectedResults once backend runs correctly!
 
-      await checkForKeyInput(driver, "H", "R"); //This is correct
-      await checkForKeyInput(driver, "E", "Q"); //Change result to: L
-      await checkForKeyInput(driver, "L", "B"); //Change result to: B
-      await checkForKeyInput(driver, "L", "D"); //Change result to: D
-      await checkForKeyInput(driver, "O", "R"); //Change result to: A
+    await checkForKeyInput(driver, "H", "R"); //This is correct
+    await checkForKeyInput(driver, "E", "Q"); //Change result to: L
+    await checkForKeyInput(driver, "L", "B"); //Change result to: B
+    await checkForKeyInput(driver, "L", "D"); //Change result to: D
+    await checkForKeyInput(driver, "O", "R"); //Change result to: A
 
-      await checkForKeyInput(driver, "W", "Z"); //Change result to: A
-      await checkForKeyInput(driver, "O", "J"); //Change result to: M
-      await checkForKeyInput(driver, "R", "G"); //Change result to: T
-      await checkForKeyInput(driver, "L", "X"); //Change result to: A
-      await checkForKeyInput(driver, "D", "A"); //Change result to: Z
-      // print("Done!");
-    }, timeout: const Timeout(Duration(minutes: 3)));
-
+    await checkForKeyInput(driver, "W", "Z"); //Change result to: A
+    await checkForKeyInput(driver, "O", "J"); //Change result to: M
+    await checkForKeyInput(driver, "R", "G"); //Change result to: T
+    await checkForKeyInput(driver, "L", "X"); //Change result to: A
+    await checkForKeyInput(driver, "D", "A"); //Change result to: Z
+    // print("Done!");
+  }, timeout: const Timeout(Duration(minutes: 3)));
 
   test("Keyboard Spamming", timeout: const Timeout(Duration(minutes: 2)),
       () async {
