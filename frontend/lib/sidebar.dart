@@ -9,7 +9,6 @@ class SideBar extends StatelessWidget {
 
   const SideBar({super.key, required this.username});
 
-
   Widget getHeader() {
     return DrawerHeader(
       decoration: const BoxDecoration(
@@ -48,7 +47,7 @@ class SideBar extends StatelessWidget {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AddMachinePopUp();
+            return const AddMachinePopUp();
           },
         );
       },
@@ -80,14 +79,14 @@ class SideBar extends StatelessWidget {
   }
 }
 
-class AddMachinePopUp extends StatefulWidget{
+class AddMachinePopUp extends StatefulWidget {
+  const AddMachinePopUp({super.key});
 
   @override
   AddMachinePopUpState createState() => AddMachinePopUpState();
 }
 
-class AddMachinePopUpState extends State<AddMachinePopUp>{
-
+class AddMachinePopUpState extends State<AddMachinePopUp> {
   String? _selectedValuePlugboardToggle;
   String? _selectedValueRotorenAnzahl;
   List<String> _selectedValueRotorenAuswahl = [];
@@ -107,7 +106,6 @@ class AddMachinePopUpState extends State<AddMachinePopUp>{
         _selectedValueRotorenAuswahl.isNotEmpty &&
         _selectedValueUmkehrwalzen.isNotEmpty;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -180,13 +178,12 @@ class AddMachinePopUpState extends State<AddMachinePopUp>{
                           children: [
                             //const Text("Auswählbare Rotoren"),
                             StatefulCheckboxMenu(
-                              selectedValues: _selectedValueRotorenAuswahl,
-                              onChanged: (value) {
-                                _selectedValueRotorenAuswahl = value;
-                              },
-                              items: itemsRotorenAuswahl,
-                              name: "Rotor(en) auswählen"
-                            ),
+                                selectedValues: _selectedValueRotorenAuswahl,
+                                onChanged: (value) {
+                                  _selectedValueRotorenAuswahl = value;
+                                },
+                                items: itemsRotorenAuswahl,
+                                name: "Rotor(en) auswählen"),
                           ],
                         ),
                         Column(
@@ -217,7 +214,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp>{
                         const SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () {
-                            if(enableButton()) {
+                            if (enableButton()) {
                               //print("To print: $_selectedValuePlugboardToggle, $_selectedValueRotorenAnzahl, $_selectedValueRotorenAuswahl, $_selectedValueUmkehrwalzen");
                               //Can be used for debugging
                               _selectedValuePlugboardToggle = null;
@@ -243,7 +240,6 @@ class AddMachinePopUpState extends State<AddMachinePopUp>{
     );
   }
 }
-
 
 class StatefulDropdownMenu extends StatefulWidget {
   final String? selectedValue;
@@ -331,7 +327,7 @@ class StatefulCheckboxMenuState extends State<StatefulCheckboxMenu> {
     });
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
       child: Row(

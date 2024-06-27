@@ -1,7 +1,6 @@
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 import 'test_lib.dart' as t_lib;
-import 'package:flutter/material.dart';
 /*
 class FakeTesterApp extends StatelessWidget {
   final Widget child;
@@ -64,7 +63,7 @@ Future<String> findSquareButtonKey(
 
 Future<void> checkForKeyInput(
     FlutterDriver? driver, String keyInput, String expectedResult) async {
-  debugPrint("Check for input: $keyInput, expecting result: $expectedResult.");
+  //debugPrint("Check for input: $keyInput, expecting result: $expectedResult.");
 
   keyInput = keyInput.toUpperCase();
   expectedResult = expectedResult.toUpperCase();
