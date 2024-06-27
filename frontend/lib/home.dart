@@ -21,17 +21,22 @@ class HomePageState extends State<HomePage> {
 
   String? get selectedItem => _selectedItem;
 
-  void _initialize() async {
+  void _initialize() {
     Cookie.read("name").then((value) {
-      _selectedItem = value;
+      setState(() {
+        _selectedItem = value;
+      });
       return Cookie.read("username");
     }).then((value) {
-      _username = value;
+      setState(() {
+        _username = value;
+      });
       return Cookie.read("numberRotors");
     }).then((value) {
-      numberRotors = value;
+      setState(() {
+        numberRotors = value == "" ? "3" : value;
+      });
     });
-    setState(() {});
   }
 
   @override
@@ -72,14 +77,14 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     const keyHistory = KeyHistoryList();
     const reflector = Reflector();
-    var I = numberRotors.codeUnitAt(0) - '0'.codeUnitAt(0);
+    var I = int.parse(numberRotors);
     var rotorWidget = RotorPage(numberRotors: I);
 
     ScaffoldMessenger.of(context).clearSnackBars();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(selectedItem ?? "Create new machine"),
+        title: Text(_selectedItem ?? "Create new machine"),
         actions: [
           IconButton(
               icon: const Icon(Icons.delete),

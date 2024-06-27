@@ -215,13 +215,20 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                         ElevatedButton(
                           onPressed: () {
                             if (enableButton()) {
-                              //print("To print: $_selectedValuePlugboardToggle, $_selectedValueRotorenAnzahl, $_selectedValueRotorenAuswahl, $_selectedValueUmkehrwalzen");
-                              //Can be used for debugging
-                              _selectedValuePlugboardToggle = null;
-                              _selectedValueRotorenAnzahl = null;
-                              _selectedValueRotorenAuswahl = [];
-                              _selectedValueUmkehrwalzen = [];
-                              Navigator.of(context).pop();
+                              var rotorIds = _selectedValueRotorenAuswahl
+                                  .map((rotor) => int.parse(RegExp(r'\d+')
+                                      .firstMatch(rotor)!
+                                      .group(0)!))
+                                  .toList();
+                              APICaller.post("add-machine", query: {})
+                                  .then((_) {
+                                //Can be used for debugging
+                                _selectedValuePlugboardToggle = null;
+                                _selectedValueRotorenAnzahl = null;
+                                _selectedValueRotorenAuswahl = [];
+                                _selectedValueUmkehrwalzen = [];
+                                Navigator.of(context).pop();
+                              });
                               // Add backend call here!
                               // Add new machine to sidebar as well!
                             }

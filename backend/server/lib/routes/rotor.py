@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from .authentication import check_auth
 from server.lib.database import get_database, Database
-from typing import Dict
+from typing import Dict, List
 from server.lib.models import UpdateRotor, MinRotor
 
 router = APIRouter()
@@ -68,7 +68,7 @@ async def get_rotor_ids(
     machine_id: int,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> list[Dict[str, int]]:
+) -> List[Dict[str, int]]:
     try:
         rotor_ids = await db_conn.get_rotor_ids(username, machine_id)
     except Exception as e:
@@ -144,12 +144,14 @@ async def add_machine(
     machine_type: int,
     plugboard: bool,
     number_rotors: int,
+    rotors: List[int],
+    reflectors: List[str],
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> None:
+) -> Dict[str, str]:
     try:
         await db_conn.add_machine(
-            username, name, machine_type, plugboard, number_rotors
+            username, name, machine_type, plugboard, number_rotors, rotors, reflectors
         )
     except Exception as e:
         print("Error: ", e)
@@ -162,7 +164,7 @@ async def delete_machine(
     machine_id: int,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> None:
+) -> Dict[str, str]:
     if machine_id < 3:
         raise HTTPException(status_code=403, detail="Can't delete Base Machine")
     try:
@@ -177,7 +179,7 @@ async def delete_machine(
 async def get_machines(
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> list:
+) -> List[Dict[str, str | int]]:
     try:
         machines = await db_conn.get_machines(username)
         del machines[0]
@@ -206,7 +208,7 @@ async def get_reflector_ids(
     machine_id: int,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> list:
+) -> List[str]:
     try:
         ids = list((await db_conn.get_reflector(username, machine_id)).keys())
     except Exception as e:
