@@ -31,21 +31,19 @@
 ### Run Enigma without GitLab
 
 - `docker compose -f docker-compose.fullylocal.yml up --build` (Note: Fully local building can take a
-  long time!)
-
+  long time depending on Internet speed!)
 
 ### Run E2E Tests
+
 - In `/frontend` run `flutter driver --target=test_driver/app.dart -d web-server --release`
-
-
+- Append `--browser-name=firefox` to use an actually good browser (instead of Chrome) and increase performance by 3x–3.5x (needs Geckodriver instead of Chromedriver)
 ### Other Commands
 
 - **Run** GitLab: `docker compose up --build -d`
-- **Run** Locally (for development): `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building takes **3 to 8
-  Minutes!**)
+- **Run** Locally (for development): `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building
+  takes **3 to 8 Minutes!**)
 - **Stop** Compose: `docker compose down`
-- **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!
-  **)
+- **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!**)
 - **Restart**
   clean: `docker compose -f docker-compose.local.yml down --rmi all --volumes && docker compose -f docker-compose.local.yml up --build -d`
 
@@ -55,12 +53,15 @@ go to `/frontend` directory
 
 - **Run** Linter: `flutter analyze`
 - **Run** Flutter (with hot reload, compose needs to run in addition!): `flutter run -d chrome`
-- **Run** Flutter tests (visible, not working with
-  all): `flutter driver --target=test_driver/app.dart -d chrome --no-headless`
+- **Run** Flutter tests (visible, but not working with all because of
+  Chrome): `flutter driver --target=test_driver/app.dart -d chrome --no-headless`
 - **Run** Flutter tests (headless, simple): `flutter --target=test_driver/app.dart -d web-server --release`
-- **Run** Flutter tests (headless,
+- **Run** Flutter tests NEW (headless,
+  pipeline): `flutter driver --target=test_driver/app.dart -d web-server --release --browser-name=firefox`
+- **Run** Flutter tests OLD (headless,
   pipeline): `flutter driver --target=test_driver/app.dart -d web-server --release --web-browser-flag="--disable-gpu --headless --window-size=1920,1080 --disable-infobars --disable-dev-shm-usage"`
 - **Start** Chrome driver (before tests): `chromedriver --port=4444`
+- **Start** Firefox driver (before tests): `geckodriver --port=4444` [`&> driver.log`]
 
 ### Backend commands
 
