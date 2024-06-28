@@ -51,7 +51,14 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
       future: Future.wait([getRotorIDs(), getUmkehrwalzenIDs()]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const AlertDialog(
+            title: Center(child: Text("Neue Maschine")),
+            content: SizedBox(
+              height: 350,
+              width: 800,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
         } else if (snapshot.hasError) {
           return AlertDialog(
             title: const Text("Error"),
@@ -70,7 +77,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
           var itemsUmkehrwalzen = snapshot.data![1] as List<String>;
 
           return AlertDialog(
-            title: const Text("Neue Maschine"),
+            title: const Center(child: Text("Neue Maschine")),
             content: SizedBox(
               height: 350,
               width: 800,
@@ -78,6 +85,9 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
+                    const SizedBox(
+                      height: 25,
+                    ),
                     // Row with Drop-down menus
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
