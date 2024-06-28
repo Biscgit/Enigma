@@ -48,7 +48,7 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _logout(BuildContext context) async {
     await APICaller.delete("logout");
-    await Cookie.delete('token');
+    await Cookie.clearAll();
     Cookie.nukeReactors();
 
     if (!context.mounted) return;

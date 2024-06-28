@@ -21,6 +21,10 @@ class Cookie {
     await _storage.delete(key: key);
   }
 
+  static Future<void> clearAll() async {
+    await _storage.deleteAll();
+  }
+
   static Future<bool> isUserLoggedIn() {
     return Cookie.read('token').then((token) => token != "");
   }
