@@ -87,6 +87,7 @@ class AddMachinePopUp extends StatefulWidget {
 }
 
 class AddMachinePopUpState extends State<AddMachinePopUp> {
+  String? _selectedMachineName;
   String? _selectedValuePlugboardToggle;
   String? _selectedValueRotorenAnzahl;
   List<String> _selectedValueRotorenAuswahl = [];
@@ -99,10 +100,11 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
     if (_selectedValueRotorenAnzahl == null) {
       return false;
     }
-    return _selectedValuePlugboardToggle != null &&
+    return _selectedMachineName != null &&
+        _selectedMachineName != "" &&
+        _selectedValuePlugboardToggle != null &&
         int.tryParse(_selectedValueRotorenAnzahl!) != 0 &&
-        int.tryParse(_selectedValueRotorenAnzahl!) !=
-            null && //Extra check for empty string
+        int.tryParse(_selectedValueRotorenAnzahl!) != null && //Extra check for empty string
         _selectedValueRotorenAuswahl.isNotEmpty &&
         _selectedValueUmkehrwalzen.isNotEmpty;
   }
@@ -144,6 +146,20 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Column(
+                          children: [
+                            const Text("Name eingeben"),
+                            SizedBox(
+                              width: 200.0,
+                              height: 50.0,
+                              child: TextField(
+                                onChanged: (String value) {
+                                  _selectedMachineName = value;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                         Column(
                           children: [
                             const Text("Plugboard erlauben?"),
@@ -223,6 +239,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                               APICaller.post("add-machine", query: {})
                                   .then((_) {
                                 //Can be used for debugging
+                                _selectedMachineName = null;
                                 _selectedValuePlugboardToggle = null;
                                 _selectedValueRotorenAnzahl = null;
                                 _selectedValueRotorenAuswahl = [];
