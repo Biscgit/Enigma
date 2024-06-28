@@ -99,6 +99,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                               width: 200.0,
                               height: 50.0,
                               child: TextField(
+                                key: const ValueKey("AddMachine-Key-Name"),
                                 onChanged: (String value) {
                                   _selectedMachineName = value;
                                 },
@@ -112,6 +113,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                             StatefulBuilder(
                               builder: (BuildContext context, StateSetter setState) {
                                 return Switch(
+                                  key: const ValueKey("AddMachine-Key-Plugboard"),
                                   value: _selectedValuePlugboardToggle ??= false,
                                   onChanged: (value) {
                                     setState(() {
@@ -131,6 +133,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                               width: 150.0,
                               height: 50.0,
                               child: TextField(
+                                key: const ValueKey("AddMachine-Key-RotorNr"),
                                 onChanged: (String value) {
                                   _selectedValueRotorenAnzahl = value;
                                 },
@@ -147,6 +150,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                             const Text("Rotor(en) auswählen"),
                             //const Text("Auswählbare Rotoren"),
                             StatefulCheckboxMenu(
+                                key: const ValueKey("AddMachine-Key-RotorList"),
                                 selectedValues: _selectedValueRotorenAuswahl,
                                 onChanged: (value) {
                                   _selectedValueRotorenAuswahl = value;
@@ -159,6 +163,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                           children: [
                             const Text("Umkehrwalze(n) auswählen"),
                             StatefulCheckboxMenu(
+                              key: const ValueKey("AddMachine-Key-UKWList"),
                               selectedValues: _selectedValueUmkehrwalzen,
                               onChanged: (value) {
                                 _selectedValueUmkehrwalzen = value;
@@ -176,6 +181,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
+                          key: const ValueKey("AddMachine-Key-Cancel"),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
@@ -186,6 +192,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
+                          key: const ValueKey("AddMachine-Key-Confirm"),
                           onPressed: () {
                             if (enableButton()) {
                               var rotorIds = _selectedValueRotorenAuswahl
@@ -340,6 +347,7 @@ class StatefulCheckboxMenuState extends State<StatefulCheckboxMenu> {
                       builder: (BuildContext context, StateSetter setState) {
                         final isChecked = _selectedValues.contains(item);
                         return CheckboxListTile(
+                          key: ValueKey("Checkbox-Key-$item"),
                           title: Text(item),
                           value: isChecked,
                           onChanged: (bool? checked) {
