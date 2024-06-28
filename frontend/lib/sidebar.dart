@@ -1,3 +1,4 @@
+import 'package:enigma/rotors.dart';
 import 'package:enigma/sidebar_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -236,9 +237,14 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                       .firstMatch(rotor)!
                                       .group(0)!))
                                   .toList();
-                              APICaller.post("add-machine", query: {})
-                                  .then((_) {
-                                //Can be used for debugging
+                              APICaller.post("add-machine", query: {}, body: {
+                                "name": _selectedMachineName,
+                                "plugboard": _selectedValuePlugboardToggle == "Ja" ? true : false,
+                                "number_rotors": _selectedValueRotorenAnzahl,
+                                "rotors": rotorIds,
+                                "reflectors": _selectedValueUmkehrwalzen
+                              }).then((_) {
+                                
                                 _selectedMachineName = null;
                                 _selectedValuePlugboardToggle = null;
                                 _selectedValueRotorenAnzahl = null;
@@ -246,8 +252,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 _selectedValueUmkehrwalzen = [];
                                 Navigator.of(context).pop();
                               });
-                              // Add backend call here!
-                              // Add new machine to sidebar as well!
+                              
                             }
                           },
                           child: const Text("Maschine erstellen"),
