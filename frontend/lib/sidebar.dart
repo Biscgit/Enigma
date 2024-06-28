@@ -246,6 +246,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 "reflectors": _selectedValueUmkehrwalzen,
                               }).then((_) {
                                 //Can be used for debugging
+
                                 _selectedMachineName = null;
                                 _selectedValuePlugboardToggle = null;
                                 _selectedValueRotorenAnzahl = null;
@@ -253,8 +254,6 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 _selectedValueUmkehrwalzen = [];
                                 Navigator.of(context).pop();
                               });
-                              // Add backend call here!
-                              // Add new machine to sidebar as well!
                             }
                           },
                           child: const Text("Maschine erstellen"),
