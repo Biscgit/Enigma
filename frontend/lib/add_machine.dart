@@ -21,8 +21,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
   List<String> itemsUmkehrwalzen = [];
 
   bool enableButton() {
-    if (_selectedValueRotorenAnzahl == null ||
-        _selectedValueUmkehrwalzen == []) {
+    if (_selectedValueRotorenAnzahl == null) {
       return false;
     }
     return _selectedMachineName != null &&
@@ -211,9 +210,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.black),
-                          child: enableButton()
-                              ? const Text("Maschine erstellen")
-                              : const Text("Rotoren oder Umkehrwalen fehlern!"),
+                          child: const Text("Maschine erstellen"),
                         ),
                       ],
                     ),
