@@ -35,7 +35,7 @@
 
 ### Run E2E Tests
 
-- Launch chromedriver (chrome )or geckodriver (firefox) on port 4444
+- Launch chromedriver (chrome) or geckodriver (firefox) on `--port=4444`
 - In `/frontend` run `flutter driver --target=test_driver/app.dart -d web-server --release`
 - Append `--browser-name=firefox` to use an actually good browser (instead of Chrome) and increase performance by
   3x–3.5x.
