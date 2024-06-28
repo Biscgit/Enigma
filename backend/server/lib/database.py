@@ -144,7 +144,7 @@ class Database:
                         # machine["machine_type"],
                         machine["name"],
                         reflectors,
-                        True,
+                        False,
                         machine["number_rotors"],
                         list(machine["reflector"].keys())[0],
                         ignore_exist=True,

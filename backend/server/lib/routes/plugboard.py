@@ -41,6 +41,9 @@ async def configure_plugboard(
         username: str = Depends(check_auth),
         db: Database = Depends(get_database)
 ):
+    if not await db.is_plugboard_enabled(username, machine):
+        raise HTTPException(status_code=400, detail=f"Plugboard is not enabled for machine {username}.{machine}")
+
     plugs = await db.get_plugboards(username, machine)
     if len(plugs) >= MAX_PLUGS:
         raise HTTPException(status_code=400, detail="Too many plugboard configurations")
@@ -78,6 +81,9 @@ async def edit_plugboard(
         username: str = Depends(check_auth),
         db: Database = Depends(get_database)
 ):
+    if not await db.is_plugboard_enabled(username, machine):
+        raise HTTPException(status_code=400, detail=f"Plugboard is not enabled for machine {username}.{machine}")
+
     letter_upper = letter.upper()
     plugs = await db.get_plugboards(username, machine)
 
@@ -106,6 +112,9 @@ async def delete_plugboard_pair(
         username: str = Depends(check_auth),
         db: Database = Depends(get_database)
 ):
+    if not await db.is_plugboard_enabled(username, machine):
+        raise HTTPException(status_code=400, detail=f"Plugboard is not enabled for machine {username}.{machine}")
+
     try:
         await db.remove_plugboard(username, machine, plug_a, plug_b)
     except Exception as e:
@@ -115,18 +124,18 @@ async def delete_plugboard_pair(
     return {"message": "Plugboard reset successfully"}  # Return a ResetPlugboardResponse instance
 
 
-@router.post("/enable")
-async def enable_disable_plugboard(
-        machine: int,
-        enabled: bool,
-        username: str = Depends(check_auth),
-        db: Database = Depends(get_database)
-):
-    try:
-        await db.set_plugboard_enabled(username, machine, enabled)
-    except Exception as e:
-        logging.error(f"Error setting plugboard: {type(e)} -> {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+# @router.post("/enable")
+# async def enable_disable_plugboard(
+#         machine: int,
+#         enabled: bool,
+#         username: str = Depends(check_auth),
+#         db: Database = Depends(get_database)
+# ):
+#     try:
+#         await db.set_plugboard_enabled(username, machine, enabled)
+#     except Exception as e:
+#         logging.error(f"Error setting plugboard: {type(e)} -> {e}")
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/is_enabled")
