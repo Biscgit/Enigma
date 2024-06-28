@@ -153,7 +153,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
           var itemsUmkehrwalzen = snapshot.data![1] as List<String>;
 
           return AlertDialog(
-            title: const Text("Neue Maschine"),
+            title: const Center(child: Text("Neue Maschine")),
             content: SizedBox(
               height: 350,
               width: 800,
@@ -161,6 +161,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
+                    const SizedBox(height: 25,),
                     // Row with Drop-down menus
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
