@@ -42,7 +42,7 @@ Future<void> logout(FlutterDriver? driver) async {
 }
 
 Future<void> resetSelectedMachine(FlutterDriver? driver) async {
-  final resetButton = find.byValueKey("Reset_button");
+  final resetButton = find.byValueKey("ResetButton");
   await driver?.tap(resetButton);
   await driver?.waitFor(
     find.byValueKey("Confirm_revert"),
