@@ -127,7 +127,14 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
       future: Future.wait([getRotorIDs(), getUmkehrwalzenIDs()]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const AlertDialog(
+            title: Text("Neue Maschine"),
+            content: SizedBox(
+              height: 350,
+              width: 800,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
         } else if (snapshot.hasError) {
           return AlertDialog(
             title: const Text("Error"),
@@ -176,13 +183,13 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                           children: [
                             const Text("Plugboard erlauben?"),
                             Switch(
-                                value: _selectedValuePlugboardToggle ??= false,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedValuePlugboardToggle = value;
-                                  });
-                                },
-                            activeColor: Colors.blue,
+                              value: _selectedValuePlugboardToggle ??= false,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedValuePlugboardToggle = value;
+                                });
+                              },
+                              activeColor: Colors.blue,
                             ),
                           ],
                         ),
@@ -219,7 +226,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                         ),
                         customMachineOptions(
                           children: [
-                             const Text("Umkehrwalze(n) auswählen"),
+                            const Text("Umkehrwalze(n) auswählen"),
                             StatefulCheckboxMenu(
                               selectedValues: _selectedValueUmkehrwalzen,
                               onChanged: (value) {
