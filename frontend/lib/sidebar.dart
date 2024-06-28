@@ -59,7 +59,6 @@ class SideBar extends StatelessWidget {
                 builder: (BuildContext context) {
                   return const AddMachinePopUp();
               });
-              print(data);
             }
           ));
           return Drawer(
