@@ -16,51 +16,53 @@ void main() {
     }
   });
 
-  test("Persistent toggle", timeout: const Timeout(Duration(seconds: 60)),
+  // ToDo: fix test -> custom machines with plugboard enabled/disabled
+  // test("Persistent enabled state",
+  //     timeout: const Timeout(Duration(seconds: 60)), () async {
+  //   // reset machines
+  //   await login(driver);
+  //   await resetSelectedMachine(driver);
+  //   await logout(driver);
+  //
+  //   await login(driver, username: "user2", password: "pass2");
+  //   await resetSelectedMachine(driver);
+  //   await logout(driver);
+  //
+  //   // check closed plugboard
+  //   await login(driver);
+  //   await driver?.waitForAbsent(
+  //     find.byValueKey("plugboard_container"),
+  //     timeout: const Duration(seconds: 3),
+  //   );
+  //
+  //   final toggle = find.byValueKey("plugboard_switch");
+  //   await driver?.tap(toggle);
+  //
+  //   // check open plugboard
+  //   await driver?.waitFor(find.byValueKey("plugboard_container"));
+  //
+  //   // check different user
+  //   await logout(driver);
+  //   await login(driver, username: "user2", password: "pass2");
+  //
+  //   await driver?.waitForAbsent(
+  //     find.byValueKey("plugboard_container"),
+  //     timeout: const Duration(seconds: 3),
+  //   );
+  //   await logout(driver);
+  //
+  //   // check if persistent after logging in again
+  //   await login(driver);
+  //   await driver?.waitFor(find.byValueKey("plugboard_container"));
+  //   await logout(driver);
+  // });
+
+  test("Loading on select", timeout: const Timeout(Duration(minutes: 2)),
       () async {
-    // reset machines
-    await login(driver);
-    await resetSelectedMachine(driver);
-    await logout(driver);
-
-    await login(driver, username: "user2", password: "pass2");
-    await resetSelectedMachine(driver);
-    await logout(driver);
-
-    // check closed plugboard
-    await login(driver);
-    await driver?.waitForAbsent(
-      find.byValueKey("plugboard_container"),
-      timeout: const Duration(seconds: 3),
-    );
-
-    final toggle = find.byValueKey("plugboard_switch");
-    await driver?.tap(toggle);
-
-    // check open plugboard
-    await driver?.waitFor(find.byValueKey("plugboard_container"));
-
-    // check different user
-    await logout(driver);
-    await login(driver, username: "user2", password: "pass2");
-
-    await driver?.waitForAbsent(
-      find.byValueKey("plugboard_container"),
-      timeout: const Duration(seconds: 3),
-    );
-    await logout(driver);
-
-    // check if persistent after logging in again
-    await login(driver);
-    await driver?.waitFor(find.byValueKey("plugboard_container"));
-    await logout(driver);
-  });
-
-  test("Loading", timeout: const Timeout(Duration(minutes: 2)), () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
-    await driver?.tap(find.byValueKey("plugboard_switch"));
+    // await driver?.tap(find.byValueKey("plugboard_switch"));
 
     for (final char in "avlhki".split("")) {
       await driver?.tap(
@@ -72,23 +74,7 @@ void main() {
     await login(driver);
     await driver?.waitFor(find.byValueKey("plugboard_container"));
 
-    // all if all plugs are displayed correctly
-    for (final char in "qwertzuiopasdfghjklyxcvbnm".split("")) {
-      if ("avlhki".contains(char)) {
-        await driver?.waitFor(
-          find.byValueKey("plugboard_letter_${char}_true"),
-        );
-      } else {
-        await driver?.waitFor(
-          find.byValueKey("plugboard_letter_${char}_false"),
-        );
-      }
-    }
-
-    await logout(driver);
-
-    // check normal loading if enabled
-    await login(driver);
+    // check if all plugs are loaded correctly
     for (final char in "qwertzuiopasdfghjklyxcvbnm".split("")) {
       if ("avlhki".contains(char)) {
         await driver?.waitFor(find.byValueKey("plugboard_letter_${char}_true"));
@@ -97,15 +83,17 @@ void main() {
             ?.waitFor(find.byValueKey("plugboard_letter_${char}_false"));
       }
     }
-
-    // disable for now
-    await driver?.tap(find.byValueKey("plugboard_switch"));
     await logout(driver);
+
+    // ToDo: create new machine instead with disabled plug
+    // disable for now
+    // await driver?.tap(find.byValueKey("plugboard_switch"));
+    // await logout(driver);
 
     // check if only affects one user
     await login(driver, username: "user2", password: "pass2");
     await resetSelectedMachine(driver);
-    await driver?.tap(find.byValueKey("plugboard_switch"));
+    // await driver?.tap(find.byValueKey("plugboard_switch"));
     for (final char in "qwertzuiopasdfghjklyxcvbnm".split("")) {
       await driver?.waitFor(
         find.byValueKey("plugboard_letter_${char}_false"),
@@ -115,7 +103,6 @@ void main() {
 
     // check if it is still disabled and load old configuration
     await login(driver);
-    await driver?.tap(find.byValueKey("plugboard_switch"));
 
     await driver?.waitFor(find.byValueKey("plugboard_container"));
     for (final char in "qwertzuiopasdfghjklyxcvbnm".split("")) {
@@ -132,12 +119,12 @@ void main() {
     await logout(driver);
   });
 
-  test("Reset", timeout: const Timeout(Duration(minutes: 2)), () async {
+  test("Reset all plugs", timeout: const Timeout(Duration(minutes: 2)), () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
     // fill with values
-    await driver?.tap(find.byValueKey("plugboard_switch"));
+    // await driver?.tap(find.byValueKey("plugboard_switch"));
     // takeScreenshot(driver!, "plugboard.png");
     for (final char in "qwertzuiopasdfghjklyxcvbnm".split("")) {
       if ("avlhki".contains(char)) {
@@ -167,7 +154,7 @@ void main() {
       () async {
     await login(driver);
     await resetSelectedMachine(driver);
-    await driver?.tap(find.byValueKey("plugboard_switch"));
+    // await driver?.tap(find.byValueKey("plugboard_switch"));
 
     for (int i = 0; i < 20; i++) {
       final char = String.fromCharCode(65 + i);
@@ -204,8 +191,8 @@ void main() {
     for (int i = 0; i < 9; i++) {
       await writeChar(letters[i], driver);
     }
-    // enable plugboard in correct order
-    await driver?.tap(find.byValueKey("plugboard_switch"));
+
+    // enable plugboard in correct order and continue typing
     for (final char in "arwdecytfivkznblhj".split("")) {
       await driver?.tap(
         find.byValueKey("plugboard_letter_${char.toLowerCase()}_false"),
@@ -240,8 +227,9 @@ void main() {
       );
     }
 
-    // finally disable and continue typing
-    await driver?.tap(find.byValueKey("plugboard_switch"));
+    // finally reset and continue typing
+    await driver?.tap(find.byValueKey("reset_plugboard"));
+
     final letters3 = "moreorless".split("");
     final encrypted3 = "uqktcxfibu".split("");
     for (int i = 0; i < letters3.length; i++) {
