@@ -9,7 +9,15 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  void resetSettings(ButtonStyle buttonStyle) {
+  void resetSettings() {
+    final buttonStyle = ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -49,19 +57,11 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = ElevatedButton.styleFrom(
-      foregroundColor: Colors.white,
-      backgroundColor: Theme.of(context).primaryColor,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-      ),
-    );
-    return ElevatedButton(
-      style: buttonStyle,
-      key: const ValueKey("Reset_button"),
-      onPressed: () => resetSettings(buttonStyle),
-      child: const Text("Reset to Default"),
+    return IconButton(
+      key: const ValueKey("ResetButton"),
+      icon: const Icon(Icons.undo),
+      tooltip: "Revert machine",
+      onPressed: () => resetSettings(),
     );
   }
 }

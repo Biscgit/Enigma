@@ -6,6 +6,7 @@ import 'package:enigma/utils.dart';
 import 'package:enigma/steckerbrett.dart';
 import 'package:enigma/keyhistory.dart';
 import 'package:enigma/button.dart';
+import 'package:enigma/add_machine.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -86,6 +87,20 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(_selectedItem ?? "Create new machine"),
         actions: [
+          const SettingsPage(key: Key('revertButton')),
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const AddMachinePopUp();
+                },
+              );
+            },
+            icon: const Icon(Icons.add),
+            tooltip: "Adding machine",
+            key: const ValueKey("addButton"),
+          ),
           IconButton(
               icon: const Icon(Icons.delete),
               tooltip: "Delete",
@@ -210,7 +225,6 @@ class HomePageState extends State<HomePage> {
                 children: [
                   reflector,
                   rotorWidget,
-                  const SettingsPage(key: Key('revert_button')),
                 ],
               )),
           Expanded(
