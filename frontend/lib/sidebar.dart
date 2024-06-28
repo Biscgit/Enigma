@@ -128,7 +128,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const AlertDialog(
-            title: Text("Neue Maschine"),
+            title: Center(child: Text("Neue Maschine")),
             content: SizedBox(
               height: 350,
               width: 800,
