@@ -144,7 +144,7 @@ class Database:
                         # machine["machine_type"],
                         machine["name"],
                         reflectors,
-                        False,
+                        True,
                         machine["number_rotors"],
                         list(machine["reflector"].keys())[0],
                         ignore_exist=True,
@@ -908,6 +908,8 @@ class Database:
             revert_rotor["id"] = rotor["id"]
             await self.update_rotor(revert_rotor)  # Needs some more doing
 
+        has_plugboard = self.is_plugboard_enabled(username, machine_id)
+
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
@@ -915,12 +917,13 @@ class Database:
                 await conn.execute(
                     """
                     UPDATE machines
-                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = FALSE, plugboard_config = ARRAY[]::JSON[], reflector_id = $3
+                    SET character_pointer = -1, character_history = ARRAY[]::JSON[], plugboard_enabled = $4, plugboard_config = ARRAY[]::JSON[], reflector_id = $3
                     WHERE id = $1 AND username = $2
                     """,
                     machine_id,
                     username,
                     list((await self.get_reflector(username, machine_id)).keys())[0],
+                    await has_plugboard
                 )
 
                 await conn.execute(
