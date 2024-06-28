@@ -88,7 +88,7 @@ class AddMachinePopUp extends StatefulWidget {
 
 class AddMachinePopUpState extends State<AddMachinePopUp> {
   String? _selectedMachineName;
-  String? _selectedValuePlugboardToggle;
+  bool? _selectedValuePlugboardToggle;
   String? _selectedValueRotorenAnzahl;
   List<String> _selectedValueRotorenAuswahl = [];
   List<String> _selectedValueUmkehrwalzen = [];
@@ -104,9 +104,21 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
         _selectedMachineName != "" &&
         _selectedValuePlugboardToggle != null &&
         int.tryParse(_selectedValueRotorenAnzahl!) != 0 &&
-        int.tryParse(_selectedValueRotorenAnzahl!) != null && //Extra check for empty string
+        int.tryParse(_selectedValueRotorenAnzahl!) !=
+            null && //Extra check for empty string
         _selectedValueRotorenAuswahl.isNotEmpty &&
         _selectedValueUmkehrwalzen.isNotEmpty;
+  }
+
+  Widget customMachineOptions({List<Widget> children = const []}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        children: children.map((child) {
+          return Expanded(child: child);
+        }).toList(),
+      ),
+    );
   }
 
   @override
@@ -136,17 +148,17 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
           return AlertDialog(
             title: const Text("Neue Maschine"),
             content: SizedBox(
-              height: 200,
+              height: 350,
               width: 800,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     // Row with Drop-down menus
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
+                        customMachineOptions(
                           children: [
                             const Text("Name eingeben"),
                             SizedBox(
@@ -160,19 +172,21 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                             ),
                           ],
                         ),
-                        Column(
+                        customMachineOptions(
                           children: [
                             const Text("Plugboard erlauben?"),
-                            StatefulDropdownMenu(
-                              selectedValue: _selectedValuePlugboardToggle,
-                              onChanged: (value) {
-                                _selectedValuePlugboardToggle = value;
-                              },
-                              items: const ["Ja", "Nein"],
+                            Switch(
+                                value: _selectedValuePlugboardToggle ??= false,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedValuePlugboardToggle = value;
+                                  });
+                                },
+                            activeColor: Colors.blue,
                             ),
                           ],
                         ),
-                        Column(
+                        customMachineOptions(
                           children: [
                             const Text("Anzahl an Rotoren"),
                             SizedBox(
@@ -184,14 +198,15 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 },
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]')),
+                                      RegExp(r'^[1-7]$')),
                                 ],
                               ),
                             ),
                           ],
                         ),
-                        Column(
+                        customMachineOptions(
                           children: [
+                            const Text("Rotor(en) auswählen"),
                             //const Text("Auswählbare Rotoren"),
                             StatefulCheckboxMenu(
                                 selectedValues: _selectedValueRotorenAuswahl,
@@ -199,18 +214,19 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                   _selectedValueRotorenAuswahl = value;
                                 },
                                 items: itemsRotorenAuswahl,
-                                name: "Rotor(en) auswählen"),
+                                name: "hier auswählen"),
                           ],
                         ),
-                        Column(
+                        customMachineOptions(
                           children: [
+                             const Text("Umkehrwalze(n) auswählen"),
                             StatefulCheckboxMenu(
                               selectedValues: _selectedValueUmkehrwalzen,
                               onChanged: (value) {
                                 _selectedValueUmkehrwalzen = value;
                               },
                               items: itemsUmkehrwalzen,
-                              name: "Umkehrwalze(n) auswählen",
+                              name: "hier auswählen",
                             ),
                           ],
                         ),
