@@ -42,6 +42,10 @@ class MockDatabase:
                 if not (key_1 in pair or key_2 in pair)
             ]
 
+    @staticmethod
+    async def is_plugboard_enabled(*_) -> bool:
+        return True
+
 
 class PlugboardResponse(BaseModel):
     message: str
