@@ -1,5 +1,5 @@
 from pydantic import BaseModel, root_validator, validator
-from typing import Optional
+from typing import Optional, List
 import string
 
 __all__ = ["LoginForm"]
@@ -49,3 +49,11 @@ class UpdateRotor(BaseModel):
     def check_pos(cls, value):
         check_len(value, 1, 1, "rotor_position")
         return value.lower()
+
+
+class Machine(BaseModel):
+    name: str
+    plugboard: bool
+    number_rotors: int
+    rotors: List[int]
+    reflectors: List[str]
