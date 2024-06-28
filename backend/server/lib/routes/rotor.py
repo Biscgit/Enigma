@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from .authentication import check_auth
 from server.lib.database import get_database, Database
 from typing import Dict, List
-from server.lib.models import UpdateRotor, MinRotor
+from server.lib.models import UpdateRotor, MinRotor, Machine
 
 router = APIRouter()
 
@@ -140,17 +140,18 @@ async def add_rotor(
 
 @router.post("/add-machine")
 async def add_machine(
-    name: str,
-    plugboard: bool,
-    number_rotors: int,
-    rotors: List[int],
-    reflectors: List[str],
+    machine: Machine,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str]:
     try:
         await db_conn.add_machine(
-            username, name, plugboard, number_rotors, rotors, reflectors
+            username,
+            machine.name,
+            machine.plugboard,
+            machine.number_rotors,
+            machine.rotors,
+            machine.reflectors,
         )
     except Exception as e:
         print("Error: ", e)

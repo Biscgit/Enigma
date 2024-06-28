@@ -848,17 +848,23 @@ class Database:
         rotors: list,
         reflectors: list,
     ) -> None:
-        reflectors1 = await self.get_reflector(username, "1")
-        reflectors2 = await self.get_reflector(username, "2")
+        reflectors1 = await self.get_reflector(username, 1)
+        reflectors2 = await self.get_reflector(username, 2)
         merged = {**reflectors1, **reflectors2}
 
         result_dict = {key: merged[key] for key in reflectors if key in merged}
         print(result_dict)
         new_machine_id = await self.create_machine(
-            username, name, result_dict, plugboard, number_rotors
+            username,
+            name,
+            result_dict,
+            plugboard,
+            number_rotors,
+            list(result_dict.keys())[0],
         )
         # rotors = await self.get_rotor_templates(username, machine_type)
         for rotor_id in rotors:
+            print(rotor_id)
             rotor = await self.get_rotor(username, rotor_id)
             rotor["machine_id"] = 0
             rotor["machine_type"] = new_machine_id

@@ -104,7 +104,8 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
         _selectedMachineName != "" &&
         _selectedValuePlugboardToggle != null &&
         int.tryParse(_selectedValueRotorenAnzahl!) != 0 &&
-        int.tryParse(_selectedValueRotorenAnzahl!) != null && //Extra check for empty string
+        int.tryParse(_selectedValueRotorenAnzahl!) !=
+            null && //Extra check for empty string
         _selectedValueRotorenAuswahl.isNotEmpty &&
         _selectedValueUmkehrwalzen.isNotEmpty;
   }
@@ -236,8 +237,14 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                       .firstMatch(rotor)!
                                       .group(0)!))
                                   .toList();
-                              APICaller.post("add-machine", query: {})
-                                  .then((_) {
+                              APICaller.post("add-machine", body: {
+                                "name": _selectedMachineName,
+                                "plugboard":
+                                    _selectedValuePlugboardToggle == "Ja",
+                                "number_rotors": _selectedValueRotorenAnzahl,
+                                "rotors": rotorIds,
+                                "reflectors": _selectedValueUmkehrwalzen,
+                              }).then((_) {
                                 //Can be used for debugging
                                 _selectedMachineName = null;
                                 _selectedValuePlugboardToggle = null;
