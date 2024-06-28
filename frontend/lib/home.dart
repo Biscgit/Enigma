@@ -69,9 +69,8 @@ class HomePageState extends State<HomePage> {
     String currentID = await Cookie.read("current_machine");
     await APICaller.delete("delete-machine", query: {'machine_id': currentID});
     await Cookie.save("current_machine", "1");
-    //if(!context.mounted) return;
-    //Navigator.pop(context);
-    //Navigator.pushReplacementNamed(context, '/home');
+    await Cookie.save("name", "Enigma I");
+    await Cookie.save("numberRotors", "3");
   }
 
   @override

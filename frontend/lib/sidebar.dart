@@ -176,13 +176,13 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                           children: [
                             const Text("Plugboard erlauben?"),
                             Switch(
-                                value: _selectedValuePlugboardToggle ??= false,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedValuePlugboardToggle = value;
-                                  });
-                                },
-                            activeColor: Colors.blue,
+                              value: _selectedValuePlugboardToggle ??= false,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedValuePlugboardToggle = value;
+                                });
+                              },
+                              activeColor: Colors.blue,
                             ),
                           ],
                         ),
@@ -219,7 +219,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                         ),
                         customMachineOptions(
                           children: [
-                             const Text("Umkehrwalze(n) auswählen"),
+                            const Text("Umkehrwalze(n) auswählen"),
                             StatefulCheckboxMenu(
                               selectedValues: _selectedValueUmkehrwalzen,
                               onChanged: (value) {
@@ -254,8 +254,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                   .toList();
                               APICaller.post("add-machine", body: {
                                 "name": _selectedMachineName,
-                                "plugboard":
-                                    _selectedValuePlugboardToggle == "Ja",
+                                "plugboard": _selectedValuePlugboardToggle,
                                 "number_rotors": _selectedValueRotorenAnzahl,
                                 "rotors": rotorIds,
                                 "reflectors": _selectedValueUmkehrwalzen,
