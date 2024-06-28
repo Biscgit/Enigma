@@ -171,10 +171,14 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        TextButton(
+                        ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey.shade300,
+                            foregroundColor: Colors.black
+                          ),
                           child: const Text("Abbrechen"),
                         ),
                         const SizedBox(width: 8),
@@ -204,6 +208,10 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                               });
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black
+                          ),
                           child: const Text("Maschine erstellen"),
                         ),
                       ],
