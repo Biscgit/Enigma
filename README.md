@@ -35,15 +35,19 @@
 
 ### Run E2E Tests
 
+- Launch chromedriver (chrome )or geckodriver (firefox) on port 4444
 - In `/frontend` run `flutter driver --target=test_driver/app.dart -d web-server --release`
-- Append `--browser-name=firefox` to use an actually good browser (instead of Chrome) and increase performance by 3x–3.5x (needs Geckodriver instead of Chromedriver)
+- Append `--browser-name=firefox` to use an actually good browser (instead of Chrome) and increase performance by
+  3x–3.5x.
+
 ### Other Commands
 
 - **Run** GitLab: `docker compose up --build -d`
 - **Run** Locally (for development): `docker compose -f docker-compose.local.yml up --build -d` (Note: Clean building
   takes **3 to 8 Minutes!**)
 - **Stop** Compose: `docker compose down`
-- **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!**)
+- **Stop** and purge all: `docker compose down --rmi all --volumes` (Removes **all containers** and **database storage!
+  **)
 - **Restart**
   clean: `docker compose -f docker-compose.local.yml down --rmi all --volumes && docker compose -f docker-compose.local.yml up --build -d`
 
