@@ -79,7 +79,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
           return AlertDialog(
             title: const Center(child: Text("Neue Maschine")),
             content: SizedBox(
-              height: 350,
+              height: 400,
               width: 800,
               child: SingleChildScrollView(
                 child: Column(
@@ -175,6 +175,15 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.grey,
+                            backgroundColor: Theme.of(context).primaryColor,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
                           child: const Text("Abbrechen"),
                         ),
                         const SizedBox(width: 8),
@@ -204,6 +213,15 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                               });
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.blue,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
                           child: const Text("Maschine erstellen"),
                         ),
                       ],
