@@ -109,20 +109,24 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                         customMachineOptions(
                           children: [
                             const Text("Plugboard erlauben?"),
-                            Switch(
-                              value: _selectedValuePlugboardToggle ??= false,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedValuePlugboardToggle = value;
-                                });
-                              },
-                              activeColor: Colors.blue,
+                            StatefulBuilder(
+                              builder: (BuildContext context, StateSetter setState) {
+                                return Switch(
+                                  value: _selectedValuePlugboardToggle ??= false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedValuePlugboardToggle = value;
+                                    });
+                                  },
+                                  activeColor: Colors.blue,
+                                );
+                              }
                             ),
                           ],
                         ),
                         customMachineOptions(
                           children: [
-                            const Text("Anzahl an Rotoren"),
+                            const Text("Anzahl an Rotoren (1-7)"),
                             SizedBox(
                               width: 150.0,
                               height: 50.0,

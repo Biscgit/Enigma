@@ -1,3 +1,4 @@
+import 'package:enigma/add_machine.dart';
 import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
 import 'dart:convert';
@@ -49,6 +50,18 @@ class SideBar extends StatelessWidget {
           );
         } else {
           var data = snapshot.data!;
+          data.add(ListTile(
+            title: const Text("Neue Maschine"),
+            onTap: () {
+              Navigator.of(context).pop();
+              showDialog(
+                context: context, 
+                builder: (BuildContext context) {
+                  return const AddMachinePopUp();
+              });
+              print(data);
+            }
+          ));
           return Drawer(
             child: ListView(
               padding: EdgeInsets.zero,
