@@ -21,7 +21,8 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
   List<String> itemsUmkehrwalzen = [];
 
   bool enableButton() {
-    if (_selectedValueRotorenAnzahl == null) {
+    if (_selectedValueRotorenAnzahl == null ||
+        _selectedValueUmkehrwalzen == []) {
       return false;
     }
     return _selectedMachineName != null &&
@@ -79,7 +80,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
           return AlertDialog(
             title: const Center(child: Text("Neue Maschine")),
             content: SizedBox(
-              height: 350,
+              height: 400,
               width: 800,
               child: SingleChildScrollView(
                 child: Column(
@@ -176,9 +177,8 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey.shade300,
-                            foregroundColor: Colors.black
-                          ),
+                              backgroundColor: Colors.grey.shade300,
+                              foregroundColor: Colors.black),
                           child: const Text("Abbrechen"),
                         ),
                         const SizedBox(width: 8),
@@ -209,10 +209,11 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black
-                          ),
-                          child: const Text("Maschine erstellen"),
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black),
+                          child: enableButton()
+                              ? const Text("Maschine erstellen")
+                              : const Text("Rotoren oder Umkehrwalen fehlern!"),
                         ),
                       ],
                     ),
