@@ -255,6 +255,7 @@ class SquareButtonState extends State<SquareButton> {
       height: widget.size,
       key: ValueKey("Tastatur-Key-$label-$highlighted"),
       child: ElevatedButton(
+        key: ValueKey("Tastatur-Button-$label"),
         onPressed: () {
           widget.tastaturState.sendKeyInput(label);
         },
