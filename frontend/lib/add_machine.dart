@@ -217,6 +217,30 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 Navigator.of(context).pop();
                               });
                             }
+                            else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Maschine nicht vollständig"),
+                                    content: const Text("Bitte füllen Sie alle Felder aus mit Werten > 0 aus."),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        key: const ValueKey("AddMachine-Cant-Create-OK"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                          foregroundColor: Colors.black
+                                        ),
+                                        child: const Text("OK")
+                                      )
+                                    ]
+                                  );
+                                }
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
