@@ -90,8 +90,11 @@ Future<void> createMachine(FlutterDriver? driver, String name, bool plugboardOn,
   await driver?.enterText(rotorCount.toString());
 
   for(int i in rotorList) {
+    await driver?.scrollUntilVisible(find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen"), find.byValueKey("Checkbox-Key-Rotor $i"), dyScroll: -1000000.0);
     await driver?.tap(find.byValueKey("Checkbox-Key-Rotor $i"));
   }
+  await driver?.scrollUntilVisible(find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen"), find.byValueKey("BottomButton-Hier Rotoren auswählen"), dyScroll: -1000000.0);
+  await driver?.tap(find.byValueKey("BottomButton-Hier Rotoren auswählen"));
 
   for(int x in uKWList) {
     String ukwKey = "";
@@ -112,7 +115,12 @@ Future<void> createMachine(FlutterDriver? driver, String name, bool plugboardOn,
       ukwKey = "";
     }
     */
+    
+    await driver?.scrollUntilVisible(find.byValueKey("SingleChildScrollView-Key-Hier UKWs auswählen"), find.byValueKey("Checkbox-Key-UKW$ukwKey"), dyScroll: -1000000.0);
     await driver?.tap(find.byValueKey("Checkbox-Key-UKW$ukwKey"));
+
+    await driver?.scrollUntilVisible(find.byValueKey("SingleChildScrollView-Key-Hier UKWs auswählen"), find.byValueKey("BottomButton-Hier UKWs auswählen"), dyScroll: -1000000.0);
+    await driver?.tap(find.byValueKey("BottomButton-Hier UKWs auswählen"));
   }
 }
 

@@ -109,7 +109,7 @@ Future<void> selectUKW(FlutterDriver? driver) async {
 
   final uKWSelectorMenu = find.byValueKey("AddMachine-Key-UKWList");
   final closingKey = find.byValueKey("BottomButton-Hier UKWs auswählen");
-  final singleChildDing = find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen");
+  final singleChildDing = find.byValueKey("SingleChildScrollView-Key-Hier UKWs auswählen");
   await driver?.tap(uKWSelectorMenu);
 
   final uKWA = find.byValueKey("Checkbox-Key-UKW-A");
