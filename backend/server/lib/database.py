@@ -568,7 +568,7 @@ class Database:
                 machine,
             )
 
-            logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
+            logging.debug(f"Fetched rotors for {username}.{machine}: {str(result)}")
             return [dict(pair) for pair in result or []]
 
     async def get_rotor_number(self, username: str, place: int, machine_id: int):
@@ -757,6 +757,7 @@ class Database:
         if (await self.fetch_machine(data["machine_id"], data["username"]))[
             "number_rotors"
         ] < data["place"]:
+            logging.debug("Failed to create machine with to high place")
             raise TypeError()
         async with self.pool.acquire() as conn:
             async with conn.transaction():
