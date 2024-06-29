@@ -101,5 +101,22 @@ void main() {
     await driver?.tap(minusButtonRotor1);
     await getRotorPosition(1); // Z
     await driver?.waitFor(find.byValueKey('RotorPosition.1'));
+
+
+    // Rotate rotor 3 A to C
+    await driver?.tap(plusButtonRotor3);
+    await driver?.tap(plusButtonRotor3);
+    await getRotorPosition(3);
+    await driver?.waitFor(find.byValueKey('RotorPosition.3'), timeout: const Duration(seconds: 10),
+    );
+
+    // Rotate rotor 3 A to X
+    await driver?.tap(minusButtonRotor3);
+    await driver?.tap(minusButtonRotor3);
+    await driver?.tap(minusButtonRotor3);
+    await getRotorPosition(3);
+    await driver?.waitFor(find.byValueKey('RotorPosition.3'), timeout: const Duration(seconds: 10),
+    );
+
   });
 }
