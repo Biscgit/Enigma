@@ -92,6 +92,8 @@ void main() {
       final confirmFinal = find.byValueKey("OKButtonDeleteFinal");
       await driver?.tap(confirmFinal);
 
+      await Future.delayed(const Duration(seconds: 5));
+
       final enigma1 = await driver?.getText(find.byValueKey("AppbarTitle"));
       assert(enigma1 == "Enigma I");
     });
@@ -128,13 +130,13 @@ Future<void> selectRotors(FlutterDriver? driver) async {
   final rotor1 = find.byValueKey("Checkbox-Key-Rotor 1");
   final rotor3 = find.byValueKey("Checkbox-Key-Rotor 3");
   final rotor16 = find.byValueKey("Checkbox-Key-Rotor 16");
-  await driver?.scrollUntilVisible(singleChildDing, rotor1, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, rotor1, dyScroll: -1000.0);
   await driver?.tap(rotor1);
-  await driver?.scrollUntilVisible(singleChildDing, rotor3, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, rotor3, dyScroll: -1000.0);
   await driver?.tap(rotor3);
-  await driver?.scrollUntilVisible(singleChildDing, rotor16, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, rotor16, dyScroll: -1000.0);
   await driver?.tap(rotor16);
-  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -1000.0);
   await driver?.tap(closingKey);
 }
 
@@ -151,18 +153,18 @@ Future<void> selectUKW(FlutterDriver? driver) async {
   final uKWDAsterisk = find.byValueKey("Checkbox-Key-UKW-D*");
   final uKWNoname = find.byValueKey("Checkbox-Key-UKW");
 
-  await driver?.scrollUntilVisible(singleChildDing, uKWA, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWA, dyScroll: -1000.0);
   await driver?.tap(uKWA);
-  await driver?.scrollUntilVisible(singleChildDing, uKWB, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWB, dyScroll: -1000.0);
   await driver?.tap(uKWB);
-  await driver?.scrollUntilVisible(singleChildDing, uKWC, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWC, dyScroll: -1000.0);
   await driver?.tap(uKWC);
-  await driver?.scrollUntilVisible(singleChildDing, uKWDAsterisk, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWDAsterisk, dyScroll: -1000.0);
   await driver?.tap(uKWDAsterisk);
-  await driver?.scrollUntilVisible(singleChildDing, uKWNoname, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWNoname, dyScroll: -1000.0);
   await driver?.tap(uKWNoname);
 
-  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -1000.0);
   await driver?.tap(closingKey);
 }
 
