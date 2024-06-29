@@ -18,6 +18,7 @@ class TastaturState extends State<Tastatur> {
       List.generate(26, (index) => GlobalKey<SquareButtonState>());
 
   var keyPressQueue = TaskQueue();
+  List<int>? keyPerformanceAVG;
   bool barShown = false;
 
   String lightUpLetter([Map<dynamic, dynamic> params = const {"encKey": "O"}]) {
@@ -97,10 +98,23 @@ class TastaturState extends State<Tastatur> {
         );
       });
 
-      // check performance in debug mode
+      // check performance
+      final endTime = DateTime.now();
+      final executionTime = endTime.difference(startTime);
+      setState(() {
+        if (keyPerformanceAVG == null) {
+          keyPerformanceAVG = List.filled(
+            5,
+            executionTime.inMilliseconds,
+            growable: true,
+          );
+        } else {
+          keyPerformanceAVG!.insert(0, executionTime.inMilliseconds);
+          keyPerformanceAVG!.removeLast();
+        }
+      });
+
       if (kDebugMode) {
-        final endTime = DateTime.now();
-        final executionTime = endTime.difference(startTime);
         print('Full keypress execution: ${executionTime.inMilliseconds}ms');
       }
     }
@@ -185,6 +199,12 @@ class TastaturState extends State<Tastatur> {
                 SquareButton(
                     label: 'M', key: listOfGlobalKeys[12], tastaturState: this)
               ],
+            ),
+            SizedBox(height: seizedBoxHeight / 2),
+            Text(
+              "Avg Performance: "
+              "${(keyPerformanceAVG?.reduce((a, b) => a + b) ?? 0) ~/ 5}ms",
+              style: const TextStyle(color: Color.fromRGBO(255, 255, 255, 0.2)),
             ),
           ],
         ),
