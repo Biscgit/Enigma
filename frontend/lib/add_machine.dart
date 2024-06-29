@@ -223,7 +223,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: const Text("Maschine nicht vollständig"),
-                                    content: const Text("Bitte füllen Sie alle Felder aus mit Werten > 0 aus."),
+                                    content: const Text("Bitte füllen Sie alle Felder mit Werten > 0 aus."),
                                     actions: <Widget>[
                                       ElevatedButton(
                                         key: const ValueKey("AddMachine-Cant-Create-OK"),
