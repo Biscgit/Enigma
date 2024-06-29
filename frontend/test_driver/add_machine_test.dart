@@ -36,11 +36,22 @@ void main() {
       print("Name entered.");
       await togglePlugboard(driver);
       print("Plugboard tested.");
-      await rotorNrTesting(driver);
-      print("Amount of rotors entered.");
+      await rotorNrTestingNoRegEx(driver, 0);
+      print("0 rotors entered.");
       await selectRotors(driver);
       print("Rotors selected.");
+
+      // Test that if you click now, it doesnt work
+
+      final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
+      await driver?.tap(confirmKey); // Nothing should happen here because UKWs are not yet selected
+
       await selectUKW(driver);
+
+      await driver?.tap(confirmKey); // Nothing should happen here because 0 rotors are entered
+
+      await rotorNrTestingNoRegEx(driver, 23);
+      await driver?.tap(confirmKey); // Now it should work.
     });
   
 
@@ -90,10 +101,6 @@ Future<void> selectRotors(FlutterDriver? driver) async {
   await driver?.tap(rotor3);
   await driver?.tap(rotor16);
 
-  // Test that if you click now, it doesnt work
-
-  final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
-  await driver?.tap(confirmKey); // Nothing should happen here
 }
 
 Future<void> selectUKW(FlutterDriver? driver) async {
@@ -117,24 +124,38 @@ Future<void> selectUKW(FlutterDriver? driver) async {
   await driver?.tap(confirmKey);
 }
 
-Future<void> rotorNrTesting(FlutterDriver? driver) async {
+Future<void> rotorNrTestingNoRegEx(FlutterDriver? driver, int amount) async {
+    final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
+    await driver?.tap(rotorTextfield);
+    await driver?.enterText(amount.toString());
+    await driver?.getText(rotorTextfield);
+}
+
+/*Future<void> rotorNrTesting(FlutterDriver? driver) async {
       final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
-      /*await driver?.tap(rotorTextfield);
+      late String? enteredAmount;
+      await driver?.tap(rotorTextfield);
       await driver?.enterText("0112233445566778997");
-      String? enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
-      assert(enteredAmount! == "7");*/
+      enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
+      assert(enteredAmount! == "7");
       // This will be null because it doesn't enter the digits one-by-one but copy-and-pastes
       // the whole number which is greater than 7 (112233445566778997 > 7)
 
       await driver?.tap(rotorTextfield);
       await driver?.enterText("0");
-      String? enteredAmount = await driver?.getText(rotorTextfield); // This should be null
-      assert(enteredAmount == null);
+      //String? enteredAmount = await driver?.getText(rotorTextfield); // This should be null
+      //assert(await driver?.getText(rotorTextfield) == null);
+      try {
+        enteredAmount = await driver?.getText(rotorTextfield);
+        throw Exception("");
+      } on Exception catch (_) {
+        //This continues the test
+      }
   
       await driver?.tap(rotorTextfield);
       await driver?.enterText("8");
       enteredAmount = await driver?.getText(rotorTextfield); // This should be null
-      assert(enteredAmount == null);
+      assert(await driver?.getText(rotorTextfield) == null);
       
       await driver?.tap(rotorTextfield);
       await driver?.enterText("9");
@@ -187,4 +208,4 @@ Future<void> rotorNrTesting(FlutterDriver? driver) async {
       await driver?.enterText("7");
       enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
       assert(enteredAmount! == "7");
-}
+}*/

@@ -128,7 +128,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                         ),
                         customMachineOptions(
                           children: [
-                            const Text("Anzahl an Rotoren (1-7)"),
+                            const Text("Anzahl an Rotoren (mindestens 1)"),
                             SizedBox(
                               width: 150.0,
                               height: 50.0,
@@ -139,7 +139,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 },
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
-                                      RegExp(r'^[1-7]$')),
+                                      RegExp(r'[0-9]')),
                                 ],
                               ),
                             ),
