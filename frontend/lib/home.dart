@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  String? _selectedItem;
+  String? _selectedItem = "Enigma 1";
   String _username = '';
   late String numberRotors = '3';
 
@@ -25,7 +25,7 @@ class HomePageState extends State<HomePage> {
   void _initialize() {
     Cookie.read("name").then((value) {
       setState(() {
-        _selectedItem = value;
+        _selectedItem = value == "" ? selectedItem : value;
       });
       return Cookie.read("username");
     }).then((value) {
@@ -35,7 +35,7 @@ class HomePageState extends State<HomePage> {
       return Cookie.read("numberRotors");
     }).then((value) {
       setState(() {
-        numberRotors = value == "" ? "3" : value;
+        numberRotors = value == "" ? numberRotors : value;
       });
     });
   }
@@ -44,6 +44,12 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _initialize();
+    Cookie.nukeReactors();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> _logout(BuildContext context) async {
