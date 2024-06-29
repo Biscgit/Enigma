@@ -31,18 +31,23 @@ class RotorPage extends StatelessWidget {
             );
           } else {
             final data = snapshot.data!;
+
+            // Get the maximum height available for the widget
             return SizedBox(
                 width: 600,
-                  child: Wrap(
-                  spacing: 8.0, // Horizontal spacing between children
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: Scrollbar(
+                    child: SingleChildScrollView(
+                        child: Wrap(
                   runSpacing: 8.0,
+                  spacing: 8.0, // Horizontal spacing between children
                   children: List.generate(
                       numberRotors,
                       (index) => RotorWidget(
                           rotorNumber: index + 1,
                           machineId: data.machineId,
                           rotorIds: data.rotorIds)),
-                ));
+                ))));
           }
         });
   }

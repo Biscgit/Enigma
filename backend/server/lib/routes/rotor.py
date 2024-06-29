@@ -166,7 +166,8 @@ async def delete_machine(
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str]:
     if machine_id < 4:
-        raise HTTPException(status_code=403, detail="Can't delete Base Machine")
+        await db_conn.revert_machine(username, machine_id)
+        return {"Status": "OK"}
     try:
         await db_conn.delete_machine(username, machine_id)
     except Exception as e:
