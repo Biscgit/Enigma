@@ -715,7 +715,7 @@ class Database:
         if (await self.fetch_machine(data["machine_id"], data["username"]))[
             "number_rotors"
         ] < data["place"]:
-            return
+            raise TypeError()
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
@@ -757,7 +757,7 @@ class Database:
         if (await self.fetch_machine(data["machine_id"], data["username"]))[
             "number_rotors"
         ] < data["place"]:
-            return
+            raise TypeError()
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(

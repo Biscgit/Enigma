@@ -128,9 +128,14 @@ async def add_rotor(
             rotor.place,
             rotor.number,
         )
+    except TypeError:
+        raise HTTPException(
+            status_code=403, detail="This machine doesn't allow this many rotors"
+        )
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't switch Rotor")
+    print(rotor)
     return {
         "offset_value": rotor["offset_value"],
         "rotor_position": rotor["rotor_position"],
