@@ -44,24 +44,22 @@ void main() {
           return await driver?.getText(notchKey);
         }
 
-        List<String?> notchValues = [];
-
         // initial value is Y
-        String? initialNotch = await getNotchValue();
-        notchValues.add('$initialNotch'); // Y
+        await getNotchValue();
+        await driver?.waitFor(find.text('Y'));
 
         // Plus button (rom Y to Z)
         await driver?.tap(plusButton);
-        String? plusNotch = await getNotchValue();
-        notchValues.add('$plusNotch'); // Z
+        await getNotchValue();
+        await driver?.waitFor(find.text('Z'));
 
         // Reset notch
         await driver?.tap(minusButton); // Y
 
         // Minus Button (From Y to X)
         await driver?.tap(minusButton);
-        String? minusNotch = await getNotchValue();
-        notchValues.add('$minusNotch'); // X
+        await getNotchValue();
+        await driver?.waitFor(find.text('X'));
       });
 
   //test("Rotors rotate", timeout: const Timeout(Duration(seconds: 60)),
