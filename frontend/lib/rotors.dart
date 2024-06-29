@@ -9,8 +9,9 @@ class Data {
 }
 
 class RotorPage extends StatelessWidget {
+  final ScrollController _scrollController = ScrollController();
   final int numberRotors;
-  const RotorPage({super.key, required this.numberRotors});
+  RotorPage({super.key, required this.numberRotors});
 
   Future<Data> _initialize() async {
     var machineId = await Cookie.read("current_machine");
@@ -37,17 +38,19 @@ class RotorPage extends StatelessWidget {
                 width: 600,
                 height: MediaQuery.of(context).size.height * 0.85,
                 child: Scrollbar(
+                    controller: _scrollController,
                     child: SingleChildScrollView(
+                        controller: _scrollController,
                         child: Wrap(
-                  runSpacing: 8.0,
-                  spacing: 8.0, // Horizontal spacing between children
-                  children: List.generate(
-                      numberRotors,
-                      (index) => RotorWidget(
-                          rotorNumber: index + 1,
-                          machineId: data.machineId,
-                          rotorIds: data.rotorIds)),
-                ))));
+                          runSpacing: 8.0,
+                          spacing: 8.0, // Horizontal spacing between children
+                          children: List.generate(
+                              numberRotors,
+                              (index) => RotorWidget(
+                                  rotorNumber: index + 1,
+                                  machineId: data.machineId,
+                                  rotorIds: data.rotorIds)),
+                        ))));
           }
         });
   }
