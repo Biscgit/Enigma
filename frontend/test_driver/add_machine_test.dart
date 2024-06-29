@@ -78,6 +78,12 @@ void main() {
     () async {
       await login(driver);
 
+      final drawerButton = find.byTooltip('Open navigation menu');
+      await driver?.tap(drawerButton);
+
+      final createdMachine = find.byValueKey("sidebar.This is a test machine.");
+      await driver?.tap(createdMachine);
+
       final deleteButton = find.byValueKey("deleteButton");
       await driver?.tap(deleteButton);
 
