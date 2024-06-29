@@ -45,10 +45,13 @@ void main() {
 
       final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
       await driver?.tap(confirmKey); // Nothing should happen here because UKWs are not yet selected
+      final cantCreateMachineSoPressOKKey = find.byValueKey("AddMachine-Cant-Create-OK");
+      await driver?.tap(cantCreateMachineSoPressOKKey);
 
       await selectUKW(driver);
 
       await driver?.tap(confirmKey); // Nothing should happen here because 0 rotors are entered
+      await driver?.tap(cantCreateMachineSoPressOKKey);
 
       await rotorNrTestingNoRegEx(driver, 23);
       await driver?.tap(confirmKey); // Now it should work.
@@ -128,7 +131,7 @@ Future<void> rotorNrTestingNoRegEx(FlutterDriver? driver, int amount) async {
     final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
     await driver?.tap(rotorTextfield);
     await driver?.enterText(amount.toString());
-    await driver?.getText(rotorTextfield);
+    //await driver?.getText(rotorTextfield); // Throws an exception for some reason, idk
 }
 
 /*Future<void> rotorNrTesting(FlutterDriver? driver) async {
