@@ -61,3 +61,14 @@ Future<void> writeChar(String char, FlutterDriver? driver) async {
   assert(char.length == 1);
   await driver?.tap(find.byValueKey("Tastatur-Button-${char.toUpperCase()}"));
 }
+
+Future<void> selectMachineByName(FlutterDriver? driver, String name) async {
+  final drawerButton = find.byTooltip('Open navigation menu');
+  await driver?.tap(drawerButton);
+
+  final machine = find.text(name);
+  await driver?.waitFor(machine);
+  await driver?.tap(machine);
+
+  await driver?.waitUntilNoTransientCallbacks();
+}
