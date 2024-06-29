@@ -139,7 +139,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 },
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]')),
+                                      RegExp(r'^\d{1,2}$')),
                                 ],
                               ),
                             ),
