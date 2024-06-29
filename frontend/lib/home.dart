@@ -105,7 +105,7 @@ class HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectedItem ?? "Create new machine"),
+        title: Text(_selectedItem ?? "Create new machine", key: const ValueKey("AppbarTitle")),
         actions: [
           const SettingsPage(key: Key('revertButton')),
           IconButton(
@@ -152,6 +152,7 @@ class HomePageState extends State<HomePage> {
                           ),
                         ),
                         TextButton(
+                            key: const ValueKey("YesButtonDeletePopup"),
                             onPressed: () async {
                               _deleteMachine(context);
                               if (!context.mounted) return;
@@ -167,6 +168,7 @@ class HomePageState extends State<HomePage> {
                                     key: const ValueKey('deletionConfirmed'),
                                     actions: <Widget>[
                                       TextButton(
+                                        key: const ValueKey("OKButtonDeleteFinal"),
                                         onPressed: () {
                                           Navigator.of(dialogContext).pop();
                                           Navigator.pushReplacementNamed(
