@@ -33,28 +33,21 @@ void main() {
       await pressSidebar(driver);
 
       await enterName(driver);
-      print("Name entered.");
       await togglePlugboard(driver);
-      print("Plugboard tested.");
       await rotorNrTestingNoRegEx(driver, 0);
-      print("0 rotors entered.");
       await selectRotors(driver);
-      print("Rotors selected.");
 
       // Test that if you click now, it doesnt work
-
       final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
       await driver?.tap(confirmKey); // Nothing should happen here because UKWs are not yet selected
       final cantCreateMachineSoPressOKKey = find.byValueKey("AddMachine-Cant-Create-OK");
       await driver?.tap(cantCreateMachineSoPressOKKey);
-
       await selectUKW(driver);
-
       await driver?.tap(confirmKey); // Nothing should happen here because 0 rotors are entered
       await driver?.tap(cantCreateMachineSoPressOKKey);
-
       await rotorNrTestingNoRegEx(driver, 23);
       await driver?.tap(confirmKey); // Now it should work.
+      await driver?.tap(find.byValueKey("addButton"));
     });
   
 
@@ -95,20 +88,28 @@ Future<void> selectRotors(FlutterDriver? driver) async {
   // Test rotor selection list
 
   final rotorSelectorMenu = find.byValueKey("AddMachine-Key-RotorList");
+  final singleChildDing = find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen");
+  final closingKey = find.byValueKey("BottomButton-Hier Rotoren auswählen");
   await driver?.tap(rotorSelectorMenu);
 
   final rotor1 = find.byValueKey("Checkbox-Key-Rotor 1");
   final rotor3 = find.byValueKey("Checkbox-Key-Rotor 3");
   final rotor16 = find.byValueKey("Checkbox-Key-Rotor 16");
+  await driver?.scrollUntilVisible(singleChildDing, rotor1, dyScroll: -100000.0);
   await driver?.tap(rotor1);
+  await driver?.scrollUntilVisible(singleChildDing, rotor3, dyScroll: -100000.0);
   await driver?.tap(rotor3);
+  await driver?.scrollUntilVisible(singleChildDing, rotor16, dyScroll: -100000.0);
   await driver?.tap(rotor16);
-
+  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -100000.0);
+  await driver?.tap(closingKey);
 }
 
 Future<void> selectUKW(FlutterDriver? driver) async {
 
   final uKWSelectorMenu = find.byValueKey("AddMachine-Key-UKWList");
+  final closingKey = find.byValueKey("BottomButton-Hier UKWs auswählen");
+  final singleChildDing = find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen");
   await driver?.tap(uKWSelectorMenu);
 
   final uKWA = find.byValueKey("Checkbox-Key-UKW-A");
@@ -117,14 +118,14 @@ Future<void> selectUKW(FlutterDriver? driver) async {
   final uKWDAsterisk = find.byValueKey("Checkbox-Key-UKW-D*");
   final uKWNoname = find.byValueKey("Checkbox-Key-UKW");
 
-  await driver?.tap(uKWA);
-  await driver?.tap(uKWB);
-  await driver?.tap(uKWC);
-  await driver?.tap(uKWDAsterisk);
-  await driver?.tap(uKWNoname);
+  await driver?.scrollUntilVisible(singleChildDing, uKWA, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWB, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWC, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWDAsterisk, dyScroll: -100000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWNoname, dyScroll: -100000.0);
 
-  final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
-  await driver?.tap(confirmKey);
+  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -100000.0);
+
 }
 
 Future<void> rotorNrTestingNoRegEx(FlutterDriver? driver, int amount) async {
