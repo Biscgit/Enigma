@@ -115,3 +115,14 @@ Future<void> createMachine(FlutterDriver? driver, String name, bool plugboardOn,
     await driver?.tap(find.byValueKey("Checkbox-Key-UKW$ukwKey"));
   }
 }
+
+Future<void> selectMachineByName(FlutterDriver? driver, String name) async {
+  final drawerButton = find.byTooltip('Open navigation menu');
+  await driver?.tap(drawerButton);
+
+  final machine = find.text(name);
+  await driver?.waitFor(machine);
+  await driver?.tap(machine);
+
+  await driver?.waitUntilNoTransientCallbacks();
+}
