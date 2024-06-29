@@ -94,6 +94,9 @@ void main() {
     getRotorPosition(1); // B
     await driver?.waitFor(find.byValueKey('RotorPosition.1'));
 
+    // Reset
+    await driver?.tap(minusButtonRotor1);
+
     // Rotate rotor 1 A to Z
     await driver?.tap(minusButtonRotor1);
     await getRotorPosition(1); // Z
