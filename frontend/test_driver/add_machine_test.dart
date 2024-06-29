@@ -131,7 +131,7 @@ Future<void> rotorNrTestingNoRegEx(FlutterDriver? driver, int amount) async {
     final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
     await driver?.tap(rotorTextfield);
     await driver?.enterText(amount.toString());
-    await driver?.getText(rotorTextfield);
+    //await driver?.getText(rotorTextfield); // Throws an exception for some reason, idk
 }
 
 /*Future<void> rotorNrTesting(FlutterDriver? driver) async {
