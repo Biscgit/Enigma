@@ -41,7 +41,7 @@ class Cookie {
   }
 
   static void clearReactors(String trigger) {
-    reactors[trigger] = [];
+    reactors[trigger]?.clear();
   }
 
   // 100% environmental friendly energy
