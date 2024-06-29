@@ -149,7 +149,8 @@ class Database:
                         list(machine["reflector"].keys())[0],
                         ignore_exist=True,
                     )
-                except asyncpg.PostgresError:
+                except asyncpg.PostgresError as e:
+                    logging.warning(e)
                     logging.warning(f"Machine `{machine}` already exists!")
 
         logging.info("Successfully loaded machines from file")
@@ -169,7 +170,8 @@ class Database:
                 rotor["offset_value"] = 0
                 try:
                     await self.set_rotor(rotor)
-                except asyncpg.PostgresError:
+                except asyncpg.PostgresError as e:
+                    logging.warning(e)
                     logging.warning(f"Rotor `{rotor}` already exists!")
 
         logging.info("Successfully loaded rotors from file")
@@ -250,6 +252,23 @@ class Database:
                 )
                 logging.debug(f"Get machines for {username}: {result}")
             return [dict(record) for record in result if record is not None]
+
+    async def fetch_machine(self, id: int, username: str) -> dict:
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                conn: asyncpg.Connection
+
+                result = await conn.fetchrow(
+                    """
+                    SELECT name, number_rotors
+                    FROM machines
+                    WHERE id = $1 AND username = $2
+                    """,
+                    id,
+                    username,
+                )
+                logging.debug(f"Get machine for {id}: {result}")
+            return dict(result) if result is not None else {}
 
     async def save_keyboard_pair(
         self, username: str, machine: int, clear: str, encrypted: str
@@ -549,7 +568,7 @@ class Database:
                 machine,
             )
 
-            logging.debug(f"Fetched rotors for {username}.{machine}: {str(result)}")
+            logging.info(f"Fetched rotors for {username}.{machine}: {str(result)}")
             return [dict(pair) for pair in result or []]
 
     async def get_rotor_number(self, username: str, place: int, machine_id: int):
@@ -693,6 +712,10 @@ class Database:
             await self.set_rotor(dict_rotor)
 
     async def update_rotor(self, data: dict) -> None:
+        if (await self.fetch_machine(data["machine_id"], data["username"]))[
+            "number_rotors"
+        ] < data["place"]:
+            return
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 conn: asyncpg.Connection
@@ -731,6 +754,10 @@ class Database:
                 )
 
     async def set_rotor(self, data: dict) -> int:
+        if (await self.fetch_machine(data["machine_id"], data["username"]))[
+            "number_rotors"
+        ] < data["place"]:
+            return
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute(

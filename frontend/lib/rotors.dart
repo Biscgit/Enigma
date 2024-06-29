@@ -35,7 +35,7 @@ class RotorPage extends StatelessWidget {
             // Get the maximum height available for the widget
             return SizedBox(
                 width: 600,
-                height: MediaQuery.of(context).size.height * 0.8,
+                height: MediaQuery.of(context).size.height * 0.85,
                 child: Scrollbar(
                     child: SingleChildScrollView(
                         child: Wrap(
