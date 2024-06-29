@@ -71,9 +71,9 @@ void main() {
     final minusButtonRotor1 = find.byValueKey("ChangeRotor.1.minus");
     final rotorPosition1 = find.byValueKey("RotorPosition.1");
 
-    final plusButtonRotor2 = find.byValueKey("ChangeRotor.2.plus");
-    final minusButtonRotor2 = find.byValueKey("ChangeRotor.2.minus");
-    final rotorPosition2 = find.byValueKey("RotorPosition.2");
+    //final plusButtonRotor2 = find.byValueKey("ChangeRotor.2.plus");
+    //final minusButtonRotor2 = find.byValueKey("ChangeRotor.2.minus");
+    //final rotorPosition2 = find.byValueKey("RotorPosition.2");
 
     final plusButtonRotor3 = find.byValueKey("ChangeRotor.3.plus");
     final minusButtonRotor3 = find.byValueKey("ChangeRotor.3.minus");
@@ -85,9 +85,9 @@ void main() {
     }
 
     // Initial values A
-    await driver?.waitFor(find.byValueKey('RotorPosition.1'));
-    await driver?.waitFor(find.byValueKey('RotorPosition.2'));
-    await driver?.waitFor(find.byValueKey('RotorPosition.3'));
+    await driver?.waitFor(find.byValueKey(rotorPosition1));
+    //await driver?.waitFor(find.byValueKey(rotorPosition2));
+    await driver?.waitFor(find.byValueKey(rotorPosition3));
 
     // Rotate rotor 1 forward (A to B)
     await driver?.tap(plusButtonRotor1);
