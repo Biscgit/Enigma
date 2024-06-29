@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 import 'test_lib.dart';
@@ -75,10 +73,8 @@ Future<void> togglePlugboard(FlutterDriver? driver) async {
     
 }
 Future<void> pressSidebar(FlutterDriver? driver) async {
-  var drawerButton = find.byTooltip('Open navigation menu');
-  await driver?.tap(drawerButton);
-  var newMachineButton = const ByText("Neue Maschine");
-  await driver?.tap(newMachineButton);
+  var addButton = find.byValueKey('addButton');
+  await driver?.tap(addButton);
 }
 
 Future<void> selectRotors(FlutterDriver? driver) async {
@@ -102,35 +98,37 @@ Future<void> selectRotors(FlutterDriver? driver) async {
 
 Future<void> selectUKW(FlutterDriver? driver) async {
 
-  final UKWSelectorMenu = find.byValueKey("AddMachine-Key-UKWList");
-  await driver?.tap(UKWSelectorMenu);
+  final uKWSelectorMenu = find.byValueKey("AddMachine-Key-UKWList");
+  await driver?.tap(uKWSelectorMenu);
 
-  final UKWA = find.byValueKey("Checkbox-Key-UKW-A");
-  final UKWB = find.byValueKey("Checkbox-Key-UKW-B");
-  final UKWC = find.byValueKey("Checkbox-Key-UKW-C");
-  final UKWDAsterisk = find.byValueKey("Checkbox-Key-UKW-D*");
-  final UKWNoname = find.byValueKey("Checkbox-Key-UKW");
+  final uKWA = find.byValueKey("Checkbox-Key-UKW-A");
+  final uKWB = find.byValueKey("Checkbox-Key-UKW-B");
+  final uKWC = find.byValueKey("Checkbox-Key-UKW-C");
+  final uKWDAsterisk = find.byValueKey("Checkbox-Key-UKW-D*");
+  final uKWNoname = find.byValueKey("Checkbox-Key-UKW");
 
-  await driver?.tap(UKWA);
-  await driver?.tap(UKWB);
-  await driver?.tap(UKWC);
-  await driver?.tap(UKWDAsterisk);
-  await driver?.tap(UKWNoname);
+  await driver?.tap(uKWA);
+  await driver?.tap(uKWB);
+  await driver?.tap(uKWC);
+  await driver?.tap(uKWDAsterisk);
+  await driver?.tap(uKWNoname);
 
   final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
   await driver?.tap(confirmKey);
 }
 
 Future<void> rotorNrTesting(FlutterDriver? driver) async {
-      var rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
-      await driver?.tap(rotorTextfield);
+      final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
+      /*await driver?.tap(rotorTextfield);
       await driver?.enterText("0112233445566778997");
       String? enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
-      assert(enteredAmount! == "7");
+      assert(enteredAmount! == "7");*/
+      // This will be null because it doesn't enter the digits one-by-one but copy-and-pastes
+      // the whole number which is greater than 7 (112233445566778997 > 7)
 
       await driver?.tap(rotorTextfield);
       await driver?.enterText("0");
-      enteredAmount = await driver?.getText(rotorTextfield); // This should be null
+      String? enteredAmount = await driver?.getText(rotorTextfield); // This should be null
       assert(enteredAmount == null);
   
       await driver?.tap(rotorTextfield);
@@ -139,12 +137,13 @@ Future<void> rotorNrTesting(FlutterDriver? driver) async {
       assert(enteredAmount == null);
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("999");
+      await driver?.enterText("9");
       enteredAmount = await driver?.getText(rotorTextfield); // This should be null
       assert(enteredAmount == null);
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("22");
+      await driver?.enterText("2");
+      await driver?.enterText("2");
       enteredAmount = await driver?.getText(rotorTextfield); // This should be null
       assert(enteredAmount == null);
 
@@ -154,32 +153,38 @@ Future<void> rotorNrTesting(FlutterDriver? driver) async {
       assert(enteredAmount! == "1");
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("12"); // Removes the 1 from before because now it's > 7
+      await driver?.enterText("1"); // Removes the 1 from before because now it's > 7
+      await driver?.enterText("2");
       enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
       assert(enteredAmount! == "2");
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("23");
+      await driver?.enterText("2");
+      await driver?.enterText("3");
       enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
       assert(enteredAmount! == "3");
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("34");
+      await driver?.enterText("3");
+      await driver?.enterText("4");
       enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
       assert(enteredAmount! == "4");
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("45");
+      await driver?.enterText("4");
+      await driver?.enterText("5");
       enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
       assert(enteredAmount! == "5");
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("56");
+      await driver?.enterText("5");
+      await driver?.enterText("6");
       enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
       assert(enteredAmount! == "6");
       
       await driver?.tap(rotorTextfield);
-      await driver?.enterText("67");
+      await driver?.enterText("6");
+      await driver?.enterText("7");
       enteredAmount = await driver?.getText(rotorTextfield); // This should never be null
       assert(enteredAmount! == "7");
 }
