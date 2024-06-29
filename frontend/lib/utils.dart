@@ -85,7 +85,7 @@ class APICaller {
     if (400 < response.statusCode && response.statusCode < 600 && !banner) {
       Cookie.trigger("400", {
         "message":
-            "${response.statusCode}: ${json.decode(response.body)["detail"]}"
+            "Error (${response.statusCode}): ${json.decode(response.body)["detail"]}"
       });
       banner = true;
     }
