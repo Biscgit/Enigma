@@ -202,7 +202,7 @@ class TastaturState extends State<Tastatur> {
             ),
             SizedBox(height: seizedBoxHeight / 2),
             Text(
-              "Avg Performance: "
+              "Average Response: "
               "${(keyPerformanceAVG?.reduce((a, b) => a + b) ?? 0) ~/ 5}ms",
               style: const TextStyle(color: Color.fromRGBO(255, 255, 255, 0.2)),
             ),
