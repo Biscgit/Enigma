@@ -45,6 +45,7 @@ class HomePageState extends State<HomePage> {
     super.initState();
     _initialize();
     Cookie.nukeReactors();
+    Cookie.setReactor("400", fetchData);
   }
 
   @override
@@ -78,6 +79,19 @@ class HomePageState extends State<HomePage> {
     await Cookie.save("current_machine", "1");
     await Cookie.save("name", "Enigma I");
     await Cookie.save("numberRotors", "3");
+  }
+
+  void fetchData([Map<dynamic, dynamic> params = const {}]) {
+    var message = params["message"];
+    // Show snackbar if status code is 400
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.deepOrange,
+        showCloseIcon: true,
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override

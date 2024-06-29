@@ -71,6 +71,7 @@ Future<String> sendPressedKeyToRotors(String s) async {
 
 class APICaller {
   static final _api = 'http://${dotenv.env['IP_FASTAPI']}:8001/';
+  static bool banner = false;
 
   static Future<Map<String, String>> getHeader() async {
     var token = await Cookie.read("token");
@@ -80,14 +81,27 @@ class APICaller {
     };
   }
 
+  static void processError(http.Response response) {
+    if (400 < response.statusCode && response.statusCode < 600 && !banner) {
+      Cookie.trigger("400", {
+        "message":
+            "${response.statusCode}: ${json.decode(response.body)["detail"]}"
+      });
+      banner = true;
+    }
+    Future.delayed(const Duration(seconds: 3), () => banner = false);
+  }
+
   static Future<http.Response> post(String site,
       {Map<String, String> query = const {},
       Map<String, dynamic> body = const {}}) async {
     try {
-      return await http.post(
+      var response = await http.post(
           Uri.parse("$_api$site").replace(queryParameters: query),
           headers: await APICaller.getHeader(),
           body: jsonEncode(body));
+      APICaller.processError(response);
+      return response;
     } catch (e) {
       rethrow;
     }
@@ -97,10 +111,12 @@ class APICaller {
       {Map<String, String> query = const {},
       Map<String, dynamic> body = const {}}) async {
     try {
-      return await http.put(
+      var response = await http.put(
           Uri.parse("$_api$site").replace(queryParameters: query),
           headers: await APICaller.getHeader(),
           body: jsonEncode(body));
+      APICaller.processError(response);
+      return response;
     } catch (e) {
       rethrow;
     }
@@ -109,9 +125,11 @@ class APICaller {
   static Future<http.Response> get(String site,
       [Map<String, String> query = const {}]) async {
     try {
-      return await http.get(
+      var response = await http.get(
           Uri.parse("$_api$site").replace(queryParameters: query),
           headers: await APICaller.getHeader());
+      APICaller.processError(response);
+      return response;
     } catch (e) {
       rethrow;
     }
@@ -121,10 +139,12 @@ class APICaller {
       {Map<String, String> query = const {},
       Map<String, dynamic> body = const {}}) async {
     try {
-      return await http.delete(
+      var response = await http.delete(
           Uri.parse("$_api$site").replace(queryParameters: query),
           headers: await APICaller.getHeader(),
           body: jsonEncode(body));
+      APICaller.processError(response);
+      return response;
     } catch (e) {
       rethrow;
     }
