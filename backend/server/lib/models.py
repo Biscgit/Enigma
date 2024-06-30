@@ -20,7 +20,7 @@ class MinRotor(BaseModel):
     number: int
     is_rotate: Optional[bool] = True
 
-    @model_validator(pre=True)
+    @model_validator(mode='before')
     def id_must_be_positive(cls, values):
         for key, value in values.items():
             if isinstance(value, int):
