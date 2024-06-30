@@ -13,7 +13,6 @@ Future<List<String>> getRotorIDs() async {
     resp = await APICaller.get("get-rotor-ids", {"machine_id": "$i"});
     respJsonList = jsonDecode(resp.body);
     int offset = respJsonList[0]["id"] ~/ 18;
-    print(offset);
     await Cookie.save("offset", "$offset");
     for (var respJson in respJsonList) {
       Map<String, dynamic> jsonMap = respJson as Map<String, dynamic>;

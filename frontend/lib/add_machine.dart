@@ -203,7 +203,6 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                         int.parse(offset) * 18)
                                     .toList();
                               }).then((rotorIds) {
-                                print(rotorIds);
                                 APICaller.post("add-machine", body: {
                                   "name": _selectedMachineName,
                                   "plugboard": _selectedValuePlugboardToggle,
