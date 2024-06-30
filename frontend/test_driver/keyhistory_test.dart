@@ -57,7 +57,9 @@ void main() {
         timeout: const Duration(seconds: 10),
       );
 
-      await driver?.waitUntilNoTransientCallbacks();
+      await driver?.waitUntilNoTransientCallbacks(
+        timeout: const Duration(seconds: 10),
+      );
       // await takeScreenshot(driver!, "here.png");
 
       // check if 140 limit is working
