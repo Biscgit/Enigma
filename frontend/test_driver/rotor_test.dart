@@ -71,13 +71,9 @@ void main() {
     final minusButtonRotor1 = find.byValueKey("ChangeRotor.1.minus");
     final rotorPosition1 = find.byValueKey("RotorPosition.1");
 
-    //final plusButtonRotor2 = find.byValueKey("ChangeRotor.2.plus");
-    //final minusButtonRotor2 = find.byValueKey("ChangeRotor.2.minus");
-    //final rotorPosition2 = find.byValueKey("RotorPosition.2");
-
     final plusButtonRotor3 = find.byValueKey("ChangeRotor.3.plus");
     final minusButtonRotor3 = find.byValueKey("ChangeRotor.3.minus");
-    final rotorPosition3 = find.byValueKey("RotorPosition.2");
+    final rotorPosition3 = find.byValueKey("RotorPosition.3");
 
     Future<String?> getRotorPosition(int rotorNumber) async {
       final result = await driver?.requestData('getRotorPosition:$rotorNumber');
@@ -85,14 +81,13 @@ void main() {
     }
 
     // Initial values A
-    await driver?.waitFor(find.byValueKey(rotorPosition1));
-    //await driver?.waitFor(find.byValueKey(rotorPosition2));
-    await driver?.waitFor(find.byValueKey(rotorPosition3));
+    await driver?.waitFor(rotorPosition1);
+    await driver?.waitFor(rotorPosition3);
 
     // Rotate rotor 1 forward (A to B)
     await driver?.tap(plusButtonRotor1);
-    getRotorPosition(1); // B
-    await driver?.waitFor(find.byValueKey('RotorPosition.1'));
+    await getRotorPosition(1); // B
+    await driver?.waitFor(rotorPosition1);
 
     // Reset
     await driver?.tap(minusButtonRotor1);
@@ -100,14 +95,13 @@ void main() {
     // Rotate rotor 1 A to Z
     await driver?.tap(minusButtonRotor1);
     await getRotorPosition(1); // Z
-    await driver?.waitFor(find.byValueKey('RotorPosition.1'));
+    await driver?.waitFor(rotorPosition1);
 
     // Rotate rotor 3 A to C
     await driver?.tap(plusButtonRotor3);
     await driver?.tap(plusButtonRotor3);
     await getRotorPosition(3);
-    await driver?.waitFor(find.byValueKey('RotorPosition.3'), timeout: const Duration(seconds: 10),
-    );
+    await driver?.waitFor(rotorPosition3, timeout: const Duration(seconds: 10));
 
     // RESET
     await driver?.tap(minusButtonRotor3);
@@ -118,8 +112,6 @@ void main() {
     await driver?.tap(minusButtonRotor3);
     await driver?.tap(minusButtonRotor3);
     await getRotorPosition(3);
-    await driver?.waitFor(find.byValueKey('RotorPosition.3'), timeout: const Duration(seconds: 10),
-    );
-
+    await driver?.waitFor(rotorPosition3, timeout: const Duration(seconds: 10));
   });
 }
