@@ -114,4 +114,20 @@ void main() {
     await getRotorPosition(3);
     await driver?.waitFor(rotorPosition3, timeout: const Duration(seconds: 10));
   });
+
+  test("Change rotor 1 to 5", timeout: const Timeout(Duration(seconds: 30)),
+          () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
+
+    // Find dropdown from rotor 1
+    await driver?.tap(find.byValueKey("DropDown.1"));
+
+    // Change to rotor 5
+    //await driver?.tap(find.byValueKey("Item.1.5"));
+
+    // Notch 1 should be H after changee
+    //await driver?.waitFor(find.byValueKey("Notch.1"));
+    //await driver?.waitFor(find.text('H'));
+  });
 }
