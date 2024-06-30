@@ -9,12 +9,15 @@ Future<List<String>> getRotorIDs() async {
   Response resp;
   List<dynamic> respJsonList;
 
-  for (var i = 0; i < 4; i++) {
+  for (var i = 1; i < 4; i++) {
     resp = await APICaller.get("get-rotor-ids", {"machine_id": "$i"});
     respJsonList = jsonDecode(resp.body);
+    int offset = respJsonList[0]["id"] ~/ 18;
+    print(offset);
+    await Cookie.save("offset", "$offset");
     for (var respJson in respJsonList) {
       Map<String, dynamic> jsonMap = respJson as Map<String, dynamic>;
-      finalList.add("Rotor ${jsonMap["id"].toString()}");
+      finalList.add("Rotor ${((jsonMap["id"] - 1) % 18 + 1).toString()}");
     }
   }
 
@@ -39,4 +42,3 @@ Future<List<String>> getUmkehrwalzenIDs() async {
 bool burnerFunc() {
   return false;
 }
-

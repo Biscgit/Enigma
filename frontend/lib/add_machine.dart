@@ -110,20 +110,19 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                         customMachineOptions(
                           children: [
                             const Text("Plugboard erlauben?"),
-                            StatefulBuilder(
-                              builder: (BuildContext context, StateSetter setState) {
-                                return Switch(
-                                  key: const ValueKey("AddMachine-Key-Plugboard"),
-                                  value: _selectedValuePlugboardToggle ??= false,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedValuePlugboardToggle = value;
-                                    });
-                                  },
-                                  activeColor: Colors.blue,
-                                );
-                              }
-                            ),
+                            StatefulBuilder(builder:
+                                (BuildContext context, StateSetter setState) {
+                              return Switch(
+                                key: const ValueKey("AddMachine-Key-Plugboard"),
+                                value: _selectedValuePlugboardToggle ??= false,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedValuePlugboardToggle = value;
+                                  });
+                                },
+                                activeColor: Colors.blue,
+                              );
+                            }),
                           ],
                         ),
                         customMachineOptions(
@@ -195,17 +194,23 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                           key: const ValueKey("AddMachine-Key-Confirm"),
                           onPressed: () {
                             if (enableButton()) {
-                              var rotorIds = _selectedValueRotorenAuswahl
-                                  .map((rotor) => int.parse(RegExp(r'\d+')
-                                      .firstMatch(rotor)!
-                                      .group(0)!))
-                                  .toList();
-                              APICaller.post("add-machine", body: {
-                                "name": _selectedMachineName,
-                                "plugboard": _selectedValuePlugboardToggle,
-                                "number_rotors": _selectedValueRotorenAnzahl,
-                                "rotors": rotorIds,
-                                "reflectors": _selectedValueUmkehrwalzen,
+                              Cookie.read("offset").then((offset) {
+                                return _selectedValueRotorenAuswahl
+                                    .map((rotor) =>
+                                        int.parse(RegExp(r'\d+')
+                                            .firstMatch(rotor)!
+                                            .group(0)!) +
+                                        int.parse(offset) * 18)
+                                    .toList();
+                              }).then((rotorIds) {
+                                print(rotorIds);
+                                APICaller.post("add-machine", body: {
+                                  "name": _selectedMachineName,
+                                  "plugboard": _selectedValuePlugboardToggle,
+                                  "number_rotors": _selectedValueRotorenAnzahl,
+                                  "rotors": rotorIds,
+                                  "reflectors": _selectedValueUmkehrwalzen,
+                                });
                               }).then((_) {
                                 //Can be used for debugging
 
@@ -216,30 +221,29 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 _selectedValueUmkehrwalzen = [];
                                 Navigator.of(context).pop();
                               });
-                            }
-                            else {
+                            } else {
                               showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Maschine nicht vollständig"),
-                                    content: const Text("Bitte füllen Sie alle Felder mit Werten > 0 aus."),
-                                    actions: <Widget>[
-                                      ElevatedButton(
-                                        key: const ValueKey("AddMachine-Cant-Create-OK"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          foregroundColor: Colors.black
-                                        ),
-                                        child: const Text("OK")
-                                      )
-                                    ]
-                                  );
-                                }
-                              );
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                        title: const Text(
+                                            "Maschine nicht vollständig"),
+                                        content: const Text(
+                                            "Bitte füllen Sie alle Felder mit Werten > 0 aus."),
+                                        actions: <Widget>[
+                                          ElevatedButton(
+                                              key: const ValueKey(
+                                                  "AddMachine-Cant-Create-OK"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor:
+                                                      Colors.black),
+                                              child: const Text("OK"))
+                                        ]);
+                                  });
                             }
                           },
                           style: ElevatedButton.styleFrom(
