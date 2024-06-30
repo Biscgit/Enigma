@@ -385,7 +385,7 @@ Widget build(BuildContext context) {
                         );
                       },
                     );
-                  }).toList(),
+                  }),
                   ElevatedButton(
                     key: ValueKey("BottomButton-$name"),
                     onPressed: () {

@@ -82,7 +82,7 @@ void main() {
       );
     } on TimeoutException catch (_) {
       // catch only issues related to scrolling bug
-      print("Run test with `--release` -> bug in library with scrolling");
+      // print("Run test with `--release` -> bug in library with scrolling");
     }
   });
 
