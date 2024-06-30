@@ -3,8 +3,9 @@ import 'package:enigma/home.dart';
 import 'package:enigma/login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<void> main() async {
+Future<void> main({String isTest = "false"}) async {
   await dotenv.load(fileName: "flutter.env");
+  dotenv.env["IS_TEST_ENV"] = isTest;
   runApp(const EnigmaApp());
 }
 

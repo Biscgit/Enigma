@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'utils.dart';
 import 'dart:convert';
 
@@ -126,80 +128,105 @@ class LoginPageState extends State<LoginPage> {
       ),
     );
 
+    final title = dotenv.get('IS_TEST_ENV', fallback: "") == "true"
+        ? const Text("Enigma")
+        : Text(
+            'The Enigma-Machine',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: screenHeight * 0.1,
+              color: const Color(0xFF666870),
+              height: 1,
+              letterSpacing: -1,
+            ),
+          )
+            .animate(onPlay: (controller) => controller.repeat())
+            .shimmer(duration: 1200.ms, color: const Color(0xFF80DDFF))
+            .animate()
+            .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
+            .slide();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Enigma Login'),
         leading: Container(),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            constraints: BoxConstraints(maxWidth: screenWidth),
-            width: loginWidth,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextField(
-                  key: const ValueKey('username'),
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  key: const ValueKey('password'),
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
-                  onSubmitted: (value) => _login(context),
-                ),
-                const SizedBox(height: 20),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      key: const ValueKey('Login'),
-                      onPressed: () => _login(context),
-                      style: buttonStyle,
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+      body: Column(
+        children: [
+          SizedBox(height: screenHeight * 0.15),
+          SizedBox(height: screenHeight * 0.15, child: title),
+          SizedBox(height: screenHeight * 0.1),
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                constraints: BoxConstraints(maxWidth: screenWidth),
+                width: loginWidth,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextField(
+                      key: const ValueKey('username'),
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        border: OutlineInputBorder(),
                       ),
                     ),
-                    Container(width: 10),
-                    ElevatedButton(
-                      style: buttonStyle,
-                      onPressed: () async {
-                        if (await _isAuthenticated()) {
-                          if (!context.mounted) return;
-                          Navigator.pushReplacementNamed(context, '/home');
-                        } else {
-                          if (!context.mounted) return;
-                          _showSnackbar(
-                            context,
-                            "No authenticated sessions found! Please login again",
-                            Colors.deepOrange.withOpacity(0.7),
-                            textColor: Colors.deepOrange.shade200,
-                          );
-                        }
-                      },
-                      child: const Text('Continue session'),
+                    const SizedBox(height: 10),
+                    TextField(
+                      key: const ValueKey('password'),
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      obscureText: true,
+                      onSubmitted: (value) => _login(context),
+                    ),
+                    const SizedBox(height: 20),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          key: const ValueKey('Login'),
+                          onPressed: () => _login(context),
+                          style: buttonStyle,
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Container(width: 10),
+                        ElevatedButton(
+                          style: buttonStyle,
+                          onPressed: () async {
+                            if (await _isAuthenticated()) {
+                              if (!context.mounted) return;
+                              Navigator.pushReplacementNamed(context, '/home');
+                            } else {
+                              if (!context.mounted) return;
+                              _showSnackbar(
+                                context,
+                                "No authenticated sessions found! Please login again",
+                                Colors.deepOrange.withOpacity(0.7),
+                                textColor: Colors.deepOrange.shade200,
+                              );
+                            }
+                          },
+                          child: const Text('Continue session'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          )
+        ],
       ),
     );
   }
