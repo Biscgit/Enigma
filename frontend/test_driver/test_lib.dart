@@ -138,5 +138,65 @@ Future<void> selectMachineByName(FlutterDriver? driver, String name) async {
   await driver?.waitFor(machine);
   await driver?.tap(machine);
 
-  await driver?.waitUntilNoTransientCallbacks();
+  await driver?.waitUntilNoTransientCallbacks(
+      timeout: const Duration(seconds: 3));
+}
+
+Future<void> createSimpleMachine(FlutterDriver? driver, String machineName,
+    bool plugboard, {int offset = 1}) async {
+  await driver?.tap(find.byValueKey('addButton'));
+  await driver?.waitUntilNoTransientCallbacks(
+      timeout: const Duration(seconds: 3));
+
+  // name and rotor count
+  await driver?.tap(find.byValueKey("AddMachine-Key-Name"));
+  await driver?.enterText(machineName);
+  await driver?.tap(find.byValueKey("AddMachine-Key-RotorNr"));
+  await driver?.enterText("3");
+
+  // plugboard
+  if (plugboard) {
+    await driver?.tap(find.byValueKey("AddMachine-Key-Plugboard"));
+  }
+
+  // ukw
+  await driver?.tap(find.byValueKey("AddMachine-Key-UKWList"));
+  await driver?.tap(find.byValueKey("Checkbox-Key-UKW-A"));
+  final closeUKWSelect = find.byValueKey("BottomButton-Hier UKWs auswählen");
+  await driver?.tap(closeUKWSelect);
+
+  // rotors
+  await driver?.tap(find.byValueKey("AddMachine-Key-RotorList"));
+  await driver?.tap(find.byValueKey("Checkbox-Key-Rotor $offset"));
+  final closeRotorSelect =
+      find.byValueKey("BottomButton-Hier Rotoren auswählen");
+  await driver?.scrollUntilVisible(
+    find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen"),
+    closeRotorSelect,
+    dyScroll: -1000,
+  );
+  await driver?.tap(closeRotorSelect);
+
+  // create
+  await driver?.tap(find.byValueKey("AddMachine-Key-Confirm"));
+  await driver?.waitUntilNoTransientCallbacks(
+      timeout: const Duration(seconds: 3));
+}
+
+Future<void> deleteMachine(FlutterDriver? driver, String name) async {
+  await selectMachineByName(driver, name);
+
+  await driver?.waitFor(find.byValueKey("deleteButton"));
+  await driver?.tap(find.byValueKey("deleteButton"));
+
+  final confirmFirst = find.byValueKey("YesButtonDeletePopup");
+  await driver?.waitFor(confirmFirst, timeout: const Duration(seconds: 3));
+  await driver?.tap(confirmFirst);
+
+  final confirmFinal = find.byValueKey("OKButtonDeleteFinal");
+  await driver?.waitFor(confirmFinal, timeout: const Duration(seconds: 3));
+  await driver?.tap(confirmFinal);
+
+  await driver?.waitUntilNoTransientCallbacks(
+      timeout: const Duration(seconds: 3));
 }
