@@ -11,10 +11,10 @@ CREATE TABLE IF NOT EXISTS machines (
     id SERIAL,
     username TEXT,
     name TEXT,
-    machine_type INTEGER,
-
     reflector JSON,
     reflector_id TEXT,
+
+    number_rotors INTEGER,
 
     character_pointer INTEGER,
     character_history JSON ARRAY[140],
@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS machines (
     PRIMARY KEY (id, username),
     FOREIGN KEY (username) REFERENCES users(username),
 
+    UNIQUE (username, name),
     CHECK (array_length(character_history, 1) <= 140),
     CHECK (array_length(plugboard_config, 1) <= 10)
 );

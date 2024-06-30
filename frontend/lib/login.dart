@@ -64,6 +64,7 @@ class LoginPageState extends State<LoginPage> {
       return Cookie.save("current_machine", "1")
           .then((_) => Cookie.save("name", "Enigma I"))
           .then((_) => Cookie.save("username", username))
+          .then((_) => Cookie.save("numberRotors", "3"))
           .then((_) {
         if (response.statusCode == 200) {
           final token = json.decode(response.body)["token"];

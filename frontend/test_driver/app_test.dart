@@ -4,6 +4,7 @@ import 'keyhistory_test.dart' as keyhistory_test;
 import 'plugboard_test.dart' as plugboard_test;
 import 'authentication_test.dart' as authentication_test;
 import 'rotor_test.dart' as rotor_test;
+import 'add_machine_test.dart' as add_machine_test;
 
 void main() {
   group('Authentication:', () {
@@ -24,5 +25,9 @@ void main() {
 
   group('Rotors:', () {
     rotor_test.main();
+  });
+
+  group('Adding machines:', () {
+    add_machine_test.main();
   });
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:enigma/utils.dart';
+import 'dart:convert';
 
 class SideBar extends StatelessWidget {
   final String username;
@@ -23,25 +24,39 @@ class SideBar extends StatelessWidget {
     );
   }
 
-  ListTile addMachine(BuildContext context) => ListTile(
-      title: const Text('Neue Enigma'),
-      onTap: () {
-        Navigator.pop(context);
-      });
+  Future<List<Widget>> getMachines() async {
+    var machines = json.decode((await APICaller.get("get-machines")).body);
+    var widgets = [getHeader()];
+    for (var machine in machines) {
+      widgets.add(Machine(
+          name: machine["name"],
+          id: machine["id"],
+          numberRotors: machine["number_rotors"],
+          key: ValueKey("sidebar.${machine["name"]}")));
+    }
+    return widgets;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          getHeader(),
-          const Machine(name: 'Enigma I', id: 1),
-          const Machine(name: 'Norway Enigma', id: 2),
-          const Machine(name: 'Enigma M3', id: 3),
-          addMachine(context)
-        ],
-      ),
+    return FutureBuilder<List<Widget>>(
+      future: getMachines(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [CircularProgressIndicator()],
+          );
+        } else {
+          var data = snapshot.data!;
+          return Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: data,
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -49,8 +64,13 @@ class SideBar extends StatelessWidget {
 class Machine extends StatelessWidget {
   final String name;
   final int id;
+  final int numberRotors;
 
-  const Machine({super.key, required this.name, required this.id});
+  const Machine(
+      {super.key,
+      required this.name,
+      required this.id,
+      required this.numberRotors});
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +79,7 @@ class Machine extends StatelessWidget {
         onTap: () {
           Cookie.save("name", name)
               .then((_) => Cookie.save("current_machine", "$id"))
+              .then((_) => Cookie.save("numberRotors", "$numberRotors"))
               .then((_) => Cookie.nukeReactors())
               .then((_) => Navigator.pop(context))
               .then((_) => Navigator.pushReplacementNamed(context, '/home'));

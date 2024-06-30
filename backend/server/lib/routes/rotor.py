@@ -1,30 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
 from .authentication import check_auth
 from server.lib.database import get_database, Database
-from typing import Dict
-from server.lib.models import Rotor, MinRotor
+from typing import Dict, List
+from server.lib.models import UpdateRotor, MinRotor, Machine
 
 router = APIRouter()
 
 
 @router.post("/update-rotor")
 async def update_rotor(
-    rotor: Rotor,
+    rotor: UpdateRotor,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
 ) -> Dict[str, str]:
     try:
-        await db_conn.update_rotor(
+        await db_conn.update_base_rotor(
             {
-                "username": username,
                 "id": rotor.id,
                 "rotor_position": rotor.rotor_position,
-                "letter_shift": rotor.letter_shift,
-                "scramble_alphabet": rotor.scramble_alphabet,
-                "machine_id": rotor.machine_id,
-                "place": rotor.place,
-                "number": rotor.number,
-                "is_rotate": rotor.is_rotate,
                 "offset_value": rotor.offset_value,
             }
         )
@@ -75,7 +68,7 @@ async def get_rotor_ids(
     machine_id: int,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> list[Dict[str, int]]:
+) -> List[Dict[str, int]]:
     try:
         rotor_ids = await db_conn.get_rotor_ids(username, machine_id)
     except Exception as e:
@@ -98,7 +91,12 @@ async def get_rotor_by_place(
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't get Rotor by place")
 
-    return rotor
+    return {
+        "offset_value": rotor["offset_value"],
+        "rotor_position": rotor["rotor_position"],
+        "letter_shift": rotor["letter_shift"],
+        "id": rotor["id"],
+    }
 
 
 @router.get("/get-rotor-number")
@@ -130,10 +128,71 @@ async def add_rotor(
             rotor.place,
             rotor.number,
         )
+    except TypeError:
+        raise HTTPException(
+            status_code=403, detail="This machine doesn't allow this many rotors"
+        )
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't switch Rotor")
-    return rotor
+    print(rotor)
+    return {
+        "offset_value": rotor["offset_value"],
+        "rotor_position": rotor["rotor_position"],
+        "letter_shift": rotor["letter_shift"],
+    }
+
+
+@router.post("/add-machine")
+async def add_machine(
+    machine: Machine,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> Dict[str, str]:
+    try:
+        await db_conn.add_machine(
+            username,
+            machine.name,
+            machine.plugboard,
+            machine.number_rotors,
+            machine.rotors,
+            machine.reflectors,
+        )
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=400, detail="Can't add Machine")
+    return {"Status": "OK"}
+
+
+@router.delete("/delete-machine")
+async def delete_machine(
+    machine_id: int,
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> Dict[str, str]:
+    if machine_id < 4:
+        await db_conn.revert_machine(username, machine_id)
+        return {"Status": "OK"}
+    try:
+        await db_conn.delete_machine(username, machine_id)
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't delete Machine")
+    return {"Status": "OK"}
+
+
+@router.get("/get-machines")
+async def get_machines(
+    username: str = Depends(check_auth),
+    db_conn: "Database" = Depends(get_database),
+) -> List[Dict[str, str | int]]:
+    try:
+        machines = await db_conn.get_machines(username)
+        del machines[0]
+    except Exception as e:
+        print("Error: ", e)
+        raise HTTPException(status_code=404, detail="Can't get Machines")
+    return machines
 
 
 @router.post("/revert-machine")
@@ -155,7 +214,7 @@ async def get_reflector_ids(
     machine_id: int,
     username: str = Depends(check_auth),
     db_conn: "Database" = Depends(get_database),
-) -> list:
+) -> List[str]:
     try:
         ids = list((await db_conn.get_reflector(username, machine_id)).keys())
     except Exception as e:

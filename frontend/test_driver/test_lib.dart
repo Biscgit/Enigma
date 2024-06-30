@@ -42,7 +42,7 @@ Future<void> logout(FlutterDriver? driver) async {
 }
 
 Future<void> resetSelectedMachine(FlutterDriver? driver) async {
-  final resetButton = find.byValueKey("Reset_button");
+  final resetButton = find.byValueKey("ResetButton");
   await driver?.tap(resetButton);
   await driver?.waitFor(
     find.byValueKey("Confirm_revert"),
@@ -60,4 +60,69 @@ Future<void> resetSelectedMachine(FlutterDriver? driver) async {
 Future<void> writeChar(String char, FlutterDriver? driver) async {
   assert(char.length == 1);
   await driver?.tap(find.byValueKey("Tastatur-Button-${char.toUpperCase()}"));
+}
+
+Future<void> createMachine(FlutterDriver? driver, String name, bool plugboardOn, int rotorCount, List<int> rotorList, List<int> uKWList) async {
+  //rotorCount > 0; rotorList only contains elements in [1; 18]
+  
+  if(rotorCount <= 0) {
+    return;
+  }
+  
+  final addButton = find.byValueKey('addButton');
+  await driver?.tap(addButton);
+
+  final nameTextfield = find.byValueKey("AddMachine-Key-Name");
+  await driver?.waitFor(nameTextfield, timeout: const Duration(seconds: 10));
+  await driver?.tap(nameTextfield);
+  await driver?.enterText(name);
+
+  var plugboardSwitch = find.byValueKey("AddMachine-Key-Plugboard");
+  await driver?.tap(plugboardSwitch);
+  await driver?.tap(plugboardSwitch);
+  await driver?.tap(plugboardSwitch); //On, off, on
+  if(!plugboardOn) {
+    await driver?.tap(plugboardSwitch); //off again
+  }
+  
+  final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
+  await driver?.tap(rotorTextfield);
+  await driver?.enterText(rotorCount.toString());
+
+  for(int i in rotorList) {
+    await driver?.tap(find.byValueKey("Checkbox-Key-Rotor $i"));
+  }
+
+  for(int x in uKWList) {
+    String ukwKey = "";
+    if(x == 0) {
+      ukwKey = "-A";
+    }
+    else if(x == 1) {
+      ukwKey = "-B";
+    }
+    else if(x == 2) {
+      ukwKey = "-C";
+    }
+    else if(x == 3) {
+      ukwKey = "-D*";
+    }
+    /*
+    else if(x == 4) {
+      ukwKey = "";
+    }
+    */
+    await driver?.tap(find.byValueKey("Checkbox-Key-UKW$ukwKey"));
+  }
+}
+
+Future<void> selectMachineByName(FlutterDriver? driver, String name) async {
+  final drawerButton = find.byTooltip('Open navigation menu');
+  await driver?.tap(drawerButton);
+
+  final machine = find.text(name);
+  await driver?.waitFor(machine);
+  await driver?.tap(machine);
+
+  await driver?.waitUntilNoTransientCallbacks();
 }

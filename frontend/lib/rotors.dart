@@ -9,8 +9,9 @@ class Data {
 }
 
 class RotorPage extends StatelessWidget {
+  final ScrollController _scrollController = ScrollController();
   final int numberRotors;
-  const RotorPage({super.key, required this.numberRotors});
+  RotorPage({super.key, required this.numberRotors});
 
   Future<Data> _initialize() async {
     var machineId = await Cookie.read("current_machine");
@@ -31,15 +32,25 @@ class RotorPage extends StatelessWidget {
             );
           } else {
             final data = snapshot.data!;
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                  numberRotors,
-                  (index) => RotorWidget(
-                      rotorNumber: index + 1,
-                      machineId: data.machineId,
-                      rotorIds: data.rotorIds)),
-            );
+
+            // Get the maximum height available for the widget
+            return SizedBox(
+                width: 600,
+                height: MediaQuery.of(context).size.height * 0.85,
+                child: Scrollbar(
+                    controller: _scrollController,
+                    child: SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Wrap(
+                          runSpacing: 8.0,
+                          spacing: 8.0, // Horizontal spacing between children
+                          children: List.generate(
+                              numberRotors,
+                              (index) => RotorWidget(
+                                  rotorNumber: index + 1,
+                                  machineId: data.machineId,
+                                  rotorIds: data.rotorIds)),
+                        ))));
           }
         });
   }
@@ -147,12 +158,12 @@ class RotorWidgetState extends State<RotorWidget> {
     setState(() {
       rotorPosition = (rotorPosition + change + 26) % 26;
     });
-    var rotor =
-        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
-    rotor["rotor_position"] =
-        String.fromCharCode(97 + (rotorPosition - offset + 26) % 26);
-    rotor["id"] = id;
-    rotor["number"] = selectedRotor;
+    var rotor = {
+      "id": id,
+      "rotor_position":
+          String.fromCharCode(97 + (rotorPosition - offset + 26) % 26),
+      "offset_value": offset
+    };
     APICaller.post("update-rotor", body: rotor);
   }
 
@@ -161,13 +172,13 @@ class RotorWidgetState extends State<RotorWidget> {
       rotorPosition = (rotorPosition + change + 26) % 26;
       notch = changeString(notch, change);
     });
-    var rotor =
-        json.decode((await APICaller.get("get-rotor", {"rotor": "$id"})).body);
     offset = (offset + change + 26) % 26;
-    rotor["letter_shift"] = changeString(notch, -offset);
-    rotor["id"] = id;
-    rotor["number"] = selectedRotor;
-    rotor["offset_value"] = offset;
+    var rotor = {
+      "id": id,
+      "rotor_position":
+          String.fromCharCode(97 + (rotorPosition - offset + 26) % 26),
+      "offset_value": offset
+    };
     APICaller.post("update-rotor", body: rotor);
   }
 
@@ -181,6 +192,7 @@ class RotorWidgetState extends State<RotorWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 150,
       margin: const EdgeInsets.all(15),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -280,13 +292,16 @@ class ReflectorState extends State<Reflector> {
   Future<List<dynamic>> _initialize() async {
     if (initialized) return items;
     machineId = await Cookie.read("current_machine");
-    items = json.decode(
-        (await APICaller.get("get-reflector-ids", {"machine_id": machineId}))
-            .body);
+    var response =
+        await APICaller.get("get-reflector-ids", {"machine_id": machineId});
+    assert(response.statusCode == 200);
     initialized = true;
-    item = json.decode(
-        (await APICaller.get("get-reflector-id", {"machine_id": machineId}))
-            .body);
+    var choosedItem =
+        await APICaller.get("get-reflector-id", {"machine_id": machineId});
+    setState(() {
+      item = json.decode(choosedItem.body);
+      items = json.decode(response.body);
+    });
     return items;
   }
 

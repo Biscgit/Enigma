@@ -1,5 +1,5 @@
 from pydantic import BaseModel, root_validator, validator
-from typing import Optional
+from typing import Optional, List
 import string
 
 __all__ = ["LoginForm"]
@@ -40,26 +40,20 @@ def check_len(value: str, min: int, max: int, key: str) -> None:
             raise ValueError(f"{key} must be an alphabetical value")
 
 
-class Rotor(MinRotor):
+class UpdateRotor(BaseModel):
     rotor_position: str
-    machine_type: int
-    letter_shift: str
-    rotor_position: str
-    scramble_alphabet: str
-    template_id: Optional[str] = None
     offset_value: int
-
-    @validator("scramble_alphabet")
-    def check_alphabet(cls, value):
-        check_len(value, 26, 26, "Custom Alphabet")
-        return value.lower()
+    id: int
 
     @validator("rotor_position")
     def check_pos(cls, value):
         check_len(value, 1, 1, "rotor_position")
         return value.lower()
 
-    @validator("letter_shift")
-    def check_notch(cls, value):
-        check_len(value, 1, 2, "letter_shift")
-        return value.lower()
+
+class Machine(BaseModel):
+    name: str
+    plugboard: bool
+    number_rotors: int
+    rotors: List[int]
+    reflectors: List[str]

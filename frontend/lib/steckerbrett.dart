@@ -279,8 +279,8 @@ mixin SteckbrettMethods<T extends StatefulWidget> on State<T> {
         ),
         child: const Text('Reset'),
       ),
-      const SizedBox(height: 3),
-      toggleSwitch(),
+      // const SizedBox(height: 3),
+      // toggleSwitch(),
     ]);
   }
 }
@@ -297,19 +297,19 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
   // Tastatur mit QWERTZ-Layout
   @override
   Widget build(BuildContext context) {
-    return _isEnabled
-        ? Container(
-            key: const ValueKey("plugboard_container"),
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: Colors.white10,
-              border: Border.all(
-                color: Colors.white.withOpacity(0), // Specify border color
-                width: 4, // Specify border width
-              ),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Column(
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: Colors.white10,
+        border: Border.all(
+          color: Colors.white.withOpacity(0), // Specify border color
+          width: 4, // Specify border width
+        ),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: _isEnabled
+          ? Column(
+              key: const ValueKey("plugboard_container"),
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Wrap(
@@ -355,9 +355,16 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
                 ),
                 bottomBar(),
               ],
+            )
+          : Container(
+              padding: const EdgeInsets.all(10),
+              child: const Text("Plugboard is not enabled",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  )),
             ),
-          )
-        : toggleSwitch();
+    );
   }
 }
 
@@ -372,18 +379,19 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
     with SteckbrettMethods {
   @override
   Widget build(BuildContext context) {
-    return _isEnabled
-        ? Container(
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: Colors.white10,
-              border: Border.all(
-                color: Colors.white.withOpacity(0), // Specify border color
-                width: 4, // Specify border width
-              ),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Column(
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: Colors.white10,
+        border: Border.all(
+          color: Colors.white.withOpacity(0), // Specify border color
+          width: 4, // Specify border width
+        ),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: _isEnabled
+          ? Column(
+              key: const ValueKey("plugboard_container"),
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Wrap(
@@ -409,8 +417,15 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
                 ),
                 bottomBar()
               ],
+            )
+          : Container(
+              padding: const EdgeInsets.all(10),
+              child: const Text("Plugboard is not enabled",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  )),
             ),
-          )
-        : toggleSwitch();
+    );
   }
 }
