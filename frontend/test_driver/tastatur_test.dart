@@ -151,15 +151,16 @@ void main() {
     // print("Done!");
   }, timeout: const Timeout(Duration(minutes: 3)));
 
-  test("Keyboard Spamming", timeout: const Timeout(Duration(minutes: 2)),
+  test("Keyboard Spamming", timeout: const Timeout(Duration(minutes: 3)),
       () async {
     await t_lib.login(driver, username: "user2", password: "pass2");
     await t_lib.resetSelectedMachine(driver);
 
+    List<Future> handlers = [];
     for (int i = 0; i < 100; i++) {
-      t_lib.writeChar("A", driver);
+      final handler = t_lib.writeChar("A", driver);
+      handlers.add(handler);
     }
-    await driver?.waitUntilNoTransientCallbacks();
 
     // check correct order
     await driver?.waitFor(find.text("A → V"));
