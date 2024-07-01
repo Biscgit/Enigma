@@ -133,9 +133,9 @@ class HomePageState extends State<HomePage> {
                   context: context,
                   builder: (BuildContext dialogContext) {
                     return AlertDialog(
-                      title: const Text('Löschen bestätigen'),
+                      title: const Text('Confirm delete'),
                       content: const Text(
-                          'Möchten Sie wirklich diese Maschine löschen?'),
+                          'Do you really want to delete this machine?'),
                       key: const ValueKey('deletionDialog'),
                       actions: <Widget>[
                         TextButton(
@@ -144,7 +144,7 @@ class HomePageState extends State<HomePage> {
                             // Navigator.pushReplacementNamed(context, '/login');
                           },
                           child: const Text(
-                            'Nein',
+                            'No',
                             style: TextStyle(
                               color: Colors.grey,
                               fontWeight: FontWeight.w600,
@@ -162,9 +162,9 @@ class HomePageState extends State<HomePage> {
                                 barrierDismissible: false,
                                 builder: (BuildContext dialogContext) {
                                   return AlertDialog(
-                                    title: const Text('Löschen Bestätigung'),
+                                    title: const Text('Confirm delete'),
                                     content: const Text(
-                                        'Maschine erfolgreich gelöscht.'),
+                                        'Machine successfully deleted'),
                                     key: const ValueKey('deletionConfirmed'),
                                     actions: <Widget>[
                                       TextButton(
@@ -187,7 +187,7 @@ class HomePageState extends State<HomePage> {
                                 },
                               );
                             },
-                            child: const Text('Ja',
+                            child: const Text('Yes',
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w600,

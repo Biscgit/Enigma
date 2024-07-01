@@ -281,6 +281,7 @@ class SquareButtonState extends State<SquareButton> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: colorBox, // background color lol
+          overlayColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // rounded corners
           ),
@@ -290,6 +291,7 @@ class SquareButtonState extends State<SquareButton> {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
+            color: Colors.black87,
           ),
         ),
       ),
