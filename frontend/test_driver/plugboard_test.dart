@@ -272,9 +272,8 @@ void main() {
 
     // create machine with same name but without plugboard
     await login(driver, username: "user2", password: "pass2");
-    const machineName3 = "NoPlugboardMachineNext";
-    await createSimpleMachine(driver, machineName3, false, offset: 19);
-    await selectMachineByName(driver, machineName3);
+    await createSimpleMachine(driver, machineName2, false);
+    await selectMachineByName(driver, machineName2);
     await driver?.waitForAbsent(
       find.byValueKey("plugboard_container"),
       timeout: const Duration(seconds: 3),
@@ -305,7 +304,7 @@ void main() {
     await logout(driver);
 
     await login(driver, username: "user2", password: "pass2");
-    await deleteMachine(driver, machineName3);
+    await deleteMachine(driver, machineName2);
     await logout(driver);
   });
 }
