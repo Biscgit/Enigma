@@ -312,6 +312,14 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
               key: const ValueKey("plugboard_container"),
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                const Text(
+                  "Plugboard",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Wrap(
                   alignment: WrapAlignment.center,
                   children: [
@@ -394,6 +402,14 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
               key: const ValueKey("plugboard_container"),
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                const Text(
+                  "Plugboard",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Wrap(
                   alignment: WrapAlignment.center,
                   children: [
