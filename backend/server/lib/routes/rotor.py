@@ -135,7 +135,6 @@ async def add_rotor(
     except Exception as e:
         print("Error: ", e)
         raise HTTPException(status_code=404, detail="Can't switch Rotor")
-    print(rotor)
     return {
         "offset_value": rotor["offset_value"],
         "rotor_position": rotor["rotor_position"],

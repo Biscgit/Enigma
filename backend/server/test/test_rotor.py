@@ -89,10 +89,55 @@ async def test_postgres_rotors_storage(monkeypatch):
 
         clear_text = "loremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnaaliquyameratseddiamvoluptuaatveroeosetaccusametjustoduodolorloremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnaaliquyameratseddiamvoluptuaatveroeosetaccusametjustoduodolorloremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlabore"
         encrypted_text = "azjkkvhkcqgvgkvdrgqsnplvtaymcllaywojjaajfuryxqvxbubhoiqcwiggdzbddczufdxnedjrzlcohlevqnkhqojmbxpxbdfrrdsmtgethfblqkximubeizoyxswpvdlafmdhlszdzhwxnxsatlnveaeezgkcnxinuifeitgksrrymexioyitqmifppqtupycfjzwssocqwonxfolyddbkoxxvsczexmnhvhkpfwirklbjmypdwtectphynfsxnpkxudtdckilkffkyndhvulvwlhhdsflvohdzspeiflgovwcndtfrtzfxpsshkyizpwokyeocwpwctlkkvjrpolkdefibpqkwwdvlunwhvyytdqnfchojwqiuuehabmwxxlpmycaikiivqdzxmpnwlkhq"
+        rotor_end_state = {
+            "Rotor 0": {
+                "id": 58,
+                "username": "user1",
+                "machine_id": 1,
+                "scramble_alphabet": "ekmflgdqvzntowyhxuspaibrcj",
+                "machine_type": 1,
+                "letter_shift": "y",
+                "rotor_position": "u",
+                "offset_value": 0,
+                "place": 1,
+                "number": 1,
+                "is_rotate": 1,
+            },
+            "Rotor 1": {
+                "id": 60,
+                "username": "user1",
+                "machine_id": 1,
+                "scramble_alphabet": "ekmflgdqvzntowyhxuspaibrcj",
+                "machine_type": 1,
+                "letter_shift": "y",
+                "rotor_position": "r",
+                "offset_value": 0,
+                "place": 2,
+                "number": 1,
+                "is_rotate": 0,
+            },
+            "Rotor 2": {
+                "id": 59,
+                "username": "user1",
+                "machine_id": 1,
+                "scramble_alphabet": "ekmflgdqvzntowyhxuspaibrcj",
+                "machine_type": 1,
+                "letter_shift": "y",
+                "rotor_position": "b",
+                "offset_value": 0,
+                "place": 3,
+                "number": 1,
+                "is_rotate": 1,
+            },
+        }
 
         for clear_chr, enc_chr in zip(clear_text, encrypted_text):
             result = await encrypt("user1", 1, db, clear_chr)
             assert result == enc_chr
+
+        rotors = await db.get_rotors("user1", 1)
+        for i in range(3):
+            rotors[f"Rotor {i}"]["id"] = rotor_end_state[f"Rotor {i}"]["id"]
         # clean up
         await db.disconnect()
         await test_client.close()
