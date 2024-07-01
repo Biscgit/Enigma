@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:test/test.dart';
 import 'tastatur_test.dart' as tastatur_test;
 import 'keyhistory_test.dart' as keyhistory_test;
@@ -7,6 +8,8 @@ import 'rotor_test.dart' as rotor_test;
 import 'add_machine_test.dart' as add_machine_test;
 
 void main() {
+  Directory('screenshots').create();
+
   group('Authentication:', () {
     authentication_test.main();
   });
