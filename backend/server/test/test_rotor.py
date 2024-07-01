@@ -99,9 +99,9 @@ async def test_postgres_rotors_storage(monkeypatch):
                 "letter_shift": "y",
                 "rotor_position": "u",
                 "offset_value": 0,
-                "place": 1,
+                "place": 0,
                 "number": 1,
-                "is_rotate": 1,
+                "is_rotate": True,
             },
             {
                 "id": 60,
@@ -112,9 +112,9 @@ async def test_postgres_rotors_storage(monkeypatch):
                 "letter_shift": "y",
                 "rotor_position": "r",
                 "offset_value": 0,
-                "place": 2,
+                "place": 1,
                 "number": 1,
-                "is_rotate": 0,
+                "is_rotate": False,
             },
             {
                 "id": 59,
@@ -125,9 +125,9 @@ async def test_postgres_rotors_storage(monkeypatch):
                 "letter_shift": "y",
                 "rotor_position": "b",
                 "offset_value": 0,
-                "place": 3,
+                "place": 2,
                 "number": 1,
-                "is_rotate": 1,
+                "is_rotate": True,
             },
         ]
 
