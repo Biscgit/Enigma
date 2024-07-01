@@ -1,5 +1,5 @@
 # by David Horvát, 2024
-FROM debian:stable-slim as builder
+FROM debian:stable-slim AS builder
 
 # install dependencies
 RUN apt update
