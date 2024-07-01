@@ -17,6 +17,11 @@ void main() {
     }
   });
 
+  test('Check Flutter-driver health', () async {
+    Health? health = await driver?.checkHealth();
+    assert(health?.status == HealthStatus.ok);
+  });
+
   test("Test cancel button", timeout: const Timeout(Duration(seconds: 30)),
       () async {
     await login(driver);

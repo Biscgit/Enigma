@@ -17,6 +17,11 @@ void main() {
     }
   });
 
+  test('Check Flutter-driver health', () async {
+    Health? health = await driver?.checkHealth();
+    assert(health?.status == HealthStatus.ok);
+  });
+
   Future<void> checkValue(SerializableFinder item, String value) async {
     assert(await driver?.getText(item) == value);
   }
@@ -119,7 +124,7 @@ void main() {
     await driver?.tap(plusButtonRotor3);
     await checkValue(rotorPosition3, "C");
 
-    // RESET
+    // Reset
     await driver?.tap(minusButtonRotor3);
     await driver?.tap(minusButtonRotor3);
 
@@ -130,24 +135,82 @@ void main() {
     await checkValue(rotorPosition3, "X");
   });
 
-  test("Change rotor 1 to 5", timeout: const Timeout(Duration(seconds: 30)),
+  test("Change rotors", timeout: const Timeout(Duration(seconds: 120)),
       () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
-    final dropdown = find.byValueKey("DropDown.1");
-    final notchKey = find.byValueKey("Notch.1");
-    // Find dropdown from rotor 1
-    await driver?.tap(dropdown);
+    // set rotor 1
+    final dropdown1 = find.byValueKey("DropDown.1");
+    await driver?.tap(dropdown1);
+    final item1 = find.byValueKey("Item.1.5");
+    await driver?.tap(item1);
 
-    final item = find.byValueKey("Item.1.5");
-    // Change to rotor 5
+    // set rotor 2
+    final dropdown2 = find.byValueKey("DropDown.2");
+    await driver?.tap(dropdown2);
+    final item2 = find.byValueKey("Item.2.2");
+    await driver?.tap(item2);
+
+    // set rotor 3
+    final dropdown3 = find.byValueKey("DropDown.3");
+    await driver?.tap(dropdown3);
+    final item3 = find.byValueKey("Item.3.4");
+    await driver?.tap(item3);
+
+    // check notches
+    final notch1 = find.byValueKey("Notch.1");
+    await checkValue(notch1, "H");
+    final notch2 = find.byValueKey("Notch.2");
+    await checkValue(notch2, "M");
+    final notch3 = find.byValueKey("Notch.3");
+    await checkValue(notch3, "R");
+
+    // type on keyboard
+    final text =
+        "Lorem ipsum dolor sit amet consetetur sadipscing elitr".split("");
+    final encText =
+        "sycgk ajert giiss lss uvws bdkvzspvka kjueouflwq ignqv".split("");
+    for (int i = 0; i < text.length; i++) {
+      if (text[i] == " ") continue;
+
+      await writeChar(text[i], driver);
+      final combo = '${text[i].toUpperCase()} → ${encText[i].toUpperCase()}';
+
+      await driver?.waitFor(
+        find.text(combo),
+        timeout: const Duration(seconds: 3),
+      );
+    }
+
+    await logout(driver);
+  });
+
+  test("Change ukw", timeout: const Timeout(Duration(seconds: 120)), () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
+
+    // set to ukw-c
+    final dropdown = find.byValueKey("DropDownReflector");
+    await driver?.tap(dropdown);
+    final item = find.byValueKey("Item.ukw-c");
     await driver?.tap(item);
 
-    await checkValue(notchKey, "H");
+    // type on keyboard
+    final text = "lorem ipsum dolor sit amet".split("");
+    final encText = "mrfxu amgax unkuf tzk vurn".split("");
+    for (int i = 0; i < text.length; i++) {
+      if (text[i] == " ") continue;
 
-    // Notch 1 should be H after changee
-    //await driver?.waitFor(find.byValueKey("Notch.1"));
-    //await driver?.waitFor(find.text('H'));
+      await writeChar(text[i], driver);
+      final combo = '${text[i].toUpperCase()} → ${encText[i].toUpperCase()}';
+
+      await driver?.waitFor(
+        find.text(combo),
+        timeout: const Duration(seconds: 3),
+      );
+    }
+
+    await logout(driver);
   });
 }
