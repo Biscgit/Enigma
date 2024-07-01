@@ -70,6 +70,7 @@ e2e-test:
     - rm flutter.env
     - env | grep "IP_FASTAPI" > flutter.env
     - flutter create --platforms web .
+    - rm test/widget_test.dart
     - flutter pub get
   script:
     - geckodriver --port=4444 &> gecko.logs &
