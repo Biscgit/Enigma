@@ -135,12 +135,13 @@ async def test_postgres_rotors_storage(monkeypatch):
             result = await encrypt("user1", 1, db, clear_chr)
             assert result == enc_chr
 
-        rotors = await db.get_rotors("user1", 1)
-        print(rotors)
+        rotor_ids = await db.get_rotor_ids("user1", 1)
         for i in range(3):
-            rotors[i]["id"] = rotor_end_state[i]["id"]
+            rotor_end_state[i]["id"] = rotor_ids[i]["id"]
+            assert rotor_end_state[i] == await db.get_rotor(
+                username, rotor_ids[i]["id"]
+            )
 
-        assert rotor_end_state == rotors
         # clean up
         await db.disconnect()
         await test_client.close()
