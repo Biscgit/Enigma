@@ -89,8 +89,8 @@ async def test_postgres_rotors_storage(monkeypatch):
 
         clear_text = "loremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnaaliquyameratseddiamvoluptuaatveroeosetaccusametjustoduodolorloremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnaaliquyameratseddiamvoluptuaatveroeosetaccusametjustoduodolorloremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlabore"
         encrypted_text = "azjkkvhkcqgvgkvdrgqsnplvtaymcllaywojjaajfuryxqvxbubhoiqcwiggdzbddczufdxnedjrzlcohlevqnkhqojmbxpxbdfrrdsmtgethfblqkximubeizoyxswpvdlafmdhlszdzhwxnxsatlnveaeezgkcnxinuifeitgksrrymexioyitqmifppqtupycfjzwssocqwonxfolyddbkoxxvsczexmnhvhkpfwirklbjmypdwtectphynfsxnpkxudtdckilkffkyndhvulvwlhhdsflvohdzspeiflgovwcndtfrtzfxpsshkyizpwokyeocwpwctlkkvjrpolkdefibpqkwwdvlunwhvyytdqnfchojwqiuuehabmwxxlpmycaikiivqdzxmpnwlkhq"
-        rotor_end_state = {
-            "Rotor 0": {
+        rotor_end_state = [
+            {
                 "id": 58,
                 "username": "user1",
                 "machine_id": 1,
@@ -103,7 +103,7 @@ async def test_postgres_rotors_storage(monkeypatch):
                 "number": 1,
                 "is_rotate": 1,
             },
-            "Rotor 1": {
+            {
                 "id": 60,
                 "username": "user1",
                 "machine_id": 1,
@@ -116,7 +116,7 @@ async def test_postgres_rotors_storage(monkeypatch):
                 "number": 1,
                 "is_rotate": 0,
             },
-            "Rotor 2": {
+            {
                 "id": 59,
                 "username": "user1",
                 "machine_id": 1,
@@ -129,7 +129,7 @@ async def test_postgres_rotors_storage(monkeypatch):
                 "number": 1,
                 "is_rotate": 1,
             },
-        }
+        ]
 
         for clear_chr, enc_chr in zip(clear_text, encrypted_text):
             result = await encrypt("user1", 1, db, clear_chr)
@@ -138,7 +138,9 @@ async def test_postgres_rotors_storage(monkeypatch):
         rotors = await db.get_rotors("user1", 1)
         print(rotors)
         for i in range(3):
-            rotors[0][f"Rotor {i}"]["id"] = rotor_end_state[f"Rotor {i}"]["id"]
+            rotors[i]["id"] = rotor_end_state[i]["id"]
+
+        assert rotor_end_state == rotors
         # clean up
         await db.disconnect()
         await test_client.close()
