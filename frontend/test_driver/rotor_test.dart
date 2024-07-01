@@ -164,4 +164,32 @@ void main() {
 
     await logout(driver);
   });
+
+  test("Change ukw", timeout: const Timeout(Duration(seconds: 30)), () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
+
+    // set to ukw-c
+    final dropdown = find.byValueKey("DropDownReflector");
+    await driver?.tap(dropdown);
+    final item = find.byValueKey("Item.ukw-c");
+    await driver?.tap(item);
+
+    // type on keyboard
+    final text = "lorem ipsum dolor sit amet".split("");
+    final encText = "mrfxu amgax unkuf tzk vurn".split("");
+    for (int i = 0; i < text.length; i++) {
+      if (text[i] == " ") continue;
+
+      await writeChar(text[i], driver);
+      final combo = '${text[i].toUpperCase()} → ${encText[i].toUpperCase()}';
+
+      await driver?.waitFor(
+        find.text(combo),
+        timeout: const Duration(seconds: 3),
+      );
+    }
+
+    await logout(driver);
+  });
 }
