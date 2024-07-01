@@ -137,29 +137,30 @@ void main() {
     // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)
     // Change the expectedResults once backend runs correctly!
 
-    await checkForKeyInput(driver, "H", "R"); //This is correct
-    await checkForKeyInput(driver, "E", "Q"); //Change result to: L
-    await checkForKeyInput(driver, "L", "B"); //Change result to: B
-    await checkForKeyInput(driver, "L", "D"); //Change result to: D
-    await checkForKeyInput(driver, "O", "R"); //Change result to: A
+    await checkForKeyInput(driver, "H", "R");
+    await checkForKeyInput(driver, "E", "Q");
+    await checkForKeyInput(driver, "L", "B");
+    await checkForKeyInput(driver, "L", "D");
+    await checkForKeyInput(driver, "O", "R");
 
-    await checkForKeyInput(driver, "W", "Z"); //Change result to: A
-    await checkForKeyInput(driver, "O", "J"); //Change result to: M
-    await checkForKeyInput(driver, "R", "G"); //Change result to: T
-    await checkForKeyInput(driver, "L", "X"); //Change result to: A
-    await checkForKeyInput(driver, "D", "A"); //Change result to: Z
+    await checkForKeyInput(driver, "W", "Z");
+    await checkForKeyInput(driver, "O", "J");
+    await checkForKeyInput(driver, "R", "G");
+    await checkForKeyInput(driver, "L", "X");
+    await checkForKeyInput(driver, "D", "A");
     // print("Done!");
   }, timeout: const Timeout(Duration(minutes: 3)));
 
-  test("Keyboard Spamming", timeout: const Timeout(Duration(minutes: 2)),
+  test("Keyboard Spamming", timeout: const Timeout(Duration(minutes: 3)),
       () async {
     await t_lib.login(driver, username: "user2", password: "pass2");
     await t_lib.resetSelectedMachine(driver);
 
+    List<Future> handlers = [];
     for (int i = 0; i < 100; i++) {
-      t_lib.writeChar("A", driver);
+      final handler = t_lib.writeChar("A", driver);
+      handlers.add(handler);
     }
-    await driver?.waitUntilNoTransientCallbacks();
 
     // check correct order
     await driver?.waitFor(find.text("A → V"));

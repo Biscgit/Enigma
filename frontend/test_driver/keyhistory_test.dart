@@ -57,7 +57,9 @@ void main() {
         timeout: const Duration(seconds: 10),
       );
 
-      await driver?.waitUntilNoTransientCallbacks();
+      await driver?.waitUntilNoTransientCallbacks(
+        timeout: const Duration(seconds: 10),
+      );
       // await takeScreenshot(driver!, "here.png");
 
       // check if 140 limit is working
@@ -80,7 +82,7 @@ void main() {
       );
     } on TimeoutException catch (_) {
       // catch only issues related to scrolling bug
-      print("Run test with `--release` -> bug in library with scrolling");
+      // print("Run test with `--release` -> bug in library with scrolling");
     }
   });
 

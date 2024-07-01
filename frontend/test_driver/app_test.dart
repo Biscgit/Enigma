@@ -19,15 +19,15 @@ void main() {
     keyhistory_test.main();
   });
 
-  group('Plugboard:', () {
-    plugboard_test.main();
-  });
-
   group('Rotors:', () {
     rotor_test.main();
   });
 
   group('Adding machines:', () {
     add_machine_test.main();
+  });
+
+  group('Plugboard:', () {
+    plugboard_test.main();
   });
 }

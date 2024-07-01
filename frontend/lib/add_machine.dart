@@ -149,13 +149,14 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                             const Text("Rotor(en) auswählen"),
                             //const Text("Auswählbare Rotoren"),
                             StatefulCheckboxMenu(
-                                key: const ValueKey("AddMachine-Key-RotorList"),
-                                selectedValues: _selectedValueRotorenAuswahl,
-                                onChanged: (value) {
-                                  _selectedValueRotorenAuswahl = value;
-                                },
-                                items: itemsRotorenAuswahl,
-                                name: "hier auswählen"),
+                              key: const ValueKey("AddMachine-Key-RotorList"),
+                              selectedValues: _selectedValueRotorenAuswahl,
+                              onChanged: (value) {
+                                _selectedValueRotorenAuswahl = value;
+                              },
+                              items: itemsRotorenAuswahl,
+                              name: "Hier Rotoren auswählen",
+                            ),
                           ],
                         ),
                         customMachineOptions(
@@ -168,7 +169,7 @@ class AddMachinePopUpState extends State<AddMachinePopUp> {
                                 _selectedValueUmkehrwalzen = value;
                               },
                               items: itemsUmkehrwalzen,
-                              name: "hier auswählen",
+                              name: "Hier UKWs auswählen",
                             ),
                           ],
                         ),
@@ -350,26 +351,28 @@ class StatefulCheckboxMenuState extends State<StatefulCheckboxMenu> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      child: Row(
-        children: [
-          Text(name),
-          const Icon(Icons.arrow_drop_down),
-        ],
-      ),
-      itemBuilder: (BuildContext context) {
-        return [
-          PopupMenuItem<String>(
-            enabled: false,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxHeight: 400,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: widget.items.map((String item) {
+Widget build(BuildContext context) {
+  return PopupMenuButton<String>(
+    child: Row(
+      children: [
+        Text(name),
+        const Icon(Icons.arrow_drop_down),
+      ],
+    ),
+    itemBuilder: (BuildContext context) {
+      return [
+        PopupMenuItem<String>(
+          enabled: false,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxHeight: 400,
+            ),
+            child: SingleChildScrollView(
+              key: ValueKey("SingleChildScrollView-Key-$name"),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...widget.items.map((String item) {
                     return StatefulBuilder(
                       builder: (BuildContext context, StateSetter setState) {
                         final isChecked = _selectedValues.contains(item);
@@ -385,14 +388,22 @@ class StatefulCheckboxMenuState extends State<StatefulCheckboxMenu> {
                         );
                       },
                     );
-                  }).toList(),
-                ),
+                  }),
+                  ElevatedButton(
+                    key: ValueKey("BottomButton-$name"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("Close"),
+                  ),
+                ],
               ),
             ),
           ),
-        ];
-      },
-      onSelected: (_) {},
-    );
-  }
+        ),
+      ];
+    },
+    onSelected: (_) {},
+  );
+}
 }

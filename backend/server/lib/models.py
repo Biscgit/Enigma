@@ -1,4 +1,4 @@
-from pydantic import BaseModel, root_validator, validator
+from pydantic import BaseModel, model_validator, field_validator
 from typing import Optional, List
 import string
 
@@ -20,7 +20,7 @@ class MinRotor(BaseModel):
     number: int
     is_rotate: Optional[bool] = True
 
-    @root_validator(pre=True)
+    @model_validator(mode='before')
     def id_must_be_positive(cls, values):
         for key, value in values.items():
             if isinstance(value, int):
@@ -45,7 +45,7 @@ class UpdateRotor(BaseModel):
     offset_value: int
     id: int
 
-    @validator("rotor_position")
+    @field_validator("rotor_position")
     def check_pos(cls, value):
         check_len(value, 1, 1, "rotor_position")
         return value.lower()
@@ -57,3 +57,10 @@ class Machine(BaseModel):
     number_rotors: int
     rotors: List[int]
     reflectors: List[str]
+
+    @field_validator("number_rotors")
+    def check_int(cls, value):
+        if 0 < value < 100:
+            return value
+
+        raise ValueError("Number Rotors must be between 1 and 99!")

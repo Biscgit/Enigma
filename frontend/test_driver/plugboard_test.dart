@@ -16,7 +16,7 @@ void main() {
     }
   });
 
-  // ToDo: fix test -> custom machines with plugboard enabled/disabled
+  // Old test, rewritten at the bottom
   // test("Persistent enabled state",
   //     timeout: const Timeout(Duration(seconds: 60)), () async {
   //   // reset machines
@@ -119,7 +119,8 @@ void main() {
     await logout(driver);
   });
 
-  test("Reset all plugs", timeout: const Timeout(Duration(minutes: 2)), () async {
+  test("Reset all plugs", timeout: const Timeout(Duration(minutes: 2)),
+      () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
@@ -241,5 +242,70 @@ void main() {
         timeout: const Duration(seconds: 3),
       );
     }
+  });
+
+  test("Persistent activation state (toggle)",
+      timeout: const Timeout(Duration(minutes: 3)), () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
+    await driver?.waitFor(find.byValueKey("plugboard_container"));
+
+    // create new machine with disabled plugboard
+    const machineName = "NoPlugboardMachine";
+    await createSimpleMachine(driver, machineName, false);
+    await selectMachineByName(driver, machineName);
+    await driver?.waitForAbsent(
+      find.byValueKey("plugboard_container"),
+      timeout: const Duration(seconds: 3),
+    );
+
+    // create new machine with disabled plugboard
+    const machineName2 = "PlugboardMachine";
+    await createSimpleMachine(driver, machineName2, true);
+    await selectMachineByName(driver, machineName2);
+    await driver?.waitFor(
+      find.byValueKey("plugboard_container"),
+      timeout: const Duration(seconds: 3),
+    );
+
+    await logout(driver);
+
+    // create machine with same name but without plugboard
+    await login(driver, username: "user2", password: "pass2");
+    const machineName3 = "NoPlugboardMachineNext";
+    await createSimpleMachine(driver, machineName3, false, offset: 19);
+    await selectMachineByName(driver, machineName3);
+    await driver?.waitForAbsent(
+      find.byValueKey("plugboard_container"),
+      timeout: const Duration(seconds: 3),
+    );
+
+    await logout(driver);
+
+    // check if both are persistent after logging in again
+    await login(driver);
+    await selectMachineByName(driver, machineName);
+    await driver?.waitForAbsent(
+      find.byValueKey("plugboard_container"),
+      timeout: const Duration(seconds: 3),
+    );
+
+    await selectMachineByName(driver, machineName2);
+    await driver?.waitFor(
+      find.byValueKey("plugboard_container"),
+      timeout: const Duration(seconds: 3),
+    );
+
+    await logout(driver);
+
+    // cleanup
+    await login(driver);
+    await deleteMachine(driver, machineName);
+    await deleteMachine(driver, machineName2);
+    await logout(driver);
+
+    await login(driver, username: "user2", password: "pass2");
+    await deleteMachine(driver, machineName3);
+    await logout(driver);
   });
 }
