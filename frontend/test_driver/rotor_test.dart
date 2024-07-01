@@ -103,7 +103,7 @@ void main() {
     await driver?.tap(plusButtonRotor3);
     await checkValue(rotorPosition3, "C");
 
-    // RESET
+    // Reset
     await driver?.tap(minusButtonRotor3);
     await driver?.tap(minusButtonRotor3);
 
@@ -114,24 +114,54 @@ void main() {
     await checkValue(rotorPosition3, "X");
   });
 
-  test("Change rotor 1 to 5", timeout: const Timeout(Duration(seconds: 30)),
+  test("Change rotors", timeout: const Timeout(Duration(seconds: 60)),
       () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
-    final dropdown = find.byValueKey("DropDown.1");
-    final item = find.byValueKey("Item.1.5");
-    final notchKey = find.byValueKey("Notch.1");
-    // Find dropdown from rotor 1
-    await driver?.tap(dropdown);
+    // set rotor 1
+    final dropdown1 = find.byValueKey("DropDown.1");
+    await driver?.tap(dropdown1);
+    final item1 = find.byValueKey("Item.1.5");
+    await driver?.tap(item1);
 
-    // Change to rotor 5
-    await driver?.tap(item);
+    // set rotor 2
+    final dropdown2 = find.byValueKey("DropDown.2");
+    await driver?.tap(dropdown2);
+    final item2 = find.byValueKey("Item.2.2");
+    await driver?.tap(item2);
 
-    await checkValue(notchKey, "H");
+    // set rotor 3
+    final dropdown3 = find.byValueKey("DropDown.3");
+    await driver?.tap(dropdown3);
+    final item3 = find.byValueKey("Item.3.4");
+    await driver?.tap(item3);
 
-    // Notch 1 should be H after changee
-    //await driver?.waitFor(find.byValueKey("Notch.1"));
-    //await driver?.waitFor(find.text('H'));
+    // check notches
+    final notch1 = find.byValueKey("Notch.1");
+    await checkValue(notch1, "H");
+    final notch2 = find.byValueKey("Notch.2");
+    await checkValue(notch2, "M");
+    final notch3 = find.byValueKey("Notch.3");
+    await checkValue(notch3, "R");
+
+    // type on keyboard
+    final text =
+        "Lorem ipsum dolor sit amet consetetur sadipscing elitr".split("");
+    final encText =
+        "sycgk ajert giiss lss uvws bdkvzspvka kjueouflwq ignqv".split("");
+    for (int i = 0; i < text.length; i++) {
+      if (text[i] == " ") continue;
+
+      await writeChar(text[i], driver);
+      final combo = '${text[i].toUpperCase()} → ${encText[i].toUpperCase()}';
+
+      await driver?.waitFor(
+        find.text(combo),
+        timeout: const Duration(seconds: 3),
+      );
+    }
+
+    await logout(driver);
   });
 }
