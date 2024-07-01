@@ -143,7 +143,7 @@ Future<void> selectMachineByName(FlutterDriver? driver, String name) async {
 }
 
 Future<void> createSimpleMachine(FlutterDriver? driver, String machineName,
-    bool plugboard, {int offset = 1}) async {
+    bool plugboard, {int rotorID = 1}) async {
   await driver?.tap(find.byValueKey('addButton'));
   await driver?.waitUntilNoTransientCallbacks(
       timeout: const Duration(seconds: 3));
@@ -167,7 +167,7 @@ Future<void> createSimpleMachine(FlutterDriver? driver, String machineName,
 
   // rotors
   await driver?.tap(find.byValueKey("AddMachine-Key-RotorList"));
-  await driver?.tap(find.byValueKey("Checkbox-Key-Rotor $offset"));
+  await driver?.tap(find.byValueKey("Checkbox-Key-Rotor $rotorID"));
   final closeRotorSelect =
       find.byValueKey("BottomButton-Hier Rotoren auswählen");
   await driver?.scrollUntilVisible(
