@@ -337,7 +337,8 @@ class ReflectorState extends State<Reflector> {
                         data.length,
                         (index) => DropdownMenuItem(
                               value: data[index],
-                              key: ValueKey("Item.${data[index]}"),
+                              key: ValueKey(
+                                  "Item.${data[index].toString().toLowerCase()}"),
                               child: Text(
                                 data[index],
                               ),
