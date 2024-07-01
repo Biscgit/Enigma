@@ -25,7 +25,8 @@ lint-frontend:
   image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
   before_script:
     - cd frontend/
-    - flutter create .
+    - flutter create --platforms web .
+    - rm test/widget_test.dart
     - flutter pub get
   script:
     - flutter analyze
