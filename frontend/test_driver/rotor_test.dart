@@ -17,6 +17,11 @@ void main() {
     }
   });
 
+  test('Check Flutter-driver health', () async {
+    Health? health = await driver?.checkHealth();
+    assert(health?.status == HealthStatus.ok);
+  });
+
   Future<void> checkValue(SerializableFinder item, String value) async {
     assert(await driver?.getText(item) == value);
   }

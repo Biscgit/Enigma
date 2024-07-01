@@ -16,6 +16,11 @@ void main() {
     }
   });
 
+  test('Check Flutter-driver health', () async {
+    Health? health = await driver?.checkHealth();
+    assert(health?.status == HealthStatus.ok);
+  });
+
   // Old test, rewritten at the bottom
   // test("Persistent enabled state",
   //     timeout: const Timeout(Duration(seconds: 60)), () async {

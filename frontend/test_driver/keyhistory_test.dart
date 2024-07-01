@@ -18,6 +18,11 @@ void main() {
     }
   });
 
+  test('Check Flutter-driver health', () async {
+    Health? health = await driver?.checkHealth();
+    assert(health?.status == HealthStatus.ok);
+  });
+
   test('History and Limit of 140', timeout: const Timeout(Duration(minutes: 5)),
       () async {
     await login(driver);
