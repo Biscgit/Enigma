@@ -65,6 +65,22 @@ void main() {
     //await driver?.waitFor(find.text('X'));
   });
 
+  test('Rotote if key presses', timeout: const Timeout(Duration(seconds: 60)),
+      () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
+    final rotorPosition1 = find.byValueKey("RotorPosition.1");
+    final rotorPosition2 = find.byValueKey("RotorPosition.2");
+    await checkValue(rotorPosition1, "A");
+    await checkValue(rotorPosition1, "B");
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (var i = 0; i < 17; i++) {
+      await writeChar("q", driver);
+      await checkValue(rotorPosition1, alphabet[i]);
+    }
+    await checkValue(rotorPosition2, "B");
+  });
+
   test("Rotors rotate", timeout: const Timeout(Duration(seconds: 60)),
       () async {
     await login(driver);
@@ -120,11 +136,11 @@ void main() {
     await resetSelectedMachine(driver);
 
     final dropdown = find.byValueKey("DropDown.1");
-    final item = find.byValueKey("Item.1.5");
     final notchKey = find.byValueKey("Notch.1");
     // Find dropdown from rotor 1
     await driver?.tap(dropdown);
 
+    final item = find.byValueKey("Item.1.5");
     // Change to rotor 5
     await driver?.tap(item);
 
