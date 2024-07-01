@@ -18,52 +18,60 @@ void main() {
   });
 
   test("Rotors exists", timeout: const Timeout(Duration(seconds: 60)),
-          () async {
-        await login(driver);
-        await resetSelectedMachine(driver);
+      () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
 
-        final rotor1 = find.text('Rotor 1');
-        final rotor2 = find.text('Rotor 2');
-        final rotor3 = find.text('Rotor 3');
-        await driver?.waitFor(rotor1);
-        await driver?.waitFor(rotor2);
-        await driver?.waitFor(rotor3);
-      });
+    final rotor1 = find.text('Rotor 1');
+    final rotor2 = find.text('Rotor 2');
+    final rotor3 = find.text('Rotor 3');
+    await driver?.waitFor(rotor1);
+    await driver?.waitFor(rotor2);
+    await driver?.waitFor(rotor3);
+  });
 
   test("Plus-Minus-Notch", timeout: const Timeout(Duration(seconds: 60)),
-          () async {
-        await login(driver);
-        await resetSelectedMachine(driver);
+      () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
 
-        final plusButton = find.byValueKey("ChangeLetter.1.plus");
-        final minusButton = find.byValueKey("ChangeLetter.1.minus");
-        final notchKey = find.byValueKey("Notch.1");
+    final plusButton = find.byValueKey("ChangeLetter.1.plus");
+    final minusButton = find.byValueKey("ChangeLetter.1.minus");
+    final notchKey = find.byValueKey("Notch.1");
+    final rotorPosition = find.byValueKey("RotorPosition.1");
 
-        // Current value
-        Future<String?> getNotchValue() async {
-          return await driver?.getText(notchKey);
-        }
+    // Current value
+    Future<void> checkNotchValue(String value) async {
+      assert(await driver?.getText(notchKey) == value);
+    }
 
-        // initial value is Y
-        await getNotchValue();
-        await driver?.waitFor(find.text('Y'));
+    Future<void> checkPositionValue(String value) async {
+      assert(await driver?.getText(rotorPosition) == value);
+    }
 
-        // Plus button (rom Y to Z)
-        await driver?.tap(plusButton);
-        await getNotchValue();
-        await driver?.waitFor(find.text('Z'));
+    // initial value is Y
+    await checkNotchValue("Y");
+    await checkPositionValue("A");
+    //await driver?.waitFor(find.text('Y'));
 
-        // Reset notch
-        await driver?.tap(minusButton); // Y
+    // Plus button (rom Y to Z)
+    await driver?.tap(plusButton);
+    await checkNotchValue("Z");
+    await checkPositionValue("B");
+    //await driver?.waitFor(find.text('Z'));
 
-        // Minus Button (From Y to X)
-        await driver?.tap(minusButton);
-        await getNotchValue();
-        await driver?.waitFor(find.text('X'));
-      });
+    // Reset notch
+    await driver?.tap(minusButton); // Y
+
+    // Minus Button (From Y to X)
+    await driver?.tap(minusButton);
+    await checkNotchValue("X");
+    await checkPositionValue("Z");
+    //await driver?.waitFor(find.text('X'));
+  });
 
   test("Rotors rotate", timeout: const Timeout(Duration(seconds: 60)),
-          () async {
+      () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
@@ -116,7 +124,7 @@ void main() {
   });
 
   test("Change rotor 1 to 5", timeout: const Timeout(Duration(seconds: 30)),
-          () async {
+      () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
@@ -131,3 +139,4 @@ void main() {
     //await driver?.waitFor(find.text('H'));
   });
 }
+
