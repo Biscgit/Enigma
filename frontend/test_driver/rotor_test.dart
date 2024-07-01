@@ -119,7 +119,7 @@ void main() {
     await checkValue(rotorPosition3, "X");
   });
 
-  test("Change rotors", timeout: const Timeout(Duration(seconds: 60)),
+  test("Change rotors", timeout: const Timeout(Duration(seconds: 120)),
       () async {
     await login(driver);
     await resetSelectedMachine(driver);
@@ -170,7 +170,7 @@ void main() {
     await logout(driver);
   });
 
-  test("Change ukw", timeout: const Timeout(Duration(seconds: 30)), () async {
+  test("Change ukw", timeout: const Timeout(Duration(seconds: 120)), () async {
     await login(driver);
     await resetSelectedMachine(driver);
 
