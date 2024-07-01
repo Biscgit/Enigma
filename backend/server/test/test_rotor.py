@@ -138,9 +138,7 @@ async def test_postgres_rotors_storage(monkeypatch):
         rotor_ids = await db.get_rotor_ids("user1", 1)
         for i in range(3):
             rotor_end_state[i]["id"] = rotor_ids[i]["id"]
-            assert rotor_end_state[i] == await db.get_rotor(
-                username, rotor_ids[i]["id"]
-            )
+            assert rotor_end_state[i] == await db.get_rotor("user1", rotor_ids[i]["id"])
 
         # clean up
         await db.disconnect()
