@@ -70,8 +70,8 @@ void main() {
       await tt.checkForKeyInput(driver, "W", "C");
       await tt.checkForKeyInput(driver, "O", "A");
       await tt.checkForKeyInput(driver, "R", "P");
-      await tt.checkForKeyInput(driver, "L", "S");
-      await tt.checkForKeyInput(driver, "D", "H");
+      await tt.checkForKeyInput(driver, "L", "H");
+      await tt.checkForKeyInput(driver, "D", "S");
   });
 
   test("Delete machine", timeout: const Timeout(Duration(seconds: 60)),
