@@ -147,6 +147,7 @@ async def test_postgres_rotors_storage(monkeypatch):
             },
             {
                 "id": 2,
+                "is_rotate": True,
                 "username": "user1",
                 "scramble_alphabet": "ajdksiruxblhwtmcqgznpyfvoe",
                 "rotor_position": "a",
@@ -159,6 +160,7 @@ async def test_postgres_rotors_storage(monkeypatch):
             },
             {
                 "id": 3,
+                "is_rotate": True,
                 "username": "user1",
                 "scramble_alphabet": "bdfhjlcprtxvznyeiwgakmusqo",
                 "rotor_position": "a",
@@ -171,6 +173,7 @@ async def test_postgres_rotors_storage(monkeypatch):
             },
             {
                 "id": 4,
+                "is_rotate": True,
                 "username": "user1",
                 "scramble_alphabet": "esovpzjayquirhxlnftgkdcmwb",
                 "rotor_position": "a",
@@ -183,6 +186,7 @@ async def test_postgres_rotors_storage(monkeypatch):
             },
             {
                 "id": 5,
+                "is_rotate": True,
                 "username": "user1",
                 "scramble_alphabet": "vzbrgityupsdnhlxawmjqofeck",
                 "rotor_position": "a",
