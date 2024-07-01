@@ -52,13 +52,11 @@ void main() {
     // initial value is Y
     await checkValue(notchKey, "Y");
     await checkValue(rotorPosition, "A");
-    //await driver?.waitFor(find.text('Y'));
 
     // Plus button (rom Y to Z)
     await driver?.tap(plusButton);
     await checkValue(notchKey, "Z");
     await checkValue(rotorPosition, "B");
-    //await driver?.waitFor(find.text('Z'));
 
     // Reset notch
     await driver?.tap(minusButton); // Y
@@ -67,7 +65,7 @@ void main() {
     await driver?.tap(minusButton);
     await checkValue(notchKey, "X");
     await checkValue(rotorPosition, "Z");
-    //await driver?.waitFor(find.text('X'));
+    await logout(driver);
   });
 
   test('Rotote if key presses', timeout: const Timeout(Duration(seconds: 60)),
@@ -77,13 +75,16 @@ void main() {
     final rotorPosition1 = find.byValueKey("RotorPosition.1");
     final rotorPosition2 = find.byValueKey("RotorPosition.2");
     await checkValue(rotorPosition1, "A");
-    await checkValue(rotorPosition1, "B");
     var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (var i = 0; i < 17; i++) {
+    for (var i = 0; i < 18; i++) {
       await writeChar("q", driver);
       await checkValue(rotorPosition1, alphabet[i]);
     }
     await checkValue(rotorPosition2, "B");
+    await writeChar("q", driver);
+    await checkValue(rotorPosition2, "B");
+    await checkValue(rotorPosition1, alphabet[18]);
+    await logout(driver);
   });
 
   test("Rotors rotate", timeout: const Timeout(Duration(seconds: 60)),
@@ -95,20 +96,20 @@ void main() {
     final minusButtonRotor1 = find.byValueKey("ChangeRotor.1.minus");
     final rotorPosition1 = find.byValueKey("RotorPosition.1");
 
+    final plusButtonRotor2 = find.byValueKey("ChangeRotor.2.plus");
+    final minusButtonRotor2 = find.byValueKey("ChangeRotor.2.minus");
+    final rotorPosition2 = find.byValueKey("RotorPosition.2");
+
     final plusButtonRotor3 = find.byValueKey("ChangeRotor.3.plus");
     final minusButtonRotor3 = find.byValueKey("ChangeRotor.3.minus");
     final rotorPosition3 = find.byValueKey("RotorPosition.3");
 
-    /*Future<String?> getRotorPosition(int rotorNumber) async {
-      final result = await driver?.requestData('getRotorPosition:$rotorNumber');
-      return result;
-    }*/
-
     // Initial values A
     await checkValue(rotorPosition1, "A");
+    await checkValue(rotorPosition2, "A");
     await checkValue(rotorPosition3, "A");
 
-    // Rotate rotor 1 forward (A to B)
+    // Rotate rotor 1 A to B
     await driver?.tap(plusButtonRotor1);
     await checkValue(rotorPosition1, "B");
 
@@ -118,6 +119,25 @@ void main() {
     // Rotate rotor 1 A to Z
     await driver?.tap(minusButtonRotor1);
     await checkValue(rotorPosition1, "Z");
+
+    // Rotate rotor 2 A to X
+    await driver?.tap(minusButtonRotor2);
+    await driver?.tap(minusButtonRotor2);
+    await driver?.tap(minusButtonRotor2);
+    await checkValue(rotorPosition2, "X");
+
+    // Reset
+    await driver?.tap(plusButtonRotor2);
+    await driver?.tap(plusButtonRotor2);
+    await driver?.tap(plusButtonRotor2);
+
+    // Rotate rotor 2 A to F
+    await driver?.tap(plusButtonRotor2);
+    await driver?.tap(plusButtonRotor2);
+    await driver?.tap(plusButtonRotor2);
+    await driver?.tap(plusButtonRotor2);
+    await driver?.tap(plusButtonRotor2);
+    await checkValue(rotorPosition2, "F");
 
     // Rotate rotor 3 A to C
     await driver?.tap(plusButtonRotor3);
@@ -133,6 +153,7 @@ void main() {
     await driver?.tap(minusButtonRotor3);
     await driver?.tap(minusButtonRotor3);
     await checkValue(rotorPosition3, "X");
+    await logout(driver);
   });
 
   test("Change rotors", timeout: const Timeout(Duration(seconds: 120)),
