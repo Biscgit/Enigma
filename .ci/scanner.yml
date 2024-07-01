@@ -25,9 +25,10 @@ lint-frontend:
   image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
   before_script:
     - cd frontend/
+    - flutter create .
     - flutter pub get
   script:
-    - flutter analyze --no-fatal-infos
+    - flutter analyze
   allow_failure: true
   rules: 
    - changes:
