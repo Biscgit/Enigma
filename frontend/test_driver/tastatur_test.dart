@@ -1,6 +1,7 @@
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
-import 'test_lib.dart' as t_lib;
+import 'test_lib.dart';
+
 /*
 class FakeTesterApp extends StatelessWidget {
   final Widget child;
@@ -16,28 +17,6 @@ class FakeTesterApp extends StatelessWidget {
   }
 }
 */
-
-void login(FlutterDriver? driver) async {
-  // Find the button by its label.
-  final usernameField = find.byValueKey('username');
-  final passwordField = find.byValueKey('password');
-  final button = find.text('Login');
-
-  await driver?.tap(usernameField);
-  await driver?.enterText("user1");
-
-  await driver?.tap(passwordField);
-  await driver?.enterText("pass1");
-
-  await driver?.tap(button);
-
-  // check if message appears
-  await driver?.waitForAbsent(
-    find.byValueKey('failedLogin'),
-    timeout: const Duration(seconds: 5),
-  );
-}
-
 Future<String> findSquareButtonKey(
     FlutterDriver? driver, String baseKey) async {
   final notHighlightedKey = 'Tastatur-Key-$baseKey-0';
@@ -130,8 +109,8 @@ void main() {
 
   test('Tastatur + Lamppanel + Backend test', () async {
     //This test passing means that all components work correctly!
-    await t_lib.login(driver);
-    await t_lib.resetSelectedMachine(driver);
+    await login(driver);
+    await resetSelectedMachine(driver);
 
     // https://www.101computing.net/enigma-machine-emulator/
     // Encryption results should be what this returns (in AAA configuration, no plugboard, etc.)
@@ -153,12 +132,12 @@ void main() {
 
   test("Keyboard Spamming", timeout: const Timeout(Duration(minutes: 3)),
       () async {
-    await t_lib.login(driver, username: "user2", password: "pass2");
-    await t_lib.resetSelectedMachine(driver);
+    await login(driver, username: "user2", password: "pass2");
+    await resetSelectedMachine(driver);
 
     List<Future> handlers = [];
     for (int i = 0; i < 100; i++) {
-      final handler = t_lib.writeChar("A", driver);
+      final handler = writeChar("A", driver);
       handlers.add(handler);
     }
     await driver?.waitUntilNoTransientCallbacks(
@@ -172,6 +151,6 @@ void main() {
     await driver?.waitFor(find.text("A → N"));
     await driver?.waitFor(find.text("A → Q"));
 
-    await t_lib.logout(driver);
+    await logout(driver);
   });
 }

@@ -205,18 +205,18 @@ class RotorWidgetState extends State<RotorWidget> {
           Text(
             'Rotor ${widget.rotorNumber}',
             style: const TextStyle(fontSize: 16),
+            key: ValueKey("Rotor.${widget.rotorNumber}"),
           ),
           DropdownButton<int>(
             value: selectedRotor,
+            key: ValueKey("DropDown.${widget.rotorNumber}"),
             items: List.generate(
                 numberRotors,
                 (index) => DropdownMenuItem(
+                      key: ValueKey("Item.${widget.rotorNumber}.${index + 1}"),
                       value: index + 1,
-                      key: ValueKey("DropDown.${widget.rotorNumber}"),
                       child: Text(
                         'Rotor ${index + 1}',
-                        key: ValueKey(
-                            "Item.${widget.rotorNumber}.$selectedRotor"),
                       ),
                     )),
             onChanged: _changeRotorSetting,
@@ -332,14 +332,14 @@ class ReflectorState extends State<Reflector> {
                   )
                 : DropdownButton<String>(
                     value: item,
+                    key: const ValueKey("DropDownReflector"),
                     items: List.generate(
                         data.length,
                         (index) => DropdownMenuItem(
                               value: data[index],
-                              key: const ValueKey("DropDownReflector"),
+                              key: ValueKey("Item.${data[index]}"),
                               child: Text(
                                 data[index],
-                                key: ValueKey("Item.${data[index]}"),
                               ),
                             )),
                     onChanged: changeReflector,

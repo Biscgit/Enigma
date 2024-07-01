@@ -17,87 +17,94 @@ void main() {
     }
   });
 
-
   test("Test cancel button", timeout: const Timeout(Duration(seconds: 30)),
-    () async {
-      await login(driver);
-      await pressAddButton(driver);
+      () async {
+    await login(driver);
+    await pressAddButton(driver);
+    await resetSelectedMachine(driver);
 
-      final cancelButton = find.byValueKey("AddMachine-Key-Cancel"); // Test cancel button
-      await driver?.waitFor(cancelButton, timeout: const Duration(seconds: 5));
-      await driver?.tap(cancelButton);
+    final cancelButton =
+        find.byValueKey("AddMachine-Key-Cancel"); // Test cancel button
+    await driver?.waitFor(cancelButton, timeout: const Duration(seconds: 5));
+    await driver?.tap(cancelButton);
   });
 
   test("Create new machine", timeout: const Timeout(Duration(seconds: 180)),
-    () async {
-      await login(driver);
-      await pressAddButton(driver);
+      () async {
+    await login(driver);
+    await pressAddButton(driver);
+    await resetSelectedMachine(driver);
 
-      await enterName(driver);
-      await togglePlugboard(driver);
-      await rotorNrTestingNoRegEx(driver, 0);
-      await selectRotors(driver);
-      // Test that if you click now, it doesnt work
-      final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
-      await driver?.tap(confirmKey); // Nothing should happen here because UKWs are not yet selected
-      final cantCreateMachineSoPressOKKey = find.byValueKey("AddMachine-Cant-Create-OK");
-      await driver?.tap(cantCreateMachineSoPressOKKey);
-      await selectUKW(driver);
-      await driver?.tap(confirmKey); // Nothing should happen here because 0 rotors are entered
-      await driver?.tap(cantCreateMachineSoPressOKKey);
-      await rotorNrTestingNoRegEx(driver, 69); // haha 69
-      await driver?.tap(confirmKey); // Now it should work.
-    });
-  
+    await enterName(driver);
+    await togglePlugboard(driver);
+    await rotorNrTestingNoRegEx(driver, 0);
+    await selectRotors(driver);
+    // Test that if you click now, it doesnt work
+    final confirmKey = find.byValueKey("AddMachine-Key-Confirm");
+    await driver?.tap(
+        confirmKey); // Nothing should happen here because UKWs are not yet selected
+    final cantCreateMachineSoPressOKKey =
+        find.byValueKey("AddMachine-Cant-Create-OK");
+    await driver?.tap(cantCreateMachineSoPressOKKey);
+    await selectUKW(driver);
+    await driver?.tap(
+        confirmKey); // Nothing should happen here because 0 rotors are entered
+    await driver?.tap(cantCreateMachineSoPressOKKey);
+    await rotorNrTestingNoRegEx(driver, 69); // haha 69
+    await driver?.tap(confirmKey); // Now it should work.
+  });
 
   test("Test new machine", timeout: const Timeout(Duration(seconds: 180)),
-    () async {
-      await login(driver);
-      final drawerButton = find.byTooltip('Open navigation menu');
-      await driver?.tap(drawerButton);
+      () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
+    final drawerButton = find.byTooltip('Open navigation menu');
+    await driver?.tap(drawerButton);
 
-      final createdMachine = find.byValueKey("sidebar.This is a test machine.");
-      await driver?.tap(createdMachine);
+    final createdMachine = find.byValueKey("sidebar.This is a test machine.");
+    await driver?.tap(createdMachine);
 
-      await Future.delayed(const Duration(seconds: 5)); // Give some time to load
+    await Future.delayed(const Duration(seconds: 5)); // Give some time to load
 
-      await tt.checkForKeyInput(driver, "H", "N");
-      await tt.checkForKeyInput(driver, "E", "C");
-      await tt.checkForKeyInput(driver, "L", "B");
-      await tt.checkForKeyInput(driver, "L", "U");
-      await tt.checkForKeyInput(driver, "O", "R");
+    await tt.checkForKeyInput(driver, "H", "N");
+    await tt.checkForKeyInput(driver, "E", "C");
+    await tt.checkForKeyInput(driver, "L", "B");
+    await tt.checkForKeyInput(driver, "L", "U");
+    await tt.checkForKeyInput(driver, "O", "R");
 
-      await tt.checkForKeyInput(driver, "W", "C");
-      await tt.checkForKeyInput(driver, "O", "A");
-      await tt.checkForKeyInput(driver, "R", "P");
-      await tt.checkForKeyInput(driver, "L", "H");
-      await tt.checkForKeyInput(driver, "D", "S");
+    await tt.checkForKeyInput(driver, "W", "C");
+    await tt.checkForKeyInput(driver, "O", "A");
+    await tt.checkForKeyInput(driver, "R", "P");
+    await tt.checkForKeyInput(driver, "L", "H");
+    await tt.checkForKeyInput(driver, "D", "S");
   });
 
   test("Delete machine", timeout: const Timeout(Duration(seconds: 60)),
-    () async {
-      await login(driver);
+      () async {
+    await login(driver);
+    await resetSelectedMachine(driver);
 
-      final drawerButton = find.byTooltip('Open navigation menu');
-      await driver?.tap(drawerButton);
+    final drawerButton = find.byTooltip('Open navigation menu');
+    await driver?.tap(drawerButton);
 
-      final createdMachine = find.byValueKey("sidebar.This is a test machine.");
-      await driver?.tap(createdMachine);
+    final createdMachine = find.byValueKey("sidebar.This is a test machine.");
+    await driver?.tap(createdMachine);
 
-      final deleteButton = find.byValueKey("deleteButton");
-      await driver?.tap(deleteButton);
+    final deleteButton = find.byValueKey("deleteButton");
+    await driver?.tap(deleteButton);
 
-      final confirmFirst = find.byValueKey("YesButtonDeletePopup");
-      await driver?.tap(confirmFirst);
-      final confirmFinal = find.byValueKey("OKButtonDeleteFinal");
-      await driver?.tap(confirmFinal);
+    final confirmFirst = find.byValueKey("YesButtonDeletePopup");
+    await driver?.tap(confirmFirst);
+    final confirmFinal = find.byValueKey("OKButtonDeleteFinal");
+    await driver?.tap(confirmFinal);
 
-      await Future.delayed(const Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 5));
 
-      final enigma1 = await driver?.getText(find.byValueKey("AppbarTitle"));
-      assert(enigma1 == "Enigma I");
-    });
+    final enigma1 = await driver?.getText(find.byValueKey("AppbarTitle"));
+    assert(enigma1 == "Enigma I");
+  });
 }
+
 Future<void> enterName(FlutterDriver? driver) async {
   final nameTextfield = find.byValueKey("AddMachine-Key-Name");
   await driver?.waitFor(nameTextfield, timeout: const Duration(seconds: 10));
@@ -112,8 +119,8 @@ Future<void> togglePlugboard(FlutterDriver? driver) async {
   await driver?.tap(plugboardSwitch);
   await driver?.tap(plugboardSwitch);
   await driver?.tap(plugboardSwitch); //On, off, on
-    
 }
+
 Future<void> pressAddButton(FlutterDriver? driver) async {
   var addButton = find.byValueKey('addButton');
   await driver?.tap(addButton);
@@ -123,7 +130,8 @@ Future<void> selectRotors(FlutterDriver? driver) async {
   // Test rotor selection list
 
   final rotorSelectorMenu = find.byValueKey("AddMachine-Key-RotorList");
-  final singleChildDing = find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen");
+  final singleChildDing =
+      find.byValueKey("SingleChildScrollView-Key-Hier Rotoren auswählen");
   final closingKey = find.byValueKey("BottomButton-Hier Rotoren auswählen");
   await driver?.tap(rotorSelectorMenu);
 
@@ -136,15 +144,16 @@ Future<void> selectRotors(FlutterDriver? driver) async {
   await driver?.tap(rotor3);
   await driver?.scrollUntilVisible(singleChildDing, rotor16, dyScroll: -1000.0);
   await driver?.tap(rotor16);
-  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -1000.0);
+  await driver?.scrollUntilVisible(singleChildDing, closingKey,
+      dyScroll: -1000.0);
   await driver?.tap(closingKey);
 }
 
 Future<void> selectUKW(FlutterDriver? driver) async {
-
   final uKWSelectorMenu = find.byValueKey("AddMachine-Key-UKWList");
   final closingKey = find.byValueKey("BottomButton-Hier UKWs auswählen");
-  final singleChildDing = find.byValueKey("SingleChildScrollView-Key-Hier UKWs auswählen");
+  final singleChildDing =
+      find.byValueKey("SingleChildScrollView-Key-Hier UKWs auswählen");
   await driver?.tap(uKWSelectorMenu);
 
   final uKWA = find.byValueKey("Checkbox-Key-UKW-A");
@@ -159,20 +168,23 @@ Future<void> selectUKW(FlutterDriver? driver) async {
   await driver?.tap(uKWB);
   await driver?.scrollUntilVisible(singleChildDing, uKWC, dyScroll: -1000.0);
   await driver?.tap(uKWC);
-  await driver?.scrollUntilVisible(singleChildDing, uKWDAsterisk, dyScroll: -1000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWDAsterisk,
+      dyScroll: -1000.0);
   await driver?.tap(uKWDAsterisk);
-  await driver?.scrollUntilVisible(singleChildDing, uKWNoname, dyScroll: -1000.0);
+  await driver?.scrollUntilVisible(singleChildDing, uKWNoname,
+      dyScroll: -1000.0);
   await driver?.tap(uKWNoname);
 
-  await driver?.scrollUntilVisible(singleChildDing, closingKey, dyScroll: -1000.0);
+  await driver?.scrollUntilVisible(singleChildDing, closingKey,
+      dyScroll: -1000.0);
   await driver?.tap(closingKey);
 }
 
 Future<void> rotorNrTestingNoRegEx(FlutterDriver? driver, int amount) async {
-    final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
-    await driver?.tap(rotorTextfield);
-    await driver?.enterText(amount.toString());
-    //await driver?.getText(rotorTextfield); // Throws an exception for some reason, idk
+  final rotorTextfield = find.byValueKey("AddMachine-Key-RotorNr");
+  await driver?.tap(rotorTextfield);
+  await driver?.enterText(amount.toString());
+  //await driver?.getText(rotorTextfield); // Throws an exception for some reason, idk
 }
 
 /*Future<void> rotorNrTesting(FlutterDriver? driver) async {
