@@ -35,8 +35,8 @@
 
 ### Run E2E Tests
 
-- Launch chromedriver (chrome) or geckodriver (firefox) on `--port=4444`
-- In `/frontend` run `flutter driver --target=test_driver/app.dart -d web-server --release`
+- Launch `chromedriver`(chrome) or `geckodriver`(firefox) on `--port=4444`
+- In `/frontend` run `flutter drive --target=test_driver/app.dart -d web-server --release`
 - Append `--browser-name=firefox` to use an actually good browser (instead of Chrome) and increase performance by
   3x–3.5x.
 
@@ -57,8 +57,8 @@ go to `/frontend` directory
 
 - **Run** Linter: `flutter analyze`
 - **Run** Flutter (with hot reload, compose needs to run in addition!): `flutter run -d chrome`
-- **Run** Flutter tests (visible, but not working with all because of
-  Chrome): `flutter driver --target=test_driver/app.dart -d chrome --no-headless`
+- **Run** Flutter tests (visible: only Chrome. **Automated scrolling does not work on Chrome with screen!** Issue in
+  Chrome and not code): `flutter driver --target=test_driver/app.dart -d chrome --no-headless`
 - **Run** Flutter tests (headless, simple): `flutter --target=test_driver/app.dart -d web-server --release`
 - **Run** Flutter tests NEW (headless,
   pipeline): `flutter driver --target=test_driver/app.dart -d web-server --release --browser-name=firefox`
