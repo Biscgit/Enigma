@@ -25,8 +25,8 @@ void main() {
   test("Test cancel button", timeout: const Timeout(Duration(seconds: 30)),
       () async {
     await login(driver);
-    await pressAddButton(driver);
     await resetSelectedMachine(driver);
+    await pressAddButton(driver);
 
     final cancelButton =
         find.byValueKey("AddMachine-Key-Cancel"); // Test cancel button
@@ -37,8 +37,8 @@ void main() {
   test("Create new machine", timeout: const Timeout(Duration(seconds: 180)),
       () async {
     await login(driver);
-    await pressAddButton(driver);
     await resetSelectedMachine(driver);
+    await pressAddButton(driver);
 
     await enterName(driver);
     await togglePlugboard(driver);
