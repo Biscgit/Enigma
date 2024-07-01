@@ -136,8 +136,9 @@ async def test_postgres_rotors_storage(monkeypatch):
             assert result == enc_chr
 
         rotors = await db.get_rotors("user1", 1)
+        print(rotors)
         for i in range(3):
-            rotors[f"Rotor {i}"]["id"] = rotor_end_state[f"Rotor {i}"]["id"]
+            rotors[0][f"Rotor {i}"]["id"] = rotor_end_state[f"Rotor {i}"]["id"]
         # clean up
         await db.disconnect()
         await test_client.close()
