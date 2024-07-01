@@ -67,14 +67,18 @@ class Rotor:
         """
         return self.rescramble(char) if back else self.scramble(char)
 
-    def rotate(self, letter_shift_on_before: bool) -> bool:
+    def rotate(self, letter_shift_on_before: bool, back: bool) -> bool:
         """
         Rotate the rotor and check if the letter_shift is triggered.
 
         :param letter_shift_on_before: Flag to determine if the rotor should rotate.
         :return: True if the letter_shift is at the current position, False otherwise.
         """
-        self.rotor_position += 1 if letter_shift_on_before else 0
+        self.rotor_position += (
+            1
+            if (letter_shift_on_before or self.rotor_position + 1 in self.letter_shift)
+            else 0
+        ) * (not back)
         self.rotor_position %= Rotor.len_al
         if self.rotor_position in self.letter_shift:
             result = self.is_rotate
@@ -109,7 +113,7 @@ class Rotor:
         :param back: Direction flag; True for rescrambling, False for scrambling.
         :return: Tuple containing the letter_shift status and the processed character.
         """
-        letter_shift = self.rotate(rotate)
+        letter_shift = self.rotate(rotate, back)
         return letter_shift, self.add_offset(
             self.scrambler(self.add_offset(char, True), back),
             False,
