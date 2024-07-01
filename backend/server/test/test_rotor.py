@@ -131,15 +131,50 @@ async def test_postgres_rotors_storage(monkeypatch):
             },
         ]
 
+        template_rotors = [
+            {
+                "scramble_alphabet": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
+                "rotor_position": "A",
+                "machine_type": 1,
+                "letter_shift": "Y",
+            },
+            {
+                "scramble_alphabet": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
+                "rotor_position": "A",
+                "machine_type": 1,
+                "letter_shift": "M",
+            },
+            {
+                "scramble_alphabet": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
+                "rotor_position": "A",
+                "machine_type": 1,
+                "letter_shift": "D",
+            },
+            {
+                "scramble_alphabet": "ESOVPZJAYQUIRHXLNFTGKDCMWB",
+                "rotor_position": "A",
+                "machine_type": 1,
+                "letter_shift": "R",
+            },
+            {
+                "scramble_alphabet": "VZBRGITYUPSDNHLXAWMJQOFECK",
+                "rotor_position": "A",
+                "machine_type": 1,
+                "letter_shift": "H",
+            },
+        ]
+
         for clear_chr, enc_chr in zip(clear_text, encrypted_text):
             result = await encrypt("user1", 1, db, clear_chr)
             assert result == enc_chr
 
         rotor_ids = await db.get_rotors("user1", 1)
+        rotor_templates = await db.get_rotor_templates("user1", 1)
         for i in range(3):
             rotor_end_state[i]["id"] = rotor_ids[i]["id"]
             assert rotor_end_state[i] == await db.get_rotor("user1", rotor_ids[i]["id"])
 
+        assert template_rotors == rotor_templates
         # clean up
         await db.disconnect()
         await test_client.close()
