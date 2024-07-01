@@ -161,6 +161,9 @@ void main() {
       final handler = t_lib.writeChar("A", driver);
       handlers.add(handler);
     }
+    await driver?.waitUntilNoTransientCallbacks(
+      timeout: const Duration(seconds: 120),
+    );
 
     // check correct order
     await driver?.waitFor(find.text("A → V"));
