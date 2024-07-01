@@ -300,7 +300,7 @@ class SteckbrettEnigma1State extends State<SteckbrettEnigma1>
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: Colors.white10,
+        color: Colors.white.withAlpha(16),
         border: Border.all(
           color: Colors.white.withOpacity(0), // Specify border color
           width: 4, // Specify border width
@@ -390,7 +390,7 @@ class SteckbrettEnigma3State extends State<SteckbrettEnigma3>
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: Colors.white10,
+        color: Colors.white.withAlpha(16),
         border: Border.all(
           color: Colors.white.withOpacity(0), // Specify border color
           width: 4, // Specify border width

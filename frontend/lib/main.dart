@@ -32,15 +32,16 @@ class EnigmaApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         // Dark theme settings
-        primaryColor: Colors.grey[900],
-        colorScheme: ColorScheme.dark(
-          primary: Colors.grey[900]!,
-          secondary: Colors.blueAccent,
-          surface: Colors.black,
+        primaryColor: const Color.fromRGBO(65, 105, 225, 1),
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.blueAccent,
+          secondary: Colors.redAccent,
+          surface: Color.fromRGBO(16, 16, 24, 0.8),
           onSurface: Colors.white70,
+          // only exception (for design), this cannot be done differently:
+          // ignore: deprecated_member_use
+          background: Color.fromRGBO(24, 24, 30, 1),
         ),
-        //   accentColor: Colors.blueAccent,
-        // Add more dark theme settings here
       ),
       themeMode: ThemeMode.system,
       // Change to ThemeMode.dark or ThemeMode.light if needed

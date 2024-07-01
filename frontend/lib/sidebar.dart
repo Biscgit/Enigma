@@ -10,13 +10,16 @@ class SideBar extends StatelessWidget {
   Widget getHeader() {
     return DrawerHeader(
       decoration: const BoxDecoration(
-        color: Colors.blue,
+        color: Color.fromRGBO(65, 105, 225, 0.8),
       ),
       child: Column(
         children: [
           Text(
             "Hallo $username!",
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 32,
+            ),
           ),
           const Text('Wähle deine Enigma')
         ],
