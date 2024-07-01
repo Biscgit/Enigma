@@ -133,34 +133,61 @@ async def test_postgres_rotors_storage(monkeypatch):
 
         template_rotors = [
             {
-                "scramble_alphabet": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
-                "rotor_position": "A",
+                "id": 1,
+                "is_rotate": True,
+                "username": "user1",
+                "scramble_alphabet": "ekmflgdqvzntowyhxuspaibrcj",
+                "rotor_position": "a",
                 "machine_type": 1,
-                "letter_shift": "Y",
+                "letter_shift": "y",
+                "number": 0,
+                "offset_value": 0,
+                "place": 0,
+                "machine_id": 0,
             },
             {
-                "scramble_alphabet": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
-                "rotor_position": "A",
+                "username": "user1",
+                "scramble_alphabet": "ajdksiruxblhwtmcqgznpyfvoe",
+                "rotor_position": "a",
                 "machine_type": 1,
-                "letter_shift": "M",
+                "letter_shift": "m",
+                "number": 0,
+                "offset_value": 0,
+                "place": 0,
+                "machine_id": 0,
             },
             {
-                "scramble_alphabet": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
-                "rotor_position": "A",
+                "username": "user1",
+                "scramble_alphabet": "bdfhjlcprtxvznyeiwgakmusqo",
+                "rotor_position": "a",
                 "machine_type": 1,
-                "letter_shift": "D",
+                "letter_shift": "d",
+                "number": 0,
+                "offset_value": 0,
+                "place": 0,
+                "machine_id": 0,
             },
             {
-                "scramble_alphabet": "ESOVPZJAYQUIRHXLNFTGKDCMWB",
-                "rotor_position": "A",
+                "username": "user1",
+                "scramble_alphabet": "esovpzjayquirhxlnftgkdcmwb",
+                "rotor_position": "a",
                 "machine_type": 1,
-                "letter_shift": "R",
+                "letter_shift": "r",
+                "number": 0,
+                "offset_value": 0,
+                "place": 0,
+                "machine_id": 0,
             },
             {
-                "scramble_alphabet": "VZBRGITYUPSDNHLXAWMJQOFECK",
-                "rotor_position": "A",
+                "username": "user1",
+                "scramble_alphabet": "vzbrgityupsdnhlxawmjqofeck",
+                "rotor_position": "a",
                 "machine_type": 1,
-                "letter_shift": "H",
+                "letter_shift": "h",
+                "number": 0,
+                "offset_value": 0,
+                "place": 0,
+                "machine_id": 0,
             },
         ]
 
@@ -172,7 +199,7 @@ async def test_postgres_rotors_storage(monkeypatch):
         rotor_templates = await db.get_rotor_templates("user1", 1)
         for i in range(3):
             rotor_end_state[i]["id"] = rotor_ids[i]["id"]
-            assert rotor_end_state[i] == await db.get_rotor("user1", rotor_ids[i]["id"])
+            assert rotor_end_state[i] == await db.get_rotor_by_place("user1", 1, i)
 
         assert template_rotors == rotor_templates
         # clean up
