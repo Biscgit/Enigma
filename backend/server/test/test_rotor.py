@@ -85,21 +85,14 @@ async def test_postgres_rotors_storage(monkeypatch):
         await db.connect()
 
         for i in range(3):
-            db.switch_rotor("user1", 1, 1, i, 1)
+            await db.switch_rotor("user1", 1, 1, i, 1)
 
         clear_text = "loremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnaaliquyameratseddiamvoluptuaatveroeosetaccusametjustoduodolorloremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnaaliquyameratseddiamvoluptuaatveroeosetaccusametjustoduodolorloremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlabore"
         encrypted_text = "azjkkvhkcqgvgkvdrgqsnplvtaymcllaywojjaajfuryxqvxbubhoiqcwiggdzbddczufdxnedjrzlcohlevqnkhqojmbxpxbdfrrdsmtgethfblqkximubeizoyxswpvdlafmdhlszdzhwxnxsatlnveaeezgkcnxinuifeitgksrrymexioyitqmifppqtupycfjzwssocqwonxfolyddbkoxxvsczexmnhvhkpfwirklbjmypdwtectphynfsxnpkxudtdckilkffkyndhvulvwlhhdsflvohdzspeiflgovwcndtfrtzfxpsshkyizpwokyeocwpwctlkkvjrpolkdefibpqkwwdvlunwhvyytdqnfchojwqiuuehabmwxxlpmycaikiivqdzxmpnwlkhq"
 
         for clear_chr, enc_chr in zip(clear_text, encrypted_text):
-            result = encrypt("user1", 1, db, clear_chr)
-            if result != enc_chr:
-                print(
-                    f"Fehler bei Position {i}: call('{clear_chr}') = '{result}' stimmt nicht mit '{enc_chr}' überein."
-                )
-            else:
-                print(
-                    f"Position {i}: call('{clear_chr}') = '{result}' stimmt mit '{enc_chr}' überein."
-                )
+            result = await encrypt("user1", 1, db, clear_chr)
+            assert result == enc_chr
         # clean up
         await db.disconnect()
         await test_client.close()
