@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
 from server.lib.routes.plugboard import router
-from server.lib.database import Database, get_database
+from server.lib.database import get_database
 from server.lib.routes.authentication import check_auth
 from server.lib.plugboard import switch_letter
 from pydantic import BaseModel
