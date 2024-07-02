@@ -1,0 +1,42 @@
+name: enigma
+description: 'Frontend for Enigma'
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+#  cupertino_icons: ^1.0.6
+  flutter_dotenv: ^5.1.0
+  flutter_secure_storage: ^9.2.2
+  http: ^1.2.1
+  url_launcher: ^6.0.13
+  pure_dart_ui: ^0.1.9
+#  synchronized: ^3.1.0
+  flutter_animate: ^4.5.0
+
+dev_dependencies:
+  flutter_driver:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  test: ^1.25.2
+  flutter_lints: ^4.0.0
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
+
+flutter:
+  assets:
+    - flutter.env
+  uses-material-design: true
+  fonts:
+  - family: Wallau
+    fonts:
+    - asset: ./fonts/wallau.ttf

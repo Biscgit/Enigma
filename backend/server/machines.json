@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Not for use",
+        "machine_type": 0,
+        "reflector": {
+           "UKW": "EJMZALYXVBWFCRQUONTSPIKHGD"
+        },
+        "number_rotors": 1001
+    },
+    {
+        "name": "Enigma 1",
+        "machine_type": 1,
+        "reflector": {
+           "UKW-A": "EJMZALYXVBWFCRQUONTSPIKHGD",
+           "UKW-B": "YRUHQSLDPXNGOKMIEBFZCWVJAT",
+           "UKW-C": "FVPJIAOYEDRZXWGCTKUQSBNMHL",
+           "UKW-D*": "FOWULAQYSRTEZVBXGJIKDNCPHM"
+        },
+        "number_rotors": 3
+    },
+    {
+        "name": "Norway Enigma",
+        "machine_type": 2,
+        "reflector": {
+           "UKW": "MOWJYPUXNDSRAIBFVLKZGQCHET"
+        },
+        "number_rotors": 3
+    },
+    {
+        "name": "Enigma M3",
+        "machine_type": 3,
+        "reflector": {
+           "UKW-B": "YRUHQSLDPXNGOKMIEBFZCWVJAT",
+           "UKW-C": "FVPJIAOYEDRZXWGCTKUQSBNMHL"
+        },
+        "number_rotors": 5
+    }
+]

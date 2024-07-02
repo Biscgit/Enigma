@@ -1,0 +1,5 @@
+# app
+asyncpg>=0.29.0
+fastapi>=0.110.2
+uvicorn[standard]>=0.29.0
+pydantic>=2.7.1

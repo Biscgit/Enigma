@@ -3,32 +3,42 @@ services:
         image: postgres:16-alpine
         environment:
             LANG: de_DE.utf8
-            POSTGRES_USER: admin
-            POSTGRES_PASSWORD: admin1234!
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
 
         networks:
             enigma-network:
-                ipv4_address: 172.20.0.100
+                ipv4_address: ${IP_POSTGRES}
+
 
     webserver:
         image: registry.mygit.th-deg.de/ts19084/enigma/backend:latest
         networks:
             enigma-network:
-                ipv4_address: 172.20.0.101
+                ipv4_address: ${IP_FASTAPI}
+        ports:
+            - 8001:8001
 
         depends_on:
             database:
                 condition: service_started
 
+        env_file:
+            - .env
+
     website:
         image: registry.mygit.th-deg.de/ts19084/enigma/frontend:latest
+        ports:
+            - 8080:8080
         networks:
             enigma-network:
-                ipv4_address: 172.20.0.102
+                ipv4_address: ${IP_FLUTTER}
 
         depends_on:
             webserver:
                 condition: service_started
+
 
 networks:
     enigma-network:

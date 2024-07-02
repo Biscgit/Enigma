@@ -1,0 +1,88 @@
+unit-integration-test:
+  stage: test
+  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:latest
+  before_script:
+    - cd backend
+  script:
+    - python3 -m pytest --cov --junitxml=report.xml --cov-report term --cov-report xml:coverage.xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    when: always
+    paths:
+      - backend/report.xml
+      - backend/coverage.xml
+    reports:
+      junit: backend/report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: backend/coverage.xml
+  rules:
+    - exists:
+      - backend/server/test/*
+    - changes:
+      - "backend/**/*"
+  needs:
+    - job: build-python-tester-linter
+      optional: true
+
+# e2e-test-widget:
+#   stage: e2e-test
+#   image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
+#   before_script:
+#     - cd frontend
+#     - flutter pub get
+#   script:
+#     - flutter test --file-reporter "json:result.json"
+#   artifacts:
+#     paths:
+#       - frontend/result.json
+#   rules:
+#     - exists:
+#       - frontend/test/*
+#   needs:
+#     - job: build-frontend
+#       optional: true
+#     - job: build-backend
+#       optional: true
+#   allow_failure: true
+
+e2e-test:
+  stage: e2e-test
+  image: ${CI_REGISTRY_IMAGE}/flutter-driver:latest
+  variables:
+    FF_NETWORK_PER_BUILD: 1
+    IP_POSTGRES: postgres
+    POSTGRES_USER: app
+    POSTGRES_PASSWORD: admin1234!
+    POSTGRES_NAME: enigma
+    POSTGRES_DB: enigma
+    IP_FASTAPI: backend
+    DB_USER: app
+    DB_PASSWORD: admin1234!
+    DB_NAME: enigma
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+    - name: registry.mygit.th-deg.de/ts19084/enigma/backend:latest
+      alias: backend
+  before_script:
+    - cd frontend
+    - rm flutter.env
+    - env | grep "IP_FASTAPI" > flutter.env
+    - flutter create --platforms web .
+    - flutter pub get
+  script:
+    - geckodriver --port=4444 &> gecko.logs &
+    - flutter drive --target=test_driver/app.dart -d web-server --release --browser-name=firefox
+  rules:
+    - exists:
+      - frontend/test_driver/*
+#   retry: 2
+  needs:
+    - job: build-frontend
+      optional: true
+    - job: build-backend
+      optional: true
+    - job: build-flutter-driver
+      optional: true
+#   allow_failure: true

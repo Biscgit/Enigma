@@ -1,0 +1,71 @@
+include: "/.ci/ci-templates.yml"
+
+scan-backend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "backend"
+  needs:
+    - job: build-backend
+      optional: true
+    - job: build-scanner
+      optional: true
+
+scan-frontend:
+  extends: .scan_image
+  variables:
+    DOCKERPATH: "frontend"
+  needs:
+    - job: build-frontend
+      optional: true
+    - job: build-scanner
+      optional: true
+
+lint-frontend:
+  stage: linter
+  image: ${CI_REGISTRY_IMAGE}/flutter-builder:latest
+  before_script:
+    - cd frontend/
+    - flutter create --platforms web .
+    - rm test/widget_test.dart
+    - flutter pub get
+  script:
+    - flutter analyze
+  allow_failure: true
+  rules: 
+   - changes:
+      - "frontend/**/*"
+  needs:
+    - job: build-flutter-builder
+      optional: true
+
+lint-backend-python:
+  stage: linter
+  image: ${CI_REGISTRY_IMAGE}/python-tester-linter:latest
+  before_script:
+    - cd backend/
+  script:
+    - python3 -m ruff check
+  allow_failure: true
+  rules: 
+   - changes:
+      - "backend/**/*"
+  needs:
+    - job: build-python-tester-linter
+      optional: true
+
+lint-backend-rust:
+  stage: linter
+  image: ${CI_REGISTRY_IMAGE}/backend/rustlib:latest
+  before_script:
+    - cd backend/
+  script:
+    - cargo clippy --manifest-path=./rustlib/Cargo.toml -q
+  allow_failure: true
+  needs:
+    - job: build-backend-rust
+  rules: 
+   - changes:
+      - "backend/rustlib/**/*"
+  needs:
+    - job: build-backend-rust
+      optional: true

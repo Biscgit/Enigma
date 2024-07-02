@@ -1,30 +1,28 @@
 stages:
-  - build
+  - prebuild
+  - linter
   - test
+  - build
+  - scanner
+  - e2e-test
+  - clean
 
-include: "build-template.yml"
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: always
+    - when: always
 
-build-backend:
-    extends: .build-docker
-    variables:
-      DOCKERPATH: "backend"
+include:
+  - local: '/.ci/build.yml'
+  - local: '/.ci/scanner.yml'
+  - local: '/.ci/test.yml'
 
-build-frontend:
-    extends: .build-docker
-    variables:
-      DOCKERPATH: "frontend"
-
-
-unit-test-job:
-  stage: test
+clean:
+  stage: clean
+  image: docker:cli
   script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
-
-lint-test-job:
-  stage: test
-  script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
+    - docker image rm -f $( docker images --quiet ) || true
+    - docker image rm -f $( docker images --quiet ) || true
+  rules:
+    - if: "$NIGHTLY_BUILD"

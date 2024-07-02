@@ -1,0 +1,78 @@
+include: "/.ci/ci-templates.yml"
+
+build-flutter-builder:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/flutter"
+    NAME: "/flutter-builder"
+  rules:
+    - if: "$NIGHTLY_BUILD"
+  needs: []
+
+build-backend-rust:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: "backend/rustlib"
+  needs: []
+
+build-scanner:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/scanner"
+    NAME: "/scanner"
+  rules:
+    - if: "$NIGHTLY_BUILD"
+  needs: []
+
+build-python-tester-linter:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/linter-tester"
+    NAME: "/python-tester-linter"
+  rules:
+    - if: "$NIGHTLY_BUILD"
+  needs:
+    - job: build-backend-rust
+      optional: true
+
+build-backend:
+  stage: build
+  extends: .build-docker
+  variables:
+    DOCKERPATH: "backend"
+  needs:
+    - job: build-backend-rust
+      optional: true
+    - job: unit-integration-test
+      optional: true
+    - job: lint-backend-python
+      optional: true
+    - job: lint-backend-rust
+      optional: true
+
+build-frontend:
+  stage: build
+  extends: .build-docker
+  variables:
+    DOCKERPATH: "frontend"
+  needs:
+    - job: lint-frontend
+      optional: true
+    - job: build-flutter-builder
+      optional: true
+
+build-flutter-driver:
+  stage: prebuild
+  extends: .build-docker
+  variables:
+    DOCKERPATH: ".docker-builds/fdriver"
+    NAME: "/flutter-driver"
+  rules:
+    - if: "$NIGHTLY_BUILD"
+  needs:
+    - job: build-flutter-builder
+      optional: true

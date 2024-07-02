@@ -12,7 +12,9 @@ services:
                 ipv4_address: ${IP_POSTGRES}
 
     webserver:
-        build: ./backend
+        build:
+            context: ./backend
+            dockerfile: DockerfileLocal
         ports:
             - 8001:8001
         networks:
@@ -23,7 +25,9 @@ services:
             - .env
 
     website:
-        build: ./frontend
+        build:
+            context: ./frontend
+            dockerfile: DockerfileLocal
         ports:
             - 8080:8080
         networks:
