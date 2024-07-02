@@ -30,11 +30,12 @@ class MinRotor(BaseModel):
 
 
 def check_len(value: str, min: int, max: int, key: str) -> None:
+    if not isinstance(value, str):
+        raise ValueError(f"{key} must be an alphabetical value")
+
     if len(value) < min or len(value) > max:
         raise ValueError(f"{key} must be between {min} and {max} characters long")
 
-    if not isinstance(value, str):
-        raise ValueError(f"{key} must be an alphabetical value")
     for i in value:
         if i.lower() not in alphabet:
             raise ValueError(f"{key} must be an alphabetical value")
