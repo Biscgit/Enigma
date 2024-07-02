@@ -1,11 +1,12 @@
 import pytest
 import json
+from fastapi import FastAPI
 from testcontainers.postgres import PostgresContainer
-from pydantic import BaseModel
 
 from .lib import create_db_with_users
 from server.lib import database, logger
-from server.lib.routes.key_input import encrypt
+from server.lib.routes.key_input import encrypt, router
+from server.lib.routes.authentication import check_auth
 
 logger.configure_logger(no_stdout=True)
 pytest_plugins = ("pytest_asyncio",)
@@ -210,6 +211,12 @@ async def test_postgres_rotors_storage(monkeypatch):
             assert rotor_end_state[i] == await db.get_rotor_by_place("user1", 1, i)
 
         assert template_rotors == rotor_templates
+
+        # check rotor positions
+        expected = {'number': 1}
+        position = await db.get_rotor_number("user2", 1, 1)
+        assert position == expected
+
         # clean up
         await db.disconnect()
         await test_client.close()
