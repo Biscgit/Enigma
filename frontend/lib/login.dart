@@ -157,7 +157,7 @@ class LoginPageState extends State<LoginPage> {
                     .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
                     .slide(),
               ),
-              const Text("by Code Lieferando",
+              const Text("by Code Lieferando 🥨",
                   style: TextStyle(
                     color: Color.fromRGBO(255, 255, 255, 0.2),
                     fontSize: 19,
