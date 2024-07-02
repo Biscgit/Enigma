@@ -38,7 +38,8 @@ class LoginPageState extends State<LoginPage> {
   }
 
   void _showSnackbar(BuildContext context, String message, Color color,
-      {Color textColor = Colors.black}) {
+      {Color textColor = Colors.black,
+      Duration duration = const Duration(days: 1)}) {
     //if (!hasShowed) {
     // hasShowed = true;
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -51,7 +52,7 @@ class LoginPageState extends State<LoginPage> {
         backgroundColor: color,
         showCloseIcon: true,
         closeIconColor: textColor,
-        duration: const Duration(days: 1),
+        duration: duration,
       ),
     );
     // }
@@ -108,14 +109,20 @@ class LoginPageState extends State<LoginPage> {
       if (!context.mounted) return;
 
       if (isOnline) {
-        _showSnackbar(context, 'Backend online!', Colors.green.withOpacity(0.7),
-            textColor: Colors.green.shade200);
+        _showSnackbar(
+          context,
+          'Backend online!',
+          Colors.green.withOpacity(0.7),
+          textColor: Colors.green.shade200,
+          duration: const Duration(seconds: 5),
+        );
       } else {
         _showSnackbar(
-            context,
-            'Backend cannot be reached. Check your connection, docker or network!',
-            Colors.red.withOpacity(0.7),
-            textColor: Colors.red.shade200);
+          context,
+          'Backend cannot be reached. Check your connection, docker or network!',
+          Colors.red.withOpacity(0.7),
+          textColor: Colors.red.shade200,
+        );
       }
     });
 
