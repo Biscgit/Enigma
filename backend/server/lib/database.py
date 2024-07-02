@@ -794,10 +794,10 @@ class Database:
     async def switch_rotor(
         self, username: str, machine_id: int, template_id, place: int, number: int
     ) -> dict:
-        id = 0
+        rotor_id = 0
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                id = await conn.fetchval(
+                rotor_id = await conn.fetchval(
                     """
                     SELECT id
                     FROM rotors
@@ -816,12 +816,12 @@ class Database:
         if await self.get_rotor_by_number(username, number, machine_id, place) is None:
             await self.set_rotor(template_rotor)
 
-        if id is None:
+        if rotor_id is None:
             template_rotor["machine_id"] = machine_id
             new_id = await self.set_rotor(template_rotor)
             return await self.get_rotor(username, new_id)
 
-        before_rotor = await self.get_rotor(username, id)
+        before_rotor = await self.get_rotor(username, rotor_id)
         actual_rotor_id = before_rotor["id"]
         before_rotor["username"] = username
         before_rotor["id"] = (
