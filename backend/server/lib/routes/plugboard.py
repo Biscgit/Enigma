@@ -73,7 +73,7 @@ async def get_configuration(
     return {"plugboard": plugs}
 
 
-@router.put("/edit", response_model=PlugboardResponse)
+"""@router.put("/edit", response_model=PlugboardResponse)
 async def edit_plugboard(
         machine: int,
         letter: str,
@@ -101,7 +101,7 @@ async def edit_plugboard(
 
     await db.remove_plugboard(username, machine, old_plug[0], old_plug[1])
     await db.save_plugboard(username, machine, new_plug_a_upper, new_plug_b_upper)
-    return {"plugboard": plugs}
+    return {"plugboard": plugs}"""
 
 
 @router.delete("/remove", response_model=ResetPlugboardResponse)  # Change response model here

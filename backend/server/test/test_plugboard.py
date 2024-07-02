@@ -84,14 +84,14 @@ def test_get_configuration(client):
     assert ['a', 'b'] in data["plugboard"]
 
 
-def test_edit_plugboard(client):
+"""def test_edit_plugboard(client):
     response = client.put("/plugboard/edit?machine=1&letter=a",
                           json={"plug_a": "c", "plug_b": "d"})
     assert response.status_code == 404
     data = response.json()
     assert "detail" in data
     assert "Letter does not exist in the plugboard" in data["detail"]
-
+"""
 
 def test_reset_plugboard(client):
     response = client.delete("/plugboard/remove", params={"machine": 1, "plug_a": "a", "plug_b": "b"})
