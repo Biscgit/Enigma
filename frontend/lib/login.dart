@@ -137,21 +137,33 @@ class LoginPageState extends State<LoginPage> {
 
     final title = dotenv.get('IS_TEST_ENV', fallback: "") == "true"
         ? const Text("Enigma")
-        : Text(
-            'The Enigma-Machine',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: screenHeight * 0.1,
-              color: const Color(0xFF666870),
-              height: 1,
-              letterSpacing: -1,
-            ),
-          )
-            .animate(onPlay: (controller) => controller.repeat())
-            .shimmer(duration: 1200.ms, color: const Color(0xFF80DDFF))
-            .animate()
-            .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-            .slide();
+        : Column(
+            children: [
+              SizedBox(
+                height: screenHeight * 0.15,
+                child: Text(
+                  'The Enigma-Machine',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: screenHeight * 0.1,
+                    color: const Color(0xFF666870),
+                    height: 1,
+                    letterSpacing: -1,
+                  ),
+                )
+                    .animate(onPlay: (controller) => controller.repeat())
+                    .shimmer(duration: 1200.ms, color: const Color(0xFF80DDFF))
+                    .animate()
+                    .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
+                    .slide(),
+              ),
+              const Text("by Code Lieferando",
+                  style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
+                    fontSize: 19,
+                  ))
+            ],
+          );
 
     return Scaffold(
       appBar: AppBar(
@@ -161,8 +173,8 @@ class LoginPageState extends State<LoginPage> {
       body: Column(
         children: [
           SizedBox(height: screenHeight * 0.15),
-          SizedBox(height: screenHeight * 0.15, child: title),
-          SizedBox(height: screenHeight * 0.1),
+          SizedBox(height: screenHeight * 0.2, child: title),
+          SizedBox(height: screenHeight * 0.05),
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
