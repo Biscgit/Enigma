@@ -1,8 +1,12 @@
 # Enigma
 
-[![pipeline status](https://mygit.th-deg.de/ts19084/enigma/badges/dev/pipeline.svg)](https://mygit.th-deg.de/ts19084/enigma/-/pipelines)
-[![coverage report](https://mygit.th-deg.de/ts19084/enigma/badges/dev/coverage.svg)](https://mygit.th-deg.de/ts19084/enigma/-/commits/main)
-[![Latest Release](https://mygit.th-deg.de/ts19084/enigma/-/badges/release.svg)](https://mygit.th-deg.de/ts19084/enigma/-/releases)
+This a sligly modified Version of the original repo: an University project to develop the Enigma-Machine. 
+The frontend is created with Flutter Web on nginx and the Backend ist mostly written in Python.
+
+> [!IMPORTANT]
+> The goal of this project was to create a working Enigma with some defined features.
+> This program is **not secure** in any way (not required!) and should not be used for more than learning!
+> **NO WARANTIES given on anything in this repository!**
 
 ### Infos
 
