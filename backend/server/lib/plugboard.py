@@ -20,6 +20,7 @@ def to_dict(plugs: list[tuple[str, str]]) -> dict:
     return plugboard
 
 
+
 async def switch_letter(
     username: str,
     machine: int,
