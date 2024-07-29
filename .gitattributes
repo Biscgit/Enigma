@@ -2,10 +2,11 @@
 # see https://github.com/gitattributes/gitattributes/blob/master/Rust.gitattributes
 *          text=auto
 
-*.rs       text diff=rust
+#*.rs       text diff=rust
 #*.toml     text diff=toml
 
 # custom attributes
+*.rs       linguist-detectable=true
 *.sql      linguist-detectable=true
 #*.toml     linguist-detectable=true
-#*.json 	   linguist-detectable=true
+#*.json 	  linguist-detectable=true
